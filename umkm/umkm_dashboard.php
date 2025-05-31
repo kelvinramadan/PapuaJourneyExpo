@@ -179,6 +179,7 @@ if (!file_exists($profile_image_path)) {
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         .header-content {
@@ -193,7 +194,7 @@ if (!file_exists($profile_image_path)) {
             font-size: 1.8rem;
         }
         
-        .header-info {
+        .header-right {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -221,19 +222,139 @@ if (!file_exists($profile_image_path)) {
             color: white;
         }
         
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
+        /* Navbar Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
             padding: 0.5rem 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
+            color: white;
             cursor: pointer;
-            text-decoration: none;
             transition: background 0.3s;
         }
         
+        .profile-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+        
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            min-width: 220px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+        }
+        
+        .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .dropdown-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dropdown-header h4 {
+            color: #333;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .dropdown-header p {
+            color: #666;
+            font-size: 0.8rem;
+            margin: 0.25rem 0 0 0;
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            margin-right: 0.5rem;
+            color: #666;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: #eee;
+            margin: 0.5rem 0;
+        }
+        
+        .logout-btn {
+            color: #dc3545 !important;
+        }
+        
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: #fff5f5 !important;
         }
         
         .container {
@@ -242,11 +363,9 @@ if (!file_exists($profile_image_path)) {
             padding: 0 2rem;
         }
         
-        .dashboard-grid {
+        .dashboard-content {
             display: grid;
-            grid-template-columns: 1fr 2fr;
             gap: 2rem;
-            margin-bottom: 2rem;
         }
         
         .card {
@@ -263,33 +382,117 @@ if (!file_exists($profile_image_path)) {
             border-bottom: 2px solid #667eea;
         }
         
-        .profile-section {
-            text-align: center;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
         
-        .profile-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #667eea;
+        .info-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-item strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
             margin-bottom: 1rem;
         }
         
-        .upload-btn {
-            background: #667eea;
-            color: white;
-            padding: 0.5rem 1rem;
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .modal.active {
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .close {
+            background: none;
             border: none;
-            border-radius: 5px;
+            font-size: 1.5rem;
             cursor: pointer;
-            margin: 0.5rem;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
         }
         
-        .upload-btn:hover {
-            background: #5a67d8;
+        .close:hover {
+            color: #333;
+            background: #f8f9fa;
         }
         
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        /* Form Styles */
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -307,7 +510,7 @@ if (!file_exists($profile_image_path)) {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e1e1e1;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -329,10 +532,11 @@ if (!file_exists($profile_image_path)) {
             color: white;
             padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             transition: transform 0.2s;
+            margin-right: 0.5rem;
         }
         
         .btn:hover {
@@ -347,86 +551,75 @@ if (!file_exists($profile_image_path)) {
             background: #5a6268;
         }
         
-        .alert {
-            padding: 1rem;
-            border-radius: 5px;
+        /* Image Upload */
+        .image-upload-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .current-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
             margin-bottom: 1rem;
         }
         
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
         }
         
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .info-item {
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .info-item strong {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .file-input {
+            position: absolute;
+            opacity: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-        }
-        
-        .close {
-            float: right;
-            font-size: 1.5rem;
             cursor: pointer;
-            color: #999;
         }
         
-        .close:hover {
-            color: #333;
+        .file-input-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
+        .file-input-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dropdown-menu {
+                right: 0;
+                left: 0;
+                margin: 0 1rem;
             }
             
             .info-grid {
                 grid-template-columns: 1fr;
             }
             
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
             }
         }
     </style>
@@ -435,12 +628,45 @@ if (!file_exists($profile_image_path)) {
     <div class="header">
         <div class="header-content">
             <h1>Dashboard UMKM</h1>
-            <div class="header-info">
+            <div class="header-right">
                 <span class="status-badge status-<?php echo $umkm_data['status']; ?>">
                     <?php echo ucfirst($umkm_data['status']); ?>
                 </span>
-                <span>Halo, <?php echo htmlspecialchars($umkm_data['business_name']); ?></span>
-                <a href="../logout.php" class="logout-btn">Logout</a>
+                
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown" id="profileDropdown">
+                    <button class="profile-toggle" onclick="toggleDropdown()">
+                        <img src="<?php echo htmlspecialchars($profile_image_path); ?>" alt="Profile" class="profile-avatar">
+                        <span><?php echo htmlspecialchars($umkm_data['business_name']); ?></span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    
+                    <div class="dropdown-menu">
+                        <div class="dropdown-header">
+                            <img src="<?php echo htmlspecialchars($profile_image_path); ?>" alt="Profile">
+                            <h4><?php echo htmlspecialchars($umkm_data['business_name']); ?></h4>
+                            <p><?php echo htmlspecialchars($umkm_data['email']); ?></p>
+                        </div>
+                        
+                        <button class="dropdown-item" onclick="openImageModal()">
+                            <i>📷</i> Ubah Foto Profil
+                        </button>
+                        
+                        <button class="dropdown-item" onclick="openProfileModal()">
+                            <i>👤</i> Edit Profil
+                        </button>
+                        
+                        <button class="dropdown-item" onclick="openPasswordModal()">
+                            <i>🔒</i> Ubah Password
+                        </button>
+                        
+                        <div class="dropdown-divider"></div>
+                        
+                        <a href="../logout.php" class="dropdown-item logout-btn">
+                            <i>🚪</i> Logout
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -458,39 +684,112 @@ if (!file_exists($profile_image_path)) {
             </div>
         <?php endif; ?>
         
-        <div class="dashboard-grid">
-            <!-- Profile Section -->
-            <div class="card profile-section">
-                <h2>Foto Profil</h2>
-                <img src="<?php echo htmlspecialchars($profile_image_path); ?>" alt="Profile" class="profile-image" id="profileImage">
-                
-                <form method="POST" enctype="multipart/form-data" id="uploadForm" style="display: none;">
-                    <input type="file" name="profile_image" id="imageInput" accept="image/*" onchange="previewImage(this)">
-                    <button type="submit" name="upload_image" class="upload-btn">Upload</button>
-                </form>
-                
-                <div>
-                    <button class="upload-btn" onclick="document.getElementById('imageInput').click()">Pilih Foto</button>
-                    <button class="upload-btn btn-secondary" onclick="changePassword()">Ubah Password</button>
-                </div>
-                
-                <div class="info-grid" style="margin-top: 2rem; text-align: left;">
+        <div class="dashboard-content">
+            <!-- Business Information Card -->
+            <div class="card">
+                <h2>Informasi Usaha</h2>
+                <div class="info-grid">
                     <div class="info-item">
-                        <strong>Status Akun</strong>
-                        <span class="status-badge status-<?php echo $umkm_data['status']; ?>">
-                            <?php echo ucfirst($umkm_data['status']); ?>
-                        </span>
+                        <strong>Nama Usaha</strong>
+                        <?php echo htmlspecialchars($umkm_data['business_name']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Pemilik</strong>
+                        <?php echo htmlspecialchars($umkm_data['owner_name']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Telepon</strong>
+                        <?php echo htmlspecialchars($umkm_data['phone']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Jenis Usaha</strong>
+                        <?php echo ucfirst($umkm_data['business_type']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Alamat</strong>
+                        <?php echo htmlspecialchars($umkm_data['address']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Deskripsi</strong>
+                        <?php echo $umkm_data['description'] ? htmlspecialchars($umkm_data['description']) : 'Belum ada deskripsi'; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Information -->
+            <div class="card">
+                <h2>Informasi Akun</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Email</strong>
+                        <?php echo htmlspecialchars($umkm_data['email']); ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>ID UMKM</strong>
+                        #<?php echo $umkm_data['id']; ?>
                     </div>
                     <div class="info-item">
                         <strong>Terdaftar Sejak</strong>
                         <?php echo date('d M Y', strtotime($umkm_data['created_at'])); ?>
                     </div>
+                    <div class="info-item">
+                        <strong>Terakhir Diperbarui</strong>
+                        <?php echo $umkm_data['updated_at'] ? date('d M Y H:i', strtotime($umkm_data['updated_at'])) : 'Belum pernah'; ?>
+                    </div>
+                    <div class="info-item">
+                        <strong>Status Verifikasi</strong>
+                        <?php if ($umkm_data['status'] == 'pending'): ?>
+                            <span style="color: #FF9800;">Menunggu persetujuan admin</span>
+                        <?php elseif ($umkm_data['status'] == 'active'): ?>
+                            <span style="color: #4CAF50;">Akun aktif dan terverifikasi</span>
+                        <?php else: ?>
+                            <span style="color: #f44336;">Akun tidak aktif</span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Business Info -->
-            <div class="card">
-                <h2>Informasi Usaha</h2>
+        </div>
+    </div>
+    
+    <!-- Image Upload Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ubah Foto Profil</h3>
+                <button class="close" onclick="closeImageModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" id="imageForm">
+                    <div class="image-upload-section">
+                        <img src="<?php echo htmlspecialchars($profile_image_path); ?>" alt="Current Profile" class="current-image" id="previewImage">
+                        
+                        <div class="file-input-wrapper">
+                            <input type="file" name="profile_image" id="imageInput" class="file-input" accept="image/*" onchange="previewImageFile(this)">
+                            <div class="file-input-btn">
+                                📁 Pilih Foto Baru
+                            </div>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
+                            Format: JPG, PNG, GIF. Maksimal 5MB
+                        </p>
+                    </div>
+                    
+                    <button type="submit" name="upload_image" class="btn">Upload Foto</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeImageModal()">Batal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profil</h3>
+                <button class="close" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
                 <form method="POST">
                     <div class="form-group">
                         <label for="business_name">Nama Usaha:</label>
@@ -532,36 +831,8 @@ if (!file_exists($profile_image_path)) {
                     </div>
                     
                     <button type="submit" name="update_profile" class="btn">Perbarui Profil</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProfileModal()">Batal</button>
                 </form>
-            </div>
-        </div>
-        
-        <!-- Account Information -->
-        <div class="card">
-            <h2>Informasi Akun</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>Email</strong>
-                    <?php echo htmlspecialchars($umkm_data['email']); ?>
-                </div>
-                <div class="info-item">
-                    <strong>ID UMKM</strong>
-                    #<?php echo $umkm_data['id']; ?>
-                </div>
-                <div class="info-item">
-                    <strong>Terakhir Diperbarui</strong>
-                    <?php echo $umkm_data['updated_at'] ? date('d M Y H:i', strtotime($umkm_data['updated_at'])) : 'Belum pernah'; ?>
-                </div>
-                <div class="info-item">
-                    <strong>Status Verifikasi</strong>
-                    <?php if ($umkm_data['status'] == 'pending'): ?>
-                        <span style="color: #FF9800;">Menunggu persetujuan admin</span>
-                    <?php elseif ($umkm_data['status'] == 'active'): ?>
-                        <span style="color: #4CAF50;">Akun aktif dan terverifikasi</span>
-                    <?php else: ?>
-                        <span style="color: #f44336;">Akun tidak aktif</span>
-                    <?php endif; ?>
-                </div>
             </div>
         </div>
     </div>
@@ -569,55 +840,106 @@ if (!file_exists($profile_image_path)) {
     <!-- Password Change Modal -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closePasswordModal()">&times;</span>
-            <h2>Ubah Password</h2>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="current_password">Password Saat Ini:</label>
-                    <input type="password" name="current_password" id="current_password" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new_password">Password Baru:</label>
-                    <input type="password" name="new_password" id="new_password" required minlength="6">
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirm_password">Konfirmasi Password Baru:</label>
-                    <input type="password" name="confirm_password" id="confirm_password" required minlength="6">
-                </div>
-                
-                <button type="submit" name="change_password" class="btn">Ubah Password</button>
-                <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Batal</button>
-            </form>
+            <div class="modal-header">
+                <h3>Ubah Password</h3>
+                <button class="close" onclick="closePasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="current_password">Password Saat Ini:</label>
+                        <input type="password" name="current_password" id="current_password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">Password Baru:</label>
+                        <input type="password" name="new_password" id="new_password" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Konfirmasi Password Baru:</label>
+                        <input type="password" name="confirm_password" id="confirm_password" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" name="change_password" class="btn">Ubah Password</button>
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Batal</button>
+                </form>
+            </div>
         </div>
     </div>
     
     <script>
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('profileImage').src = e.target.result;
-                    document.getElementById('uploadForm').style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
         }
         
-        function changePassword() {
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        // Modal functions
+        function openImageModal() {
+            document.getElementById('imageModal').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('imageModal').classList.add('active');
+            }, 10);
+            document.getElementById('profileDropdown').classList.remove('active');
+        }
+        
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+        
+        function openProfileModal() {
+            document.getElementById('profileModal').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('profileModal').classList.add('active');
+            }, 10);
+            document.getElementById('profileDropdown').classList.remove('active');
+        }
+        
+        function closeProfileModal() {
+            const modal = document.getElementById('profileModal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+        
+        function openPasswordModal() {
             document.getElementById('passwordModal').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('passwordModal').classList.add('active');
+            }, 10);
+            document.getElementById('profileDropdown').classList.remove('active');
         }
         
         function closePasswordModal() {
-            document.getElementById('passwordModal').style.display = 'none';
+            const modal = document.getElementById('passwordModal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
         }
         
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('passwordModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+        // Image preview functionality
+        function previewImageFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
         
@@ -632,6 +954,63 @@ if (!file_exists($profile_image_path)) {
                 this.setCustomValidity('');
             }
         });
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const imageModal = document.getElementById('imageModal');
+            const profileModal = document.getElementById('profileModal');
+            const passwordModal = document.getElementById('passwordModal');
+            
+            if (event.target == imageModal) {
+                closeImageModal();
+            } else if (event.target == profileModal) {
+                closeProfileModal();
+            } else if (event.target == passwordModal) {
+                closePasswordModal();
+            }
+        }
+        
+        // Form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Phone number validation
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    // Remove non-digit characters except + and -
+                    this.value = this.value.replace(/[^\d+\-\s]/g, '');
+                });
+            }
+            
+            // Business name validation
+            const businessNameInput = document.getElementById('business_name');
+            if (businessNameInput) {
+                businessNameInput.addEventListener('input', function() {
+                    if (this.value.length < 3) {
+                        this.setCustomValidity('Nama usaha minimal 3 karakter');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+        });
+        
+        // Auto-close alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+        });
+        
+        // Prevent form resubmission on page refresh
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
     </script>
 </body>
 </html>
