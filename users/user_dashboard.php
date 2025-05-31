@@ -201,10 +201,24 @@ $db->close();
             font-size: 1.8rem;
         }
         
-        .user-info {
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-trigger {
             display: flex;
             align-items: center;
             gap: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        
+        .profile-trigger:hover {
+            background: rgba(255,255,255,0.1);
         }
         
         .user-avatar {
@@ -226,19 +240,72 @@ $db->close();
             border-radius: 50%;
         }
         
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.3s;
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
         }
         
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+            color: #dc3545;
+        }
+        
+        .dropdown-item:last-child:hover {
+            background: #f5f5f5;
+        }
+        
+        .dropdown-separator {
+            height: 1px;
+            background: #e9ecef;
+            margin: 0.5rem 0;
         }
         
         .container {
@@ -298,46 +365,6 @@ $db->close();
         
         .action-btn:hover {
             transform: translateY(-2px);
-        }
-        
-        .profile-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .profile-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid #667eea;
-        }
-        
-        .profile-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .profile-image-placeholder {
-            width: 100%;
-            height: 100%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #999;
         }
         
         .form-group {
@@ -440,8 +467,7 @@ $db->close();
         
         @media (max-width: 768px) {
             .header-content {
-                flex-direction: column;
-                gap: 1rem;
+                padding: 0 1rem;
             }
             
             .container {
@@ -452,9 +478,8 @@ $db->close();
                 grid-template-columns: 1fr;
             }
             
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
+            .dropdown-menu {
+                right: -20px;
             }
         }
     </style>
@@ -465,19 +490,36 @@ $db->close();
             <div class="logo">
                 <h1>Omaki Platform</h1>
             </div>
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php if ($user_data['profile_image'] && file_exists('../uploads/profile_images/' . $user_data['profile_image'])): ?>
-                        <img src="../uploads/profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
-                    <?php else: ?>
-                        <?php echo strtoupper(substr($user_name, 0, 1)); ?>
-                    <?php endif; ?>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-trigger" onclick="toggleDropdown()">
+                    <div class="user-avatar">
+                        <?php if ($user_data['profile_image'] && file_exists('../uploads/profile_images/' . $user_data['profile_image'])): ?>
+                            <img src="../uploads/profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($user_name, 0, 1)); ?>
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <div><?php echo htmlspecialchars($user_name); ?></div>
+                        <small><?php echo htmlspecialchars($user_email); ?></small>
+                    </div>
+                    <span class="dropdown-arrow">▼</span>
                 </div>
-                <div>
-                    <div><?php echo htmlspecialchars($user_name); ?></div>
-                    <small><?php echo htmlspecialchars($user_email); ?></small>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" onclick="openModal('photoModal')">
+                        📷 Ubah Foto Profil
+                    </button>
+                    <button class="dropdown-item" onclick="openModal('profileModal')">
+                        ✏️ Edit Profil
+                    </button>
+                    <button class="dropdown-item" onclick="openModal('passwordModal')">
+                        🔒 Ubah Password
+                    </button>
+                    <div class="dropdown-separator"></div>
+                    <a href="../logout.php" class="dropdown-item">
+                        🚪 Logout
+                    </a>
                 </div>
-                <a href="../logout.php" class="logout-btn">Logout</a>
             </div>
         </div>
     </header>
@@ -496,28 +538,6 @@ $db->close();
             <p>Jelajahi keindahan Papua dan nikmati pengalaman wisata yang tak terlupakan.</p>
         </div>
 
-        <div class="profile-section">
-            <h3>Profil Saya</h3>
-            <div class="profile-header">
-                <div class="profile-image">
-                    <?php if ($user_data['profile_image'] && file_exists('../uploads/profile_images/' . $user_data['profile_image'])): ?>
-                        <img src="../uploads/profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
-                    <?php else: ?>
-                        <div class="profile-image-placeholder">
-                            <?php echo strtoupper(substr($user_name, 0, 1)); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div>
-                    <h4><?php echo htmlspecialchars($user_data['full_name']); ?></h4>
-                    <p><?php echo htmlspecialchars($user_data['email']); ?></p>
-                    <button onclick="openModal('photoModal')" class="btn">Ubah Foto</button>
-                    <button onclick="openModal('profileModal')" class="btn">Edit Profil</button>
-                    <button onclick="openModal('passwordModal')" class="btn btn-secondary">Ubah Password</button>
-                </div>
-            </div>
-        </div>
-
         <div class="quick-actions">
             <h3>Aksi Cepat</h3>
             <div class="actions-grid">
@@ -526,7 +546,7 @@ $db->close();
                 <a href="#" class="action-btn">🍽️ Kuliner Lokal</a>
                 <a href="#" class="action-btn">🎯 Tour & Aktivitas</a>
                 <a href="#" class="action-btn">📱 Booking Saya</a>
-                <a href="#" class="action-btn">⚙️ Pengaturan Profil</a>
+                <a href="#" class="action-btn">💬 Bantuan & Support</a>
             </div>
         </div>
     </div>
@@ -601,13 +621,28 @@ $db->close();
     </div>
 
     <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
+        }
+
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
+            // Close dropdown when opening modal
+            document.getElementById('profileDropdown').classList.remove('active');
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
@@ -618,6 +653,16 @@ $db->close();
                 }
             });
         }
+
+        // Close messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s';
+                setTimeout(() => message.remove(), 500);
+            });
+        }, 5000);
     </script>
 </body>
 </html>
