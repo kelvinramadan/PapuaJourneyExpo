@@ -1,4 +1,5 @@
 <?php
+//login.php
 session_start();
 require_once 'config/database.php';
 
@@ -34,20 +35,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['user_name'] = $row['full_name'];
                     $_SESSION['user_type'] = 'user';
                     header('Location: users/user_dashboard.php');
+                    exit();
                 } else {
-                    if ($row['status'] == 'active') {
-                        $_SESSION['umkm_id'] = $row['id'];
-                        $_SESSION['umkm_email'] = $row['email'];
-                        $_SESSION['umkm_name'] = $row['business_name'];
-                        $_SESSION['user_type'] = 'umkm';
-                        header('Location: umkm/umkm_dashboard.php');
-                    } else {
-                        $error_message = 'Akun UMKM Anda belum aktif. Silakan hubungi administrator.';
+                    // Enhanced status checking for UMKM
+                    switch ($row['status']) {
+                        case 'active':
+                            $_SESSION['umkm_id'] = $row['id'];
+                            $_SESSION['umkm_email'] = $row['email'];
+                            $_SESSION['umkm_name'] = $row['business_name'];
+                            $_SESSION['user_type'] = 'umkm';
+                            header('Location: umkm/umkm_dashboard.php');
+                            exit();
+                            break;
+                        
+                        case 'pending':
+                            $error_message = 'Akun UMKM Anda masih dalam proses verifikasi. Silakan tunggu persetujuan dari administrator. Anda akan menerima notifikasi melalui email setelah akun disetujui.';
+                            break;
+                        
+                        case 'inactive':
+                            $error_message = 'Akun UMKM Anda telah dinonaktifkan oleh administrator. Silakan hubungi administrator untuk informasi lebih lanjut.';
+                            break;
+                        
+                        default:
+                            $error_message = 'Status akun UMKM Anda tidak valid. Silakan hubungi administrator.';
+                            break;
                     }
                 }
-                exit();
             } else {
-                $error_message = 'Email atau password salah!';
+                $error_message = 'Email, password salah! atau akun anda belum terverifikasi';
             }
         } else {
             $error_message = 'Email atau password salah!';
@@ -154,6 +169,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 5px;
             margin-bottom: 1rem;
             border-left: 4px solid #c33;
+            line-height: 1.4;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ffc107;
+            line-height: 1.4;
         }
         
         .register-link {
@@ -169,6 +195,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .register-link a:hover {
             text-decoration: underline;
         }
+        
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #17a2b8;
+            font-size: 0.9rem;
+            display: none; /* Hidden by default, shown only for UMKM */
+        }
     </style>
 </head>
 <body>
@@ -179,10 +216,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         
         <?php if ($error_message): ?>
-            <div class="error-message">
-                <?php echo htmlspecialchars($error_message); ?>
-            </div>
+            <?php if (strpos($error_message, 'verifikasi') !== false): ?>
+                <div class="warning-message">
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php else: ?>
+                <div class="error-message">
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
+        
+        <div class="status-info" id="umkm-info">
+            <strong>Catatan untuk UMKM:</strong><br>
+            Akun UMKM harus disetujui oleh administrator sebelum dapat digunakan untuk login.
+        </div>
         
         <form method="POST" action="">
             <div class="form-group">
@@ -211,5 +259,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
         </div>
     </div>
+    
+    <script>
+        function toggleUMKMInfo() {
+            const userType = document.getElementById('user_type').value;
+            const umkmInfo = document.getElementById('umkm-info');
+            
+            if (userType === 'umkm') {
+                umkmInfo.style.display = 'block';
+            } else {
+                umkmInfo.style.display = 'none';
+            }
+        }
+        
+        // Show/hide status info based on user type selection
+        document.getElementById('user_type').addEventListener('change', toggleUMKMInfo);
+        
+        // Set initial state on page load
+        document.addEventListener('DOMContentLoaded', toggleUMKMInfo);
+    </script>
 </body>
 </html>
