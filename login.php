@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
             } else {
-                $error_message = 'Email, password salah! atau akun anda belum terverifikasi';
+                $error_message = 'Email, password salah!';
             }
         } else {
             $error_message = 'Email atau password salah!';

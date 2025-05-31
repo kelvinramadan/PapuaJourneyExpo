@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2025 at 03:36 PM
+-- Generation Time: May 31, 2025 at 05:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,7 +48,7 @@ CREATE TABLE `umkm` (
 --
 
 INSERT INTO `umkm` (`id`, `email`, `password`, `business_name`, `owner_name`, `phone`, `address`, `business_type`, `description`, `profile_image`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'wisata@rajaampat.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Raja Ampat Tour', 'Budi Santoso', '081234567892', 'Raja Ampat, Papua Barat', 'wisata', 'Penyedia tur diving dan snorkeling di Raja Ampat', 'default-umkm.jpg', 'pending', '2025-05-31 13:02:00', '2025-05-31 13:02:00');
+(1, 'gardenstraw@gmail.com', '$2y$10$YlaHkKRycMeWJHaibTo6HOsY335duiKFrLsSTwXnKdLw6v6kS.l2G', 'Garden Straww', 'Kepin Marhaban', '8888', 'Manokwarti', 'event', 'zzzz', 'default-umkm.jpg', 'active', '2025-05-31 15:35:59', '2025-05-31 15:39:05');
 
 -- --------------------------------------------------------
 
@@ -73,8 +73,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`, `profile_image`, `created_at`, `updated_at`) VALUES
-(1, 'kelvin@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Kelvin Oktabrian', '082133871850', 'Surakarta', 'default-user.jpg', '2025-05-31 13:02:00', '2025-05-31 13:02:00'),
-(2, 'naura@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Naura Tsani', '081234567891', 'Sragen', 'default-user.jpg', '2025-05-31 13:02:00', '2025-05-31 13:02:00');
+(1, 'brian@gmail.com', '$2y$10$3a0kZlwNH07iK/qrZZgKH.QVOrXgodwxrSSzeXHf/t.lQMH2wa3.y', 'Brian Domani', '082133871850', 'Serang Banten', 'user_6_1748705717.JPG', '2025-05-31 15:34:52', '2025-05-31 15:38:57');
 
 --
 -- Indexes for dumped tables
@@ -102,13 +101,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `umkm`
 --
 ALTER TABLE `umkm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
