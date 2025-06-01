@@ -406,6 +406,8 @@ if (!file_exists($profile_image_path)) {
             </div>
         </div>
     </div>
+
+    <a href="add_artikel.php" class="btn">Tambah Artikel</a>
     
     <script>
         // Dropdown functionality
