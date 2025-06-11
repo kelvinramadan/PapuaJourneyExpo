@@ -164,6 +164,23 @@ if (!file_exists($profile_image_path)) {
     <title>Dashboard UMKM - <?php echo htmlspecialchars($umkm_data['business_name']); ?></title>
     <style>         
     * {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         margin: 0;
         padding: 0;
         box-sizing: border-box;
