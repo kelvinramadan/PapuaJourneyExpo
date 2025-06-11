@@ -4,7 +4,7 @@
 session_start();
 
 require_once '../config/database.php';
-
+include 'navbar.php';
 
 // Check if user is logged in and is UMKM
 if (!isset($_SESSION['umkm_id']) || $_SESSION['user_type'] != 'umkm') {

@@ -1,6 +1,5 @@
 <?php
 // umkm/umkm_dashboard.php
-session_start();
 require_once '../config/database.php';
 
 // Check if user is logged in and is UMKM
@@ -180,7 +179,7 @@ if (!file_exists($profile_image_path)) {
 
 
 
-        
+
         margin: 0;
         padding: 0;
         box-sizing: border-box;
