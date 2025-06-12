@@ -1,9 +1,8 @@
 <?php
 session_start();
-//user_dashboard
+
 // Check if user is logged in and is a regular user
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'user') {
-    // Redirect to login page if not logged in or not a regular user
     header('Location: ../login.php');
     exit();
 }
@@ -278,17 +277,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $db->close();
 
-// Function to format price
+// Helper functions
 function formatPrice($price) {
     return 'Rp ' . number_format($price, 0, ',', '.');
 }
 
-// Function to format date
 function formatDate($date) {
     return date('d M Y', strtotime($date));
 }
 
-// Function to truncate text
 function truncateText($text, $length) {
     if (strlen($text) <= $length) {
         return $text;
@@ -302,48 +299,11 @@ function truncateText($text, $length) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="userdashboard.css">
     <title>Dashboard Wisatawan - Omaki Platform</title>
+    <link rel="stylesheet" href="userdashboard.css">
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <h1>Omaki Platform</h1>
-            </div>
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="profile-trigger" onclick="toggleDropdown()">
-                    <div class="user-avatar">
-                        <?php if ($user_data['profile_image'] && file_exists('../uploads/profile_images/' . $user_data['profile_image'])): ?>
-                            <img src="../uploads/profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
-                        <?php else: ?>
-                            <?php echo strtoupper(substr($user_name, 0, 1)); ?>
-                        <?php endif; ?>
-                    </div>
-                    <div>
-                        <div><?php echo htmlspecialchars($user_name); ?></div>
-                        <small><?php echo htmlspecialchars($user_email); ?></small>
-                    </div>
-                    <span class="dropdown-arrow">▼</span>
-                </div>
-                <div class="dropdown-menu">
-                    <button class="dropdown-item" onclick="openModal('photoModal')">
-                        📷 Ubah Foto Profil
-                    </button>
-                    <button class="dropdown-item" onclick="openModal('profileModal')">
-                        ✏️ Edit Profil
-                    </button>
-                    <button class="dropdown-item" onclick="openModal('passwordModal')">
-                        🔒 Ubah Password
-                    </button>
-                    <div class="dropdown-separator"></div>
-                    <a href="../logout.php" class="dropdown-item">
-                        🚪 Logout
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
+    <?php include 'navbar.php'; ?>
 
     <div class="container">
         <?php if ($message): ?>
