@@ -1,0 +1,146 @@
+{
+  "destinations": [
+    {
+      "id": "danau_sentani",
+      "name": "Danau Sentani",
+      "category": "danau",
+      "description": "Danau Sentani adalah danau terbesar di Papua yang terletak sekitar 50 km dari pusat kota Jayapura. Danau ini memiliki luas sekitar 9.360 hektar dan dikelilingi oleh 22 pulau kecil. Danau Sentani terkenal dengan keindahan alamnya, budaya lokal yang unik, dan sebagai lokasi Festival Danau Sentani yang diadakan setiap tahun.",
+      "location": {
+        "coordinates": [-2.6230, 140.5170],
+        "district": "Kabupaten Jayapura",
+        "distance_from_jayapura": "50 km"
+      },
+      "attractions": [
+        "Pemandangan danau yang indah",
+        "22 pulau kecil di tengah danau",
+        "Budaya suku Sentani",
+        "Festival Danau Sentani tahunan",
+        "Lukisan batu tradisional",
+        "Kerajinan kulit kayu"
+      ],
+      "activities": [
+        "Berperahu mengelilingi danau",
+        "Mengunjungi kampung tradisional",
+        "Fotografi alam",
+        "Berinteraksi dengan masyarakat lokal",
+        "Menghadiri festival budaya"
+      ],
+      "best_time_to_visit": "April-Oktober (musim kering)",
+      "cultural_significance": "Danau ini memiliki nilai budaya tinggi bagi suku Sentani dan merupakan pusat kehidupan masyarakat setempat sejak berabad-abad lalu."
+    },
+    {
+      "id": "pantai_base_g",
+      "name": "Pantai Base G",
+      "category": "pantai",
+      "description": "Pantai Base G adalah pantai berpasir putih yang terletak di dekat Jayapura. Pantai ini memiliki pemandangan laut yang indah dengan air yang jernih dan cocok untuk berbagai aktivitas air. Nama 'Base G' berasal dari masa Perang Dunia II ketika tempat ini digunakan sebagai pangkalan militer.",
+      "location": {
+        "coordinates": [-2.5929, 140.6618],
+        "district": "Jayapura",
+        "distance_from_jayapura": "15 km"
+      },
+      "attractions": [
+        "Pasir putih yang bersih",
+        "Air laut yang jernih",
+        "Pemandangan sunset yang indah",
+        "Spot snorkeling",
+        "Warung makanan laut"
+      ],
+      "activities": [
+        "Berenang",
+        "Snorkeling",
+        "Berjemur",
+        "Fotografi sunset",
+        "Menikmati makanan laut"
+      ],
+      "best_time_to_visit": "Sepanjang tahun, terbaik saat cuaca cerah",
+      "facilities": [
+        "Area parkir",
+        "Toilet umum",
+        "Warung makan",
+        "Tempat istirahat"
+      ]
+    },
+    {
+      "id": "taman_wisata_teluk_youtefa",
+      "name": "Taman Wisata Teluk Youtefa",
+      "category": "taman_wisata",
+      "description": "Taman Wisata Teluk Youtefa adalah kawasan konservasi mangrove yang indah di Jayapura. Tempat ini menawarkan jembatan kayu yang memungkinkan pengunjung berjalan-jalan di atas hutan mangrove sambil menikmati pemandangan teluk yang memukau.",
+      "location": {
+        "coordinates": [-2.5674, 140.7058],
+        "district": "Jayapura",
+        "distance_from_jayapura": "8 km"
+      },
+      "attractions": [
+        "Hutan mangrove yang lestari",
+        "Jembatan kayu sepanjang 1,2 km",
+        "Pemandangan Teluk Youtefa yang indah",
+        "Berbagai jenis burung",
+        "Sunset point yang menawan"
+      ],
+      "activities": [
+        "Berjalan di jembatan kayu",
+        "Bird watching",
+        "Fotografi alam",
+        "Edukasi konservasi mangrove",
+        "Menikmati sunset"
+      ],
+      "best_time_to_visit": "Sore hari untuk menikmati sunset",
+      "conservation_info": "Taman ini berperan penting dalam konservasi ekosistem mangrove dan menjadi habitat berbagai spesies burung."
+    },
+    {
+      "id": "bukit_teletubbies",
+      "name": "Bukit Teletubbies",
+      "category": "bukit",
+      "description": "Bukit Teletubbies adalah destinasi wisata alam yang terkenal dengan pemandangan bukit-bukit hijau yang bergelombang menyerupai setting acara Teletubbies. Lokasi ini sangat populer untuk fotografi dan menikmati pemandangan alam Papua yang eksotis.",
+      "location": {
+        "coordinates": [-2.6156, 140.4892],
+        "district": "Kabupaten Jayapura",
+        "distance_from_jayapura": "45 km"
+      },
+      "attractions": [
+        "Bukit-bukit hijau bergelombang",
+        "Pemandangan 360 derajat",
+        "Udara segar pegunungan",
+        "Spot foto Instagram",
+        "Keindahan alam Papua"
+      ],
+      "activities": [
+        "Hiking ringan",
+        "Fotografi landscape",
+        "Piknik",
+        "Menikmati udara segar",
+        "Sunrise/sunset viewing"
+      ],
+      "best_time_to_visit": "Pagi hari atau sore hari",
+      "tips": "Bawa jaket karena suhu di bukit cukup dingin, terutama pagi dan sore hari."
+    },
+    {
+      "id": "museum_loka_budaya",
+      "name": "Museum Loka Budaya",
+      "category": "museum",
+      "description": "Museum Loka Budaya adalah museum yang menyimpan dan memamerkan kekayaan budaya Papua. Museum ini memiliki koleksi artefak tradisional, pakaian adat, alat musik, dan berbagai benda bersejarah yang mencerminkan kehidupan masyarakat Papua.",
+      "location": {
+        "coordinates": [-2.5932, 140.6692],
+        "district": "Jayapura",
+        "distance_from_jayapura": "3 km"
+      },
+      "attractions": [
+        "Koleksi artefak tradisional Papua",
+        "Pakaian adat suku-suku Papua",
+        "Alat musik tradisional",
+        "Lukisan dan ukiran tradisional",
+        "Dokumentasi sejarah Papua"
+      ],
+      "activities": [
+        "Tur museum dengan pemandu",
+        "Belajar sejarah dan budaya Papua",
+        "Fotografi koleksi museum",
+        "Workshop kerajinan tradisional",
+        "Edukasi budaya"
+      ],
+      "opening_hours": "08:00 - 16:00 WIT (Senin-Sabtu)",
+      "entrance_fee": "Rp 10.000 untuk dewasa, Rp 5.000 untuk anak-anak",
+      "cultural_significance": "Museum ini berperan penting dalam pelestarian dan edukasi budaya Papua untuk generasi mendatang."
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "transportation": [
+    {
+      "type": "udara",
+      "name": "Bandara Sentani",
+      "description": "Bandara Sentani adalah bandara utama yang melayani Jayapura dan sekitarnya. Bandara ini menerima penerbangan dari berbagai kota besar di Indonesia.",
+      "location": {
+        "address": "Sentani, Kabupaten Jayapura",
+        "distance_to_jayapura": "40 km",
+        "travel_time": "45-60 menit"
+      },
+      "airlines": [
+        "Garuda Indonesia",
+        "Lion Air",
+        "Sriwijaya Air",
+        "Wings Air"
+      ],
+      "routes": [
+        "Jakarta - Jayapura",
+        "Makassar - Jayapura",
+        "Manado - Jayapura",
+        "Denpasar - Jayapura"
+      ],
+      "transport_to_city": [
+        {
+          "method": "Taksi",
+          "cost": "Rp 150.000 - 200.000",
+          "duration": "45-60 menit"
+        },
+        {
+          "method": "Ojek Online",
+          "cost": "Rp 100.000 - 150.000",
+          "duration": "45-60 menit"
+        },
+        {
+          "method": "Angkot",
+          "cost": "Rp 20.000 - 30.000",
+          "duration": "60-90 menit"
+        }
+      ]
+    },
+    {
+      "type": "dalam_kota",
+      "options": [
+        {
+          "name": "Angkot (Angkutan Kota)",
+          "description": "Transportasi umum tradisional Jayapura dengan rute tetap",
+          "cost": "Rp 5.000 - 15.000 per perjalanan",
+          "routes": [
+            "Terminal Sentani - Jayapura",
+            "Abepura - Entrop",
+            "Waena - Hamadi",
+            "Base G - Sentani"
+          ],
+          "operating_hours": "06:00 - 18:00 WIT",
+          "tips": "Siapkan uang pas, tanyakan rute kepada sopir sebelum naik"
+        },
+        {
+          "name": "Ojek Motor",
+          "description": "Transportasi cepat dan fleksibel untuk jarak dekat",
+          "cost": "Rp 10.000 - 50.000 tergantung jarak",
+          "availability": "24 jam",
+          "tips": "Tawar harga sebelum berangkat, pastikan helm tersedia"
+        },
+        {
+          "name": "Taksi",
+          "description": "Transportasi nyaman dengan AC dan tarif meter",
+          "cost": "Tarif awal Rp 7.000, Rp 3.000 per km",
+          "companies": ["Blue Bird", "Express"],
+          "availability": "24 jam dengan panggilan"
+        },
+        {
+          "name": "Ojek Online",
+          "description": "Layanan transportasi berbasis aplikasi",
+          "platforms": ["Gojek", "Grab"],
+          "cost": "Sesuai tarif aplikasi",
+          "availability": "Terbatas di area tertentu"
+        }
+      ]
+    },
+    {
+      "type": "antar_destinasi",
+      "routes": [
+        {
+          "from": "Jayapura",
+          "to": "Danau Sentani",
+          "options": [
+            {
+              "method": "Angkot",
+              "cost": "Rp 15.000",
+              "duration": "60 menit",
+              "route": "Jayapura - Terminal Sentani - Danau Sentani"
+            },
+            {
+              "method": "Ojek",
+              "cost": "Rp 80.000 - 100.000",
+              "duration": "45 menit",
+              "note": "Lebih cepat dan langsung"
+            },
+            {
+              "method": "Taksi",
+              "cost": "Rp 120.000 - 150.000",
+              "duration": "45 menit",
+              "note": "Paling nyaman"
+            }
+          ]
+        },
+        {
+          "from": "Jayapura",
+          "to": "Pantai Base G",
+          "options": [
+            {
+              "method": "Angkot",
+              "cost": "Rp 10.000",
+              "duration": "30 menit",
+              "route": "Jayapura - Base G"
+            },
+            {
+              "method": "Ojek",
+              "cost": "Rp 30.000 - 40.000",
+              "duration": "20 menit"
+            }
+          ]
+        },
+        {
+          "from": "Jayapura",
+          "to": "Taman Wisata Teluk Youtefa",
+          "options": [
+            {
+              "method": "Angkot",
+              "cost": "Rp 8.000",
+              "duration": "25 menit"
+            },
+            {
+              "method": "Ojek",
+              "cost": "Rp 25.000 - 35.000",
+              "duration": "15 menit"
+            }
+          ]
+        },
+        {
+          "from": "Jayapura",
+          "to": "Bukit Teletubbies",
+          "options": [
+            {
+              "method": "Sewa Mobil + Sopir",
+              "cost": "Rp 400.000 - 500.000 per hari",
+              "duration": "60 menit",
+              "note": "Recommended karena akses jalan yang sulit"
+            },
+            {
+              "method": "Tour Package",
+              "cost": "Rp 300.000 - 400.000 per orang",
+              "duration": "Half day tour",
+              "include": "Transportasi + pemandu"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "rental",
+      "car_rental": [
+        {
+          "name": "Rental Mobil Jayapura",
+          "contact": "081234567890",
+          "vehicles": ["Avanza", "Innova", "Pajero"],
+          "price_range": "Rp 300.000 - 800.000 per hari",
+          "includes": "Sopir, BBM untuk dalam kota"
+        },
+        {
+          "name": "Papua Car Rental",
+          "contact": "081987654321",
+          "vehicles": ["Xenia", "Rush", "Fortuner"],
+          "price_range": "Rp 350.000 - 900.000 per hari",
+          "services": "Antar jemput bandara, tour guide"
+        }
+      ],
+      "motorcycle_rental": [
+        {
+          "name": "Rental Motor Sentani",
+          "contact": "082345678901",
+          "vehicles": ["Honda Beat", "Yamaha Mio", "Honda Vario"],
+          "price_range": "Rp 75.000 - 100.000 per hari",
+          "requirements": "KTP, SIM C, deposit Rp 500.000"
+        }
+      ]
+    }
+  ],
+  "travel_tips": [
+    "Selalu bawa uang tunai karena tidak semua tempat menerima kartu",
+    "Tawar harga transportasi tradisional sebelum berangkat",
+    "Siapkan jas hujan karena cuaca bisa berubah cepat",
+    "Gunakan aplikasi peta offline untuk navigasi",
+    "Hormati budaya lokal saat menggunakan transportasi umum"
+  ]
+}

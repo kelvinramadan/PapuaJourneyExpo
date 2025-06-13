@@ -266,6 +266,9 @@ $db->close();
             <a href="penginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'penginapan.php' ? 'active' : ''; ?>">
                 🏨 Penginapan
             </a>
+            <a href="../chatbot" class="<?php echo basename($_SERVER['PHP_SELF']) == 'chatbot' ? 'active' : ''; ?>">
+                🤖 Chatbot
+            </a>
         </div>
         
         <div class="profile-dropdown" id="profileDropdown">
