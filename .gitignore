@@ -1,4 +1,6 @@
-RAG_PY/.env
-chatbot/chatbot_debug.log
+rag_py/.env
+chatbot/rag_py/.env
 chatbot/chatbot_debug.log
 *.log
+chatbot/rag_py/.env
+chatbot/rag_py/.env
