@@ -260,7 +260,7 @@ $db->close();
             <a href="user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
                 🏠 Home
             </a>
-            <a href="wisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'wisata.php' ? 'active' : ''; ?>">
+            <a href="userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
                 🏝️ Wisata
             </a>
             <a href="penginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'penginapan.php' ? 'active' : ''; ?>">
