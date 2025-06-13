@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2025 at 06:02 AM
+-- Generation Time: Jun 13, 2025 at 05:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -105,6 +105,35 @@ INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`,
 (1, 'brian@gmail.com', '$2y$10$3a0kZlwNH07iK/qrZZgKH.QVOrXgodwxrSSzeXHf/t.lQMH2wa3.y', 'Brian Domani', '082133871850', 'Surakarta Jawa Tengah', 'user_1_1748709563.jpg', '2025-05-31 15:34:52', '2025-05-31 16:39:34'),
 (3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wisata`
+--
+
+CREATE TABLE `wisata` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `harga` decimal(10,2) NOT NULL,
+  `kategori` enum('budaya','alam') NOT NULL,
+  `alamat` text NOT NULL,
+  `jam_buka` varchar(100) NOT NULL,
+  `photo` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wisata`
+--
+
+INSERT INTO `wisata` (`id`, `judul`, `deskripsi`, `harga`, `kategori`, `alamat`, `jam_buka`, `photo`, `created_at`, `updated_at`) VALUES
+(1, 'Lembah Baliem', 'Lembah yang terkenal dengan Festival Budaya Suku Dani dan pemandangan alam pegunungan yang menakjubkan', 30000.00, 'budaya', 'Distrik Wamena, Kabupaten Jayawijaya, Papua Pegunungan', '08:00 - 17:00', 'lembah_baliem.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
+(2, 'Raja Ampat', 'Surga bawah laut dengan keanekaragaman hayati laut tertinggi di dunia', 150000.00, 'alam', 'Kepulauan Raja Ampat, Papua Barat Daya', '24 Jam', 'raja_ampat.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
+(3, 'Taman Nasional Lorentz', 'Satu-satunya taman nasional di Asia Tenggara yang mencakup area salju tropis, hutan hujan, dan pegunungan tinggi', 50000.00, 'alam', 'Kabupaten Mimika, Jayawijaya, Papua', '06:00 - 18:00', 'lorentz.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
+(4, 'Karmon Waterfall', 'Air Terjun Karmon adalah salah satu destinasi wisata alam yang menakjubkan di Kabupaten Biak Numfor, Provinsi Papua. Terletak di tengah-tengah hutan tropis yang lebat, air terjun ini memiliki ketinggian sekitar 40 meter. Keindahan Air Terjun Karmon terletak pada aliran airnya yang jernih dan suasana sekitarnya yang alami dan menawan.', 10000.00, 'alam', 'Kampung Karmon, Distrik Warsa, Biak bagian utara', '08:00 - 17:00', '684c2e7cb31d0.jpg', '2025-06-13 13:58:20', '2025-06-13 13:58:20');
+
 --
 -- Indexes for dumped tables
 --
@@ -133,6 +162,12 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `wisata`
+--
+ALTER TABLE `wisata`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -153,6 +188,12 @@ ALTER TABLE `umkm`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `wisata`
+--
+ALTER TABLE `wisata`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

@@ -5,7 +5,6 @@ require_once '../config/database.php';
 // Proses form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $db = getDbConnection();
-    
     $judul = mysqli_real_escape_string($db, $_POST['judul']);
     $deskripsi = mysqli_real_escape_string($db, $_POST['deskripsi']);
     $harga = floatval($_POST['harga']);
@@ -221,6 +220,7 @@ $wisata_list = mysqli_query($db, "SELECT * FROM wisata ORDER BY created_at DESC"
     </style>
 </head>
 <body>
+    <?php include 'navbaradmin.php'; ?>
     <div class="container">
         <div class="header">
             <h1>🏛️ Admin Wisata</h1>

@@ -24,11 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_login'])) {
 }
 
 // Handle admin logout
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: index.php');
-    exit();
-}
+
 
 // Handle UMKM status updates
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
@@ -463,16 +459,7 @@ $db->close();
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <h1>Admin Dashboard</h1>
-            <div>
-                <span>Halo, <?php echo htmlspecialchars($_SESSION['admin_username']); ?></span>
-                <a href="?logout=1" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </div>
-    
+    <?php include 'navbaradmin.php'; ?>
     <div class="container">
         <?php if ($success_message): ?>
             <div class="alert alert-success">
