@@ -1,0 +1,234 @@
+{
+  "cuisine": [
+    {
+      "category": "Makanan Utama",
+      "dishes": [
+        {
+          "name": "Papeda",
+          "description": "Makanan pokok khas Papua yang terbuat dari tepung sagu dengan tekstur seperti lem bening. Dimakan dengan kuah ikan atau sayuran.",
+          "ingredients": ["Tepung sagu", "Air", "Garam"],
+          "served_with": [
+            "Kuah ikan kuning",
+            "Sayur ganemo",
+            "Ikan bakar",
+            "Udang"
+          ],
+          "taste": "Hambar, tekstur kenyal dan lengket",
+          "cultural_significance": "Makanan tradisional turun temurun, simbol kehidupan masyarakat Papua",
+          "where_to_try": [
+            "Rumah Makan Papua Asli",
+            "Warung Mama Papua",
+            "Hotel Swiss-Belhotel Jayapura"
+          ],
+          "price_range": "Rp 25.000 - 50.000"
+        },
+        {
+          "name": "Ikan Kuah Kuning",
+          "description": "Ikan segar dimasak dengan kuah berwarna kuning dari kunyit dan rempah-rempah khas Papua",
+          "ingredients": [
+            "Ikan segar (biasanya ikan laut)",
+            "Kunyit",
+            "Jahe",
+            "Serai",
+            "Daun pandan",
+            "Garam",
+            "Bawang merah"
+          ],
+          "taste": "Gurih, segar, dan harum rempah",
+          "best_fish": ["Ikan kakap", "Ikan baronang", "Ikan kerapu"],
+          "where_to_try": [
+            "Warung Ikan Bakar Hamadi",
+            "RM Sari Laut",
+            "Pantai Base G (warung pinggir pantai)"
+          ],
+          "price_range": "Rp 35.000 - 75.000"
+        },
+        {
+          "name": "Udang Selingkuh",
+          "description": "Udang air tawar berukuran besar yang dimasak dengan bumbu tradisional Papua",
+          "characteristics": "Udang berukuran jumbo dengan daging yang manis dan kenyal",
+          "cooking_methods": [
+            "Bakar dengan bumbu rempah",
+            "Kuah santan",
+            "Goreng tepung"
+          ],
+          "where_to_try": [
+            "Danau Sentani (langsung dari nelayan)",
+            "Warung Seafood Sentani",
+            "Pasar Hamadi"
+          ],
+          "price_range": "Rp 50.000 - 100.000 per porsi",
+          "season": "Terbaik saat musim kemarau (April-Oktober)"
+        }
+      ]
+    },
+    {
+      "category": "Sayuran dan Lauk",
+      "dishes": [
+        {
+          "name": "Sayur Ganemo",
+          "description": "Sayuran hijau khas Papua yang dimasak dengan santan dan ikan teri",
+          "ingredients": [
+            "Daun ganemo (sejenis bayam)",
+            "Santan kelapa",
+            "Ikan teri",
+            "Bawang merah",
+            "Cabai rawit"
+          ],
+          "taste": "Gurih, segar, dan sedikit pedas",
+          "nutritional_value": "Tinggi vitamin A dan zat besi",
+          "where_to_try": "Warung-warung tradisional di sekitar Danau Sentani",
+          "price_range": "Rp 15.000 - 25.000"
+        },
+        {
+          "name": "Ulat Sagu Bakar",
+          "description": "Larva yang hidup di batang pohon sagu, dibakar atau digoreng sebagai sumber protein",
+          "preparation": "Dibakar dengan daun pisang atau digoreng dengan sedikit garam",
+          "taste": "Gurih, creamy di bagian dalam",
+          "nutritional_value": "Tinggi protein dan lemak sehat",
+          "cultural_note": "Makanan tradisional yang dianggap berkhasiat untuk kesehatan",
+          "where_to_try": [
+            "Kampung Asei",
+            "Pasar tradisional Sentani",
+            "Festival kuliner Papua"
+          ],
+          "price_range": "Rp 30.000 - 50.000 per porsi"
+        }
+      ]
+    },
+    {
+      "category": "Makanan Ringan",
+      "snacks": [
+        {
+          "name": "Keripik Pisang",
+          "description": "Pisang lokal yang diiris tipis dan digoreng hingga kering dan renyah",
+          "varieties": [
+            "Pisang raja",
+            "Pisang kepok",
+            "Pisang tanduk"
+          ],
+          "flavors": ["Original", "Manis", "Pedas"],
+          "where_to_buy": [
+            "Pasar Hamadi",
+            "Toko oleh-oleh Jayapura",
+            "Bandara Sentani"
+          ],
+          "price_range": "Rp 10.000 - 25.000 per bungkus",
+          "shelf_life": "2-3 minggu dalam kemasan kedap udara"
+        },
+        {
+          "name": "Manisan Pala",
+          "description": "Buah pala yang diawetkan dengan gula, memiliki rasa manis dan aroma harum",
+          "benefits": "Dipercaya baik untuk pencernaan dan kesehatan",
+          "where_to_buy": [
+            "Pasar Hamadi",
+            "Toko Spesialis Rempah",
+            "Pusat oleh-oleh Jayapura"
+          ],
+          "price_range": "Rp 15.000 - 30.000 per bungkus"
+        }
+      ]
+    },
+    {
+      "category": "Minuman Tradisional",
+      "beverages": [
+        {
+          "name": "Sopi",
+          "description": "Minuman beralkohol tradisional yang terbuat dari aren atau kelapa",
+          "alcohol_content": "30-40%",
+          "cultural_significance": "Digunakan dalam upacara adat dan penyambutan tamu penting",
+          "note": "Hanya dikonsumsi dalam konteks budaya, tidak dijual bebas",
+          "where_available": "Upacara adat, festival budaya"
+        },
+        {
+          "name": "Es Kelapa Muda",
+          "description": "Minuman segar dari kelapa muda dengan tambahan sirup dan es serut",
+          "variations": [
+            "Kelapa muda murni",
+            "Kelapa muda campur sirup merah",
+            "Kelapa muda dengan nata de coco"
+          ],
+          "where_to_try": [
+            "Pantai Base G",
+            "Warung-warung di Danau Sentani",
+            "Pusat kota Jayapura"
+          ],
+          "price_range": "Rp 10.000 - 20.000"
+        }
+      ]
+    }
+  ],
+  "dining_experiences": [
+    {
+      "name": "Makan di Kampung Asei",
+      "description": "Pengalaman makan makanan tradisional langsung di kampung nelayan tepi Danau Sentani",
+      "menu_highlights": [
+        "Papeda sagu asli",
+        "Ikan bakar danau",
+        "Sayur ganemo",
+        "Udang selingkuh"
+      ],
+      "experience_includes": [
+        "Melihat proses pembuatan papeda",
+        "Belajar cara makan papeda yang benar",
+        "Berinteraksi dengan keluarga nelayan",
+        "Pemandangan danau yang indah"
+      ],
+      "cost": "Rp 100.000 - 150.000 per orang",
+      "duration": "2-3 jam",
+      "booking": "Melalui pemandu lokal atau hotel"
+    },
+    {
+      "name": "Food Tour Pasar Hamadi",
+      "description": "Tur kuliner berkeliling pasar tradisional terbesar di Jayapura",
+      "highlights": [
+        "Mencicipi berbagai makanan lokal",
+        "Belajar tentang bahan-bahan lokal",
+        "Berinteraksi dengan pedagang",
+        "Membeli oleh-oleh khas Papua"
+      ],
+      "what_to_try": [
+        "Keripik pisang",
+        "Manisan pala",
+        "Ikan asap",
+        "Buah-buahan tropis"
+      ],
+      "cost": "Rp 75.000 - 100.000 per orang",
+      "duration": "3-4 jam",
+      "best_time": "Pagi hari (07:00 - 10:00)"
+    }
+  ],
+  "recommended_restaurants": [
+    {
+      "name": "Rumah Makan Papua Asli",
+      "location": "Jl. Ahmad Yani, Jayapura",
+      "specialties": ["Papeda", "Ikan kuah kuning", "Sayur ganemo"],
+      "price_range": "Rp 25.000 - 75.000 per porsi",
+      "atmosphere": "Tradisional Papua dengan dekorasi khas",
+      "opening_hours": "10:00 - 22:00 WIT"
+    },
+    {
+      "name": "Warung Ikan Bakar Hamadi",
+      "location": "Pasar Hamadi, Jayapura",
+      "specialties": ["Ikan bakar", "Udang bakar", "Cumi bakar"],
+      "price_range": "Rp 30.000 - 100.000 per porsi",
+      "atmosphere": "Warung pinggir laut, casual",
+      "opening_hours": "16:00 - 23:00 WIT"
+    },
+    {
+      "name": "Sari Laut Restaurant",
+      "location": "Jl. Percetakan Negara, Jayapura",
+      "specialties": ["Seafood segar", "Masakan Chinese-Indonesian"],
+      "price_range": "Rp 50.000 - 150.000 per porsi",
+      "atmosphere": "Restaurant formal dengan AC",
+      "opening_hours": "11:00 - 22:00 WIT"
+    }
+  ],
+  "food_etiquette": [
+    "Makan papeda menggunakan sumpit atau garpu khusus dengan gerakan memutar",
+    "Jangan menolak makanan yang ditawarkan, cukup mencicipi sedikit",
+    "Cuci tangan sebelum dan sesudah makan",
+    "Duduk bersila atau sesuai adat setempat saat makan di kampung tradisional",
+    "Berterima kasih dalam bahasa lokal: 'Farayokh' (Bahasa Sentani)"
+  ]
+}

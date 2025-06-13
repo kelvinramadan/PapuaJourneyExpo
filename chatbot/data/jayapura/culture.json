@@ -1,0 +1,182 @@
+{
+  "culture": [
+    {
+      "tribe": "Suku Sentani",
+      "location": "Danau Sentani dan sekitarnya",
+      "description": "Suku Sentani adalah suku asli yang mendiami kawasan Danau Sentani. Mereka terkenal dengan keahlian seni lukis tradisional dan kerajinan kulit kayu.",
+      "traditions": [
+        {
+          "name": "Festival Danau Sentani",
+          "description": "Festival budaya tahunan yang menampilkan tarian tradisional, musik, dan pameran kerajinan",
+          "when": "Biasanya bulan Juni",
+          "activities": [
+            "Tari tradisional Yospan",
+            "Pertunjukan musik tradisional",
+            "Pameran lukisan kulit kayu",
+            "Lomba perahu tradisional",
+            "Kuliner khas Sentani"
+          ]
+        },
+        {
+          "name": "Lukisan Kulit Kayu (Khalkhauw)",
+          "description": "Seni tradisional melukis pada kulit kayu dengan motif-motif yang memiliki makna spiritual",
+          "motifs": [
+            "Motif ikan (simbol kehidupan)",
+            "Motif burung (simbol kebebasan)",
+            "Motif cicak (simbol keberuntungan)",
+            "Motif spiral (simbol kehidupan yang berkelanjutan)"
+          ],
+          "where_to_see": "Museum Loka Budaya, Kampung Asei"
+        }
+      ],
+      "customs": [
+        "Menyambut tamu dengan tarian Yospan",
+        "Memberikan bunga dan daun pandan sebagai tanda selamat datang",
+        "Berbagi makanan tradisional sebagai simbol persaudaraan"
+      ],
+      "language": {
+        "name": "Bahasa Sentani",
+        "greetings": [
+          "Wa yokai = Halo/Selamat datang",
+          "Farayokh = Terima kasih",
+          "Nerere = Selamat tinggal"
+        ]
+      }
+    },
+    {
+      "category": "Upacara Adat",
+      "ceremonies": [
+        {
+          "name": "Upacara Bakar Batu",
+          "description": "Upacara tradisional memasak makanan menggunakan batu panas yang dipanaskan dengan api",
+          "significance": "Simbol kebersamaan dan gotong royong dalam masyarakat",
+          "foods_prepared": [
+            "Daging babi",
+            "Ubi jalar",
+            "Sayuran tradisional",
+            "Pisang"
+          ],
+          "when_performed": "Perayaan penting, penyambutan tamu kehormatan, syukuran panen"
+        },
+        {
+          "name": "Upacara Penyambutan Tamu",
+          "description": "Ritual tradisional untuk menyambut tamu penting dengan tarian dan persembahan",
+          "elements": [
+            "Tari Yospan sebagai pembuka",
+            "Pemberian kalung bunga",
+            "Penyajian makanan tradisional",
+            "Pertukaran hadiah"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Seni dan Kerajinan",
+      "crafts": [
+        {
+          "name": "Tas Noken",
+          "description": "Tas tradisional Papua yang terbuat dari serat pandan atau kulit kayu",
+          "uses": "Membawa barang sehari-hari, simbol status sosial",
+          "where_to_buy": "Pasar Hamadi, Museum Loka Budaya, Kampung Sentani",
+          "price_range": "Rp 100.000 - 500.000 tergantung ukuran dan kualitas"
+        },
+        {
+          "name": "Ukiran Kayu",
+          "description": "Seni ukir tradisional dengan motif-motif khas Papua",
+          "common_items": [
+            "Patung manusia",
+            "Ukiran binatang",
+            "Topeng tradisional",
+            "Peralatan rumah tangga"
+          ],
+          "where_to_see": "Museum Loka Budaya, galeri seni lokal"
+        },
+        {
+          "name": "Perhiasan Tradisional",
+          "description": "Aksesoris tradisional terbuat dari bahan alami",
+          "materials": [
+            "Bulu burung cendrawasih",
+            "Gigi babi",
+            "Kulit kerang",
+            "Batu alam"
+          ],
+          "types": [
+            "Hiasan kepala",
+            "Kalung",
+            "Gelang",
+            "Anting-anting"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Musik dan Tarian",
+      "performances": [
+        {
+          "name": "Tari Yospan",
+          "description": "Tarian pergaulan khas Papua yang menggambarkan kegembiraan dan kebersamaan",
+          "characteristics": "Gerakan yang dinamis, diiringi musik tradisional, dilakukan secara berkelompok",
+          "occasions": "Festival, penyambutan tamu, perayaan",
+          "where_to_watch": "Festival Danau Sentani, acara budaya di hotel-hotel"
+        },
+        {
+          "name": "Musik Tradisional",
+          "instruments": [
+            {
+              "name": "Tifa",
+              "description": "Gendang tradisional Papua terbuat dari kayu dan kulit binatang",
+              "use": "Mengiringi tarian dan upacara adat"
+            },
+            {
+              "name": "Suling Bambu",
+              "description": "Alat musik tiup tradisional dari bambu",
+              "use": "Musik pengiring dan hiburan"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cultural_etiquette": [
+    {
+      "do": [
+        "Hormati adat istiadat setempat",
+        "Minta izin sebelum mengambil foto orang atau tempat sakral",
+        "Berpakaian sopan saat mengunjungi kampung adat",
+        "Ikuti petunjuk pemandu lokal",
+        "Berikan sumbangan sukarela jika berkunjung ke kampung adat"
+      ]
+    },
+    {
+      "dont": [
+        "Jangan sembarangan menyentuh benda-benda sakral",
+        "Jangan berteriak atau membuat keributan",
+        "Jangan menolak makanan yang ditawarkan (cukup cicip sedikit jika tidak bisa makan)",
+        "Jangan mengkritik tradisi atau kepercayaan lokal",
+        "Jangan membawa atau mengonsumsi alkohol di area sakral"
+      ]
+    }
+  ],
+  "cultural_experiences": [
+    {
+      "name": "Kunjungan Kampung Asei",
+      "description": "Mengunjungi kampung tradisional di tepi Danau Sentani untuk melihat proses pembuatan lukisan kulit kayu",
+      "activities": [
+        "Melihat proses pembuatan lukisan kulit kayu",
+        "Berinteraksi dengan pengrajin lokal",
+        "Belajar makna motif-motif tradisional",
+        "Membeli kerajinan langsung dari pembuat"
+      ],
+      "cost": "Rp 50.000 - 100.000 per orang (termasuk pemandu)",
+      "duration": "2-3 jam"
+    },
+    {
+      "name": "Workshop Kerajinan Tradisional",
+      "description": "Belajar membuat kerajinan tradisional Papua seperti tas noken atau lukisan kulit kayu",
+      "available_at": "Museum Loka Budaya, beberapa hotel resort",
+      "cost": "Rp 100.000 - 200.000 per orang",
+      "duration": "3-4 jam",
+      "what_you_get": "Hasil kerajinan buatan sendiri sebagai souvenir"
+    }
+  ]
+}
