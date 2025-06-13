@@ -420,3 +420,352 @@ body {
         font-size: 1.1rem;
     }
 }
+
+/* JSON Response Formatting Styles */
+.chat-greeting {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #e6fffa, #b2f5ea);
+    border-radius: 12px;
+    border-left: 4px solid #38b2ac;
+}
+
+.chat-main-content {
+    margin: 1rem 0;
+}
+
+.chat-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-description {
+    font-size: 1rem;
+    color: #4a5568;
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+}
+
+.chat-detail {
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    border-left: 3px solid #667eea;
+}
+
+.chat-subtitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-content {
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.6;
+}
+
+.chat-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-items li {
+    padding: 0.5rem 0;
+    color: #4a5568;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.chat-items li::before {
+    content: "•";
+    color: #667eea;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    font-size: 1.2rem;
+}
+
+.chat-transportation {
+    background: linear-gradient(135deg, #f0fff4, #e6fffa);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    border: 1px solid #68d391;
+}
+
+.chat-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.transport-option {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(104, 211, 145, 0.2);
+}
+
+.transport-method {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.transport-cost, .transport-duration {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.transport-description {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.chat-tips {
+    background: linear-gradient(135deg, #fffaf0, #fef5e7);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    border: 1px solid #f6ad55;
+}
+
+.chat-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tip-emoji {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.tip-text {
+    font-size: 0.95rem;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.chat-closing {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    border-radius: 12px;
+    border-left: 3px solid #a0aec0;
+    font-style: italic;
+}
+
+/* Responsive adjustments for JSON formatting */
+@media (max-width: 768px) {
+    .chat-greeting {
+        font-size: 1rem;
+        padding: 0.6rem;
+    }
+    
+    .chat-title {
+        font-size: 1.2rem;
+    }
+    
+    .chat-detail, .chat-transportation, .chat-tips {
+        padding: 1rem;
+    }
+    
+    .transport-option, .chat-tip {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-title {
+        font-size: 1.1rem;
+    }
+    
+    .chat-detail, .chat-transportation, .chat-tips {
+        padding: 0.75rem;
+    }
+    
+    .transport-option, .chat-tip {
+        padding: 0.6rem;
+    }
+}
+
+/* Markdown Formatting Styles */
+.md-h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #667eea;
+}
+
+.md-h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 1.25rem 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.md-h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 1rem 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.md-ul {
+    margin: 0.75rem 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.md-li {
+    padding: 0.25rem 0 0.25rem 1.5rem;
+    color: #4a5568;
+    position: relative;
+    line-height: 1.6;
+}
+
+.md-li::before {
+    content: "•";
+    color: #667eea;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    font-size: 1.2rem;
+}
+
+.md-ol {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+    counter-reset: item;
+}
+
+.md-li-numbered {
+    padding: 0.25rem 0;
+    color: #4a5568;
+    list-style: none;
+    position: relative;
+    line-height: 1.6;
+    counter-increment: item;
+}
+
+.md-li-numbered::before {
+    content: counter(item) ".";
+    color: #667eea;
+    font-weight: bold;
+    position: absolute;
+    left: -1.5rem;
+}
+
+.md-blockquote {
+    background: linear-gradient(135deg, #fffaf0, #fef5e7);
+    border-left: 4px solid #f6ad55;
+    margin: 1rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #4a5568;
+}
+
+.md-hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #667eea, transparent);
+    margin: 1.5rem 0;
+}
+
+/* Enhanced styling for specific patterns */
+.message-bubble strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.message-bubble em {
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* Responsive adjustments for Markdown */
+@media (max-width: 768px) {
+    .md-h1 {
+        font-size: 1.3rem;
+    }
+    
+    .md-h2 {
+        font-size: 1.2rem;
+    }
+    
+    .md-h3 {
+        font-size: 1.1rem;
+    }
+    
+    .md-blockquote {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .md-h1 {
+        font-size: 1.2rem;
+    }
+    
+    .md-h2 {
+        font-size: 1.1rem;
+    }
+    
+    .md-h3 {
+        font-size: 1rem;
+    }
+    
+    .md-li, .md-li-numbered {
+        padding-left: 1.25rem;
+    }
+    
+    .md-blockquote {
+        padding: 0.6rem 0.75rem;
+    }
+}

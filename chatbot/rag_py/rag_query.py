@@ -5,6 +5,11 @@ import chromadb
 import sys
 import json
 
+# Set UTF-8 encoding for output to handle emojis
+if sys.platform.startswith('win'):
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -71,23 +76,68 @@ ATURAN PENTING:
 1. SELALU jawab dalam Bahasa Indonesia dengan gaya yang ramah dan interaktif.
 2. Jika pengguna menyapa (misal: "Halo"), balas sapaan itu dengan hangat dan tanyakan apa yang bisa Anda bantu terkait wisata di Jayapura.
 3. FOKUS UTAMA Anda adalah memberikan informasi tentang destinasi wisata, transportasi, budaya, dan kuliner di Jayapura.
-4. Jika ditanya tentang topik di luar wisata Jayapura, jawab dengan sopan bahwa Anda tidak memiliki informasi tersebut dan arahkan kembali percakapan ke wisata Jayapura. Contoh: "Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?"
+4. Jika ditanya tentang topik di luar wisata Jayapura, jawaban harus tetap sopan dan arahkan kembali ke topik wisata Jayapura.
 5. Gunakan informasi dari "KONTEKS PENGETAHUAN" di bawah ini sebagai sumber utama.
 6. Jika konteks tidak menyediakan jawaban, katakan dengan jujur bahwa Anda belum memiliki informasi detailnya.
-7. Jaga agar jawaban tetap ringkas dan padat informasi untuk menghemat penggunaan API, namun tetap jelas dan bermanfaat.
+
+FORMAT JAWABAN - GUNAKAN MARKDOWN:
+- Gunakan format Markdown untuk membuat jawaban lebih menarik dan terstruktur
+- Gunakan **bold** untuk judul/nama tempat penting
+- Gunakan emoji yang relevan (🏝️, 🍽️, 🚗, 📍, ⭐, 🎯, 💡, etc.)
+- Gunakan bullet points (-) atau numbering (1.) untuk daftar
+- Gunakan > untuk highlight informasi penting
+- Gunakan ## untuk judul utama dan ### untuk sub judul
+- Pisahkan informasi dalam section yang jelas
+
+CONTOH FORMAT MARKDOWN:
+👋 **Halo! Selamat datang di Papua Journey!**
+
+## 🏝️ **Destinasi Wisata Jayapura**
+
+### **Pantai Base G** 📍
+- **Lokasi**: Jayapura
+- **Aktivitas**: Berenang, snorkeling, foto sunset
+- **Waktu terbaik**: Pagi hari (06:00-10:00)
+
+## 🚗 **Transportasi**
+
+### **Mobil Sewaan**
+- **Biaya**: Rp 300.000/hari
+- **Durasi**: 30 menit dari pusat kota
+- **Keterangan**: Paling nyaman dan fleksibel
+
+> 💡 **Tips**: Datang saat pagi untuk pemandangan terbaik dan hindari keramaian!
+
+---
+
+Apakah ada yang ingin ditanyakan lagi tentang wisata Jayapura? 😊
 
 KONTEKS PENGETAHUAN:
 {knowledge_context}
 
-Berdasarkan aturan di atas, jawab pertanyaan pengguna berikut:
+Berdasarkan aturan di atas, jawab pertanyaan pengguna berikut dengan format Markdown yang menarik:
 {query}
 """
     
     try:
         response = generation_model.generate_content(prompt)
-        return response.text
+        return response.text.strip()
+            
     except Exception as e:
-        return f"Error generating response: {e}"
+        return f"Maaf, terjadi kesalahan sistem: {str(e)}"
+
+def safe_print(text):
+    """Safely print text with Unicode support, fallback to ASCII if needed."""
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # Remove emojis and special Unicode characters if encoding fails
+        import re
+        # Remove emojis and other non-ASCII characters
+        clean_text = re.sub(r'[^\x00-\x7F]+', '', text)
+        print(clean_text)
+    except Exception as e:
+        print(f"Error printing response: {e}", file=sys.stderr)
 
 def main():
     """Main function to handle the RAG query process."""
@@ -99,11 +149,11 @@ def main():
 
     if is_initial_greeting(user_query):
         final_answer = generate_response(user_query, [])
-        print(final_answer)
+        safe_print(final_answer)
         sys.exit(0)
 
     if not is_jayapura_related(user_query):
-        print("Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?")
+        safe_print("Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?")
         sys.exit(0)
 
     try:
@@ -120,7 +170,7 @@ def main():
 
     passages = find_best_passages(query_embedding, collection)
     final_answer = generate_response(user_query, passages)
-    print(final_answer)
+    safe_print(final_answer)
 
 if __name__ == "__main__":
     main()

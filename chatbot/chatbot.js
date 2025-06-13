@@ -107,9 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
         messageBubble.classList.add('message-bubble');
         messageBubble.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
         
-        // Format message with line breaks and basic HTML
-        const formattedText = formatMessage(text);
-        messageBubble.innerHTML = formattedText;
+        // Handle Markdown for bot messages, plain text for user messages
+        if (sender === 'bot') {
+            messageBubble.innerHTML = parseMarkdown(text);
+        } else {
+            const formattedText = formatMessage(text);
+            messageBubble.innerHTML = formattedText;
+        }
 
         messageContent.appendChild(messageBubble);
         messageContainer.appendChild(avatar);
@@ -124,6 +128,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 behavior: 'smooth'
             });
         }, 100);
+    }
+
+    function parseMarkdown(text) {
+        let html = text;
+        
+        // Convert headers
+        html = html.replace(/^### (.*$)/gm, '<h3 class="md-h3">$1</h3>');
+        html = html.replace(/^## (.*$)/gm, '<h2 class="md-h2">$1</h2>');
+        html = html.replace(/^# (.*$)/gm, '<h1 class="md-h1">$1</h1>');
+        
+        // Convert bold text
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert italic text
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Convert blockquotes
+        html = html.replace(/^> (.*$)/gm, '<blockquote class="md-blockquote">$1</blockquote>');
+        
+        // Convert unordered lists
+        html = html.replace(/^- (.*$)/gm, '<li class="md-li">$1</li>');
+        
+        // Wrap consecutive list items in ul tags
+        html = html.replace(/(<li class="md-li">.*<\/li>)/gs, (match) => {
+            return '<ul class="md-ul">' + match + '</ul>';
+        });
+        
+        // Convert numbered lists
+        html = html.replace(/^\d+\. (.*$)/gm, '<li class="md-li-numbered">$1</li>');
+        
+        // Wrap consecutive numbered list items in ol tags
+        html = html.replace(/(<li class="md-li-numbered">.*<\/li>)/gs, (match) => {
+            return '<ol class="md-ol">' + match + '</ol>';
+        });
+        
+        // Convert horizontal rules
+        html = html.replace(/^---$/gm, '<hr class="md-hr">');
+        
+        // Convert line breaks
+        html = html.replace(/\n/g, '<br>');
+        
+        // Clean up extra br tags around block elements
+        html = html.replace(/<br>\s*(<h[1-6]|<\/h[1-6]>|<ul|<\/ul>|<ol|<\/ol>|<blockquote|<\/blockquote>|<hr)/g, '$1');
+        html = html.replace(/(<\/h[1-6]>|<\/ul>|<\/ol>|<\/blockquote>|<hr[^>]*>)\s*<br>/g, '$1');
+        
+        return html;
     }
 
     function formatMessage(text) {
