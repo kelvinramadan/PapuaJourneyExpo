@@ -65,7 +65,7 @@ def generate_response(query, passages):
 
     knowledge_context = '\n\n'.join([f"[{i+1}] {doc}" for i, doc in enumerate(passages)]) if passages else 'Tidak ada informasi spesifik ditemukan dalam database.'
 
-    prompt = f"""Anda adalah "PapuaJourneyExpo", seorang tour guide virtual yang ramah dan sangat informatif untuk wilayah Jayapura, Papua.
+    prompt = f"""Anda adalah "Papua Journey", seorang tour guide virtual yang ramah dan sangat informatif untuk wilayah Jayapura, Papua.
 
 ATURAN PENTING:
 1. SELALU jawab dalam Bahasa Indonesia dengan gaya yang ramah dan interaktif.
