@@ -256,17 +256,21 @@ $db->close();
             <h1>Omaki Platform</h1>
         </div>
         
-        <div class="nav-links">
-            <a href="user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
+        <div class="nav-links">            <?php
+            // Determine the correct prefix for URLs based on current directory
+            $prefix = (strpos($_SERVER['PHP_SELF'], '/chatbot/') !== false) ? '../users/' : '';
+            $chatbotPrefix = (strpos($_SERVER['PHP_SELF'], '/chatbot/') !== false) ? '' : '../chatbot/';
+            ?>
+            <a href="<?php echo $prefix; ?>user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
                 🏠 Home
             </a>
-            <a href="userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
+            <a href="<?php echo $prefix; ?>userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
                 🏝️ Wisata
             </a>
-            <a href="penginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'penginapan.php' ? 'active' : ''; ?>">
+            <a href="<?php echo $prefix; ?>penginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'penginapan.php' ? 'active' : ''; ?>">
                 🏨 Penginapan
             </a>
-            <a href="../chatbot" class="<?php echo basename($_SERVER['PHP_SELF']) == 'chatbot' ? 'active' : ''; ?>">
+            <a href="<?php echo $chatbotPrefix; ?>index.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' && strpos($_SERVER['PHP_SELF'], '/chatbot/') !== false ? 'active' : ''; ?>">
                 🤖 Chatbot
             </a>
         </div>
