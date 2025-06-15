@@ -4,3 +4,10 @@ chatbot/chatbot_debug.log
 *.log
 chatbot/rag_py/.env
 chatbot/rag_py/.env
+
+# Claude Code files
+CLAUDE.md
+.claude/
+claude-*
+*claude*
+.claude-*
