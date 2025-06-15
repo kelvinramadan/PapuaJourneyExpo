@@ -3,9 +3,9 @@
 session_start();
 require_once '../config/database.php';
 
-// Simple admin authentication - you might want to improve this
+// Simple admin authentication
 $admin_username = 'admin';
-$admin_password = 'admin123'; // Change this to a secure password
+$admin_password = 'admin123';
 
 $error_message = '';
 $success_message = '';
@@ -23,8 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_login'])) {
     }
 }
 
-// Handle admin logout
-
+// Handle logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: index.php');
+    exit();
+}
 
 // Handle UMKM status updates
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
@@ -81,7 +85,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
             }
             
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-family: Arial, sans-serif;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 min-height: 100vh;
                 display: flex;
@@ -93,7 +97,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 background: white;
                 padding: 2rem;
                 border-radius: 10px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
                 width: 100%;
                 max-width: 400px;
             }
@@ -106,10 +110,6 @@ if (!isset($_SESSION['admin_logged_in'])) {
             .login-header h1 {
                 color: #333;
                 margin-bottom: 0.5rem;
-            }
-            
-            .login-header p {
-                color: #666;
             }
             
             .form-group {
@@ -126,10 +126,9 @@ if (!isset($_SESSION['admin_logged_in'])) {
             .form-group input {
                 width: 100%;
                 padding: 0.75rem;
-                border: 2px solid #e1e1e1;
+                border: 2px solid #ddd;
                 border-radius: 5px;
                 font-size: 1rem;
-                transition: border-color 0.3s;
             }
             
             .form-group input:focus {
@@ -146,20 +145,19 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 border-radius: 5px;
                 font-size: 1rem;
                 cursor: pointer;
-                transition: transform 0.2s;
             }
             
             .btn:hover {
-                transform: translateY(-2px);
+                opacity: 0.9;
             }
             
             .error-message {
-                background: #fee;
-                color: #c33;
+                background: #ffebee;
+                color: #c62828;
                 padding: 0.75rem;
                 border-radius: 5px;
                 margin-bottom: 1rem;
-                border-left: 4px solid #c33;
+                border-left: 4px solid #c62828;
             }
         </style>
     </head>
@@ -223,6 +221,7 @@ $db->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Omaki Platform</title>
+    <link rel="stylesheet" href="sidebar.css">
     <style>
         * {
             margin: 0;
@@ -231,236 +230,231 @@ $db->close();
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
         }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-        }
-        
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        
+
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
-        
+
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
         }
-        
+
         .stat-pending { color: #FF9800; }
         .stat-active { color: #4CAF50; }
         .stat-inactive { color: #f44336; }
-        
+
         .stat-label {
             color: #666;
+            font-size: 14px;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            font-weight: 500;
         }
-        
+
+        /* Card */
         .card {
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
+
         .card h2 {
             color: #333;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #667eea;
         }
-        
+
+        /* Alert */
         .alert {
-            padding: 1rem;
+            padding: 15px;
             border-radius: 5px;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
-        
+
         .alert-success {
             background: #d4edda;
             color: #155724;
             border-left: 4px solid #28a745;
         }
-        
+
         .alert-error {
             background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
         }
-        
+
+        /* Table */
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
+            margin-top: 20px;
         }
-        
+
         .table th,
         .table td {
-            padding: 1rem;
+            padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #e1e1e1;
+            border-bottom: 1px solid #ddd;
         }
-        
+
         .table th {
             background: #f8f9fa;
             font-weight: 600;
             color: #333;
         }
-        
+
         .table tr:hover {
             background: #f8f9fa;
         }
-        
+
+        /* Status Badge */
         .status-badge {
-            padding: 0.3rem 0.8rem;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 12px;
             font-weight: bold;
         }
-        
+
         .status-pending {
             background: #fff3cd;
             color: #856404;
         }
-        
+
         .status-active {
             background: #d4edda;
             color: #155724;
         }
-        
+
         .status-inactive {
             background: #f8d7da;
             color: #721c24;
         }
-        
+
+        /* Buttons */
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
-            margin: 0 0.2rem;
-            transition: all 0.3s;
+            font-size: 14px;
+            margin: 2px;
+            transition: background-color 0.3s;
         }
-        
+
         .btn-approve {
             background: #28a745;
             color: white;
         }
-        
+
         .btn-approve:hover {
             background: #218838;
         }
-        
+
         .btn-reject {
             background: #dc3545;
             color: white;
         }
-        
+
         .btn-reject:hover {
             background: #c82333;
         }
-        
+
         .btn-deactivate {
             background: #ffc107;
             color: #212529;
         }
-        
+
         .btn-deactivate:hover {
             background: #e0a800;
         }
-        
+
         .btn-delete {
             background: #6c757d;
             color: white;
         }
-        
+
         .btn-delete:hover {
             background: #5a6268;
         }
-        
+
         .actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 5px;
             flex-wrap: wrap;
         }
-        
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .table {
-                font-size: 0.9rem;
+                font-size: 14px;
             }
-            
+
             .table th,
             .table td {
-                padding: 0.5rem;
+                padding: 8px;
             }
-            
+
             .actions {
                 flex-direction: column;
             }
-            
+
             .btn {
                 width: 100%;
-                margin: 0.1rem 0;
+                margin: 2px 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <?php include 'navbaradmin.php'; ?>
-    <div class="container">
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>Admin Dashboard</h1>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="index.php" class="btn active">🏠 Admin Homepage</a>
+            <a href="adminwisata.php" class="btn">🏞️ Admin Wisata</a>
+            <a href="adminpenginapan.php" class="btn">🏨 Admin Penginapan</a>
+        </nav>
+        
+        <div class="user-section">
+            <div class="user-greeting">Halo, <?php echo htmlspecialchars($_SESSION['admin_username']); ?></div>
+            <a href="?logout=1" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
         <?php if ($success_message): ?>
             <div class="alert alert-success">
                 <?php echo htmlspecialchars($success_message); ?>
@@ -589,6 +583,40 @@ $db->close();
     </div>
 
     <script>
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Add active state to navigation buttons
+        const currentPage = window.location.pathname.split('/').pop();
+        document.querySelectorAll('.nav-menu .btn').forEach(btn => {
+            if (btn.getAttribute('href') === currentPage) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+
         // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
