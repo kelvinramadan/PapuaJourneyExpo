@@ -24,7 +24,7 @@ def get_all_texts_from_json(directory):
                                 texts.append(json.dumps(item))
     return texts
 
-data_directory = 'chatbot/data/jayapura'
+data_directory = '../data/jayapura'
 documents = get_all_texts_from_json(data_directory)
 
 if documents:

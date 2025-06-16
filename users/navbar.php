@@ -269,9 +269,8 @@ $db->close();
             </a>
             <a href="<?php echo $prefix; ?>penginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'penginapan.php' ? 'active' : ''; ?>">
                 🏨 Penginapan
-            </a>
-            <a href="<?php echo $chatbotPrefix; ?>index.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' && strpos($_SERVER['PHP_SELF'], '/chatbot/') !== false ? 'active' : ''; ?>">
-                🤖 Chatbot
+            </a>            <a href="<?php echo $prefix; ?>users_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'users_chatbot.php' ? 'active' : ''; ?>">
+                🤖 AI Assistant
             </a>
         </div>
         

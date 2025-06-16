@@ -1,6 +1,7 @@
 rag_py/.env
 chatbot/rag_py/.env
 chatbot/chatbot_debug.log
+users/users_chatbot_debug.log
 *.log
 chatbot/rag_py/.env
 chatbot/rag_py/.env
@@ -11,3 +12,4 @@ CLAUDE.md
 claude-*
 *claude*
 .claude-*
+users/chatbot/rag_py/.env
