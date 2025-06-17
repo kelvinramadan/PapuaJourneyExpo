@@ -18,41 +18,83 @@ $db = getDbConnection();
 // Get filter parameters
 $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : '';
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$view_mode = isset($_GET['view']) ? $_GET['view'] : 'list';
+$wisata_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Build query with filters
-$sql = "SELECT * FROM wisata WHERE 1=1";
-$params = [];
-
-if (!empty($kategori_filter)) {
-    $sql .= " AND kategori = ?";
-    $params[] = $kategori_filter;
+// Helper functions
+function formatPrice($price) {
+    return 'Rp ' . number_format($price, 0, ',', '.');
 }
 
-if (!empty($search)) {
-    $sql .= " AND (judul LIKE ? OR deskripsi LIKE ? OR alamat LIKE ?)";
-    $search_param = "%$search%";
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $params[] = $search_param;
+function formatDate($date) {
+    return date('d M Y', strtotime($date));
 }
 
-$sql .= " ORDER BY created_at DESC";
-
-// Prepare and execute query
-$stmt = $db->prepare($sql);
-if (!empty($params)) {
-    $types = str_repeat('s', count($params));
-    $stmt->bind_param($types, ...$params);
+function truncateText($text, $limit) {
+    return strlen($text) > $limit ? substr($text, 0, $limit) . '...' : $text;
 }
-$stmt->execute();
-$result = $stmt->get_result();
 
-// Simpan data yang diperlukan sebelum output HTML
-$wisata_data = [];
-while ($row = $result->fetch_assoc()) {
-    $wisata_data[] = $row;
+// Handle detail view
+$wisata_detail = null;
+if ($view_mode === 'detail' && $wisata_id > 0) {
+    $stmt = $db->prepare("SELECT * FROM wisata WHERE id = ?");
+    $stmt->bind_param("i", $wisata_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $wisata_detail = $result->fetch_assoc();
+    $stmt->close();
 }
-$stmt->close();
+
+// Build query with filters for list view
+if ($view_mode === 'list') {
+    $sql = "SELECT * FROM wisata WHERE 1=1";
+    $params = [];
+
+    if (!empty($kategori_filter)) {
+        $sql .= " AND kategori = ?";
+        $params[] = $kategori_filter;
+    }
+
+    if (!empty($search)) {
+        $sql .= " AND (judul LIKE ? OR deskripsi LIKE ? OR alamat LIKE ?)";
+        $search_param = "%$search%";
+        $params[] = $search_param;
+        $params[] = $search_param;
+        $params[] = $search_param;
+    }
+
+    $sql .= " ORDER BY created_at DESC";
+
+    // Prepare and execute query
+    $stmt = $db->prepare($sql);
+    if (!empty($params)) {
+        $types = str_repeat('s', count($params));
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Simpan data yang diperlukan sebelum output HTML
+    $wisata_data = [];
+    while ($row = $result->fetch_assoc()) {
+        $wisata_data[] = $row;
+    }
+    $stmt->close();
+}
+
+// Get related wisata for detail view
+$related_wisata = [];
+if ($view_mode === 'detail' && $wisata_detail) {
+    $stmt = $db->prepare("SELECT * FROM wisata WHERE kategori = ? AND id != ? ORDER BY created_at DESC LIMIT 3");
+    $stmt->bind_param("si", $wisata_detail['kategori'], $wisata_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $related_wisata[] = $row;
+    }
+    $stmt->close();
+}
+
 mysqli_close($db);
 ?>
 
@@ -116,310 +158,351 @@ mysqli_close($db);
         
         .filters input,
         .filters select {
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: 25px;
             background: rgba(255,255,255,0.9);
             font-size: 14px;
-            min-width: 150px;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+        
+        .filters input:focus,
+        .filters select:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
         }
         
         .filters button {
-            background: #28a745;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-size: 14px;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
         
         .filters button:hover {
-            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
         }
         
-        .wisata-grid {
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Article Grid Styles */
+        .articles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
         }
         
-        .wisata-card {
+        .article-card {
             background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
             cursor: pointer;
+            position: relative;
         }
         
-        .wisata-card:hover {
+        .article-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
         }
         
-        .wisata-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        
-        .card-content {
-            padding: 20px;
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: between;
-            align-items: start;
-            margin-bottom: 10px;
-        }
-        
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .card-category {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .card-price {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        
-        .no-data {
-            text-align: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-top: 50px;
-        }
-        
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-        }
-        
-        .modal-content {
-            background: white;
-            margin: 3% auto;
-            padding: 0;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
+        .article-image {
             position: relative;
-        }
-        
-        .modal-header {
-            position: relative;
-            height: 300px;
+            height: 220px;
             overflow: hidden;
-            border-radius: 20px 20px 0 0;
         }
         
-        .modal-header img {
+        .article-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.4s ease;
         }
         
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            color: white;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-            background: rgba(0,0,0,0.5);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+        .article-card:hover .article-image img {
+            transform: scale(1.1);
+        }
+        
+        .placeholder-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1;
+            font-size: 4rem;
+            color: #90caf9;
         }
         
-        .close:hover {
-            background: rgba(0,0,0,0.7);
+        .card-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            backdrop-filter: blur(10px);
         }
         
-        .modal-body {
-            padding: 30px;
+        .category-budaya {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
         }
         
-        .modal-title {
-            font-size: 2rem;
+        .category-alam {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .article-card-content {
+            padding: 25px;
+        }
+        
+        .article-card-title {
+            font-size: 1.4rem;
             font-weight: bold;
             color: #333;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .article-card-price {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #28a745;
             margin-bottom: 15px;
         }
         
-        .modal-category {
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-detail {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .card-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+        
+        /* Article Detail Styles */
+        .article-detail {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            margin-bottom: 40px;
+        }
+        
+        .article-header {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .article-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .article-category {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            padding: 12px 24px;
+            border-radius: 25px;
             font-size: 14px;
             font-weight: bold;
             text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 20px;
+            color: white;
+            backdrop-filter: blur(10px);
         }
         
-        .modal-price {
-            font-size: 2rem;
+        .article-content {
+            padding: 40px;
+        }
+        
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .article-price {
+            font-size: 2.2rem;
             font-weight: bold;
             color: #28a745;
-            margin-bottom: 20px;
         }
         
-        .modal-description {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 25px;
-        }
-        
-        .modal-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        
-        .info-item h4 {
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-        
-        .info-item p {
+        .article-date {
             color: #666;
-            line-height: 1.5;
+            font-size: 1.1rem;
         }
         
-        /* Profile Modal Styles */
-        .profile-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
+        .article-description {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 40px;
         }
         
-        .profile-modal-content {
-            background: white;
-            margin: 5% auto;
+        .wisata-info-section {
+            background: #f8f9fa;
             padding: 30px;
             border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-        
-        .profile-modal-header {
-            text-align: center;
             margin-bottom: 30px;
         }
         
-        .profile-modal-header h2 {
-            color: #333;
-            margin-bottom: 10px;
+        .wisata-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .modal-buttons {
+        .info-item {
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .info-item span {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .info-item div strong {
+            color: #667eea;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .info-item div {
+            flex: 1;
+        }
+        
+        .contact-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
             margin-top: 30px;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
+        .btn {
+            padding: 15px 30px;
             border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
         }
         
         .btn-secondary:hover {
-            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+        
+        .no-results {
+            text-align: center;
+            color: white;
+            padding: 80px 20px;
+        }
+        
+        .no-results h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .no-results p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
         }
         
         @media (max-width: 768px) {
@@ -436,14 +519,33 @@ mysqli_close($db);
             .filters select,
             .filters button {
                 width: 100%;
+                min-width: auto;
             }
             
-            .wisata-grid {
+            .articles-grid {
                 grid-template-columns: 1fr;
             }
             
-            .modal-info {
+            .article-title {
+                font-size: 1.8rem;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .wisata-info-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .contact-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -453,218 +555,250 @@ mysqli_close($db);
     
     <div class="main-content">
         <div class="container">
-            <div class="page-header">
-                <h1>🏝️ Wisata Papua</h1>
-                <p>Jelajahi keindahan alam dan budaya Papua yang memukau</p>
-            </div>
-            
-            <div class="filters">
-                <form method="GET" style="display: flex; gap: 15px; flex-wrap: wrap; width: 100%;">
-                    <input type="text" name="search" placeholder="Cari wisata..." value="<?php echo htmlspecialchars($search); ?>">
-                    <select name="kategori">
-                        <option value="">Semua Kategori</option>
-                        <option value="budaya" <?php echo $kategori_filter == 'budaya' ? 'selected' : ''; ?>>Budaya</option>
-                        <option value="alam" <?php echo $kategori_filter == 'alam' ? 'selected' : ''; ?>>Alam</option>
-                    </select>
-                    <button type="submit">Filter</button>
-                    <?php if (!empty($kategori_filter) || !empty($search)): ?>
-                        <a href="userwisata.php" style="text-decoration: none;">
-                            <button type="button" style="background: #dc3545;">Reset</button>
-                        </a>
-                    <?php endif; ?>
-                </form>
-            </div>
-            
-            <div class="wisata-grid">
+            <?php if ($view_mode === 'list'): ?>
+                <div class="page-header">
+                    <h1>🏝️ Wisata Papua</h1>
+                    <p>Jelajahi keindahan alam dan budaya Papua yang memukau</p>
+                </div>
+                
+                <div class="filters">
+                    <form method="GET" style="display: flex; gap: 15px; flex-wrap: wrap; width: 100%;">
+                        <input type="text" name="search" placeholder="🔍 Cari wisata..." value="<?php echo htmlspecialchars($search); ?>">
+                        <select name="kategori">
+                            <option value="">📋 Semua Kategori</option>
+                            <option value="budaya" <?php echo $kategori_filter == 'budaya' ? 'selected' : ''; ?>>🎭 Budaya</option>
+                            <option value="alam" <?php echo $kategori_filter == 'alam' ? 'selected' : ''; ?>>🌿 Alam</option>
+                        </select>
+                        <button type="submit">🔍 Filter</button>
+                        <?php if (!empty($kategori_filter) || !empty($search)): ?>
+                            <a href="userwisata.php" style="text-decoration: none;">
+                                <button type="button" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">🔄 Reset</button>
+                            </a>
+                        <?php endif; ?>
+                    </form>
+                </div>
+                
                 <?php if (!empty($wisata_data)): ?>
-                    <?php foreach ($wisata_data as $wisata): ?>
-                        <div class="wisata-card" onclick="openWisataModal(<?php echo htmlspecialchars(json_encode($wisata)); ?>)">
-                            <img src="../uploads/<?php echo $wisata['photo']; ?>" alt="<?php echo htmlspecialchars($wisata['judul']); ?>">
-                            <div class="card-content">
-                                <div class="card-category"><?php echo ucfirst($wisata['kategori']); ?></div>
-                                <div class="card-title"><?php echo htmlspecialchars($wisata['judul']); ?></div>
-                                <div class="card-price">Rp <?php echo number_format($wisata['harga'], 0, ',', '.'); ?></div>
+                    <div class="articles-grid">
+                        <?php foreach ($wisata_data as $wisata): ?>
+                            <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $wisata['id']; ?>'">
+                                <div class="article-image">
+                                    <?php if ($wisata['photo']): ?>
+                                        <img src="../uploads/<?php echo htmlspecialchars($wisata['photo']); ?>" 
+                                             alt="<?php echo htmlspecialchars($wisata['judul']); ?>">
+                                    <?php else: ?>
+                                        <div class="placeholder-image">
+                                            🏝️
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="card-category category-<?php echo $wisata['kategori']; ?>">
+                                        <?php
+                                        $kategori_icons = [
+                                            'budaya' => '🎭 Budaya',
+                                            'alam' => '🌿 Alam'
+                                        ];
+                                        echo $kategori_icons[$wisata['kategori']] ?? ucfirst($wisata['kategori']);
+                                        ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="article-card-content">
+                                    <h4 class="article-card-title"><?php echo htmlspecialchars($wisata['judul']); ?></h4>
+                                    <div class="article-card-price"><?php echo formatPrice($wisata['harga']); ?></div>
+                                    
+                                    <div class="card-description">
+                                        <?php echo truncateText(htmlspecialchars($wisata['deskripsi']), 100); ?>
+                                    </div>
+                                    
+                                    <div class="card-actions">
+                                        <a href="?view=detail&id=<?php echo $wisata['id']; ?>" class="btn-detail">
+                                            📖 Lihat Selengkapnya
+                                        </a>
+                                        <span class="card-date">
+                                            <?php echo formatDate($wisata['created_at']); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="no-results">
+                        <div style="font-size: 5rem; margin-bottom: 1rem;">😔</div>
+                        <h3>Tidak Ada Wisata Ditemukan</h3>
+                        <p>Maaf, tidak ada wisata yang sesuai dengan pencarian Anda.</p>
+                        <p>Coba ubah kata kunci pencarian atau pilih kategori lain.</p>
+                    </div>
+                <?php endif; ?>
+                
+            <?php elseif ($view_mode === 'detail' && $wisata_detail): ?>
+                <a href="?" class="back-button">
+                    ⬅️ Kembali ke Daftar Wisata
+                </a>
+                
+                <div class="article-detail">
+                    <div class="article-header">
+                        <?php if ($wisata_detail['photo']): ?>
+                            <img src="../uploads/<?php echo htmlspecialchars($wisata_detail['photo']); ?>" 
+                                 alt="<?php echo htmlspecialchars($wisata_detail['judul']); ?>">
+                        <?php else: ?>
+                            <div class="placeholder-image" style="height: 400px;">
+                                🏝️
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="article-category category-<?php echo $wisata_detail['kategori']; ?>">
+                            <?php
+                            $kategori_icons = [
+                                'budaya' => '🎭 Budaya',
+                                'alam' => '🌿 Alam'
+                            ];
+                            echo $kategori_icons[$wisata_detail['kategori']] ?? ucfirst($wisata_detail['kategori']);
+                            ?>
+                        </div>
+                    </div>
+                    
+                    <div class="article-content">
+                        <h1 class="article-title"><?php echo htmlspecialchars($wisata_detail['judul']); ?></h1>
+                        
+                        <div class="article-meta">
+                            <div class="article-price"><?php echo formatPrice($wisata_detail['harga']); ?></div>
+                            <div class="article-date">
+                                📅 <?php echo formatDate($wisata_detail['created_at']); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="article-description">
+                            <?php echo nl2br(htmlspecialchars($wisata_detail['deskripsi'])); ?>
+                        </div>
+                        
+                        <div class="wisata-info-section">
+                            <h3 style="margin-bottom: 25px; color: #333; font-size: 1.5rem;">ℹ️ Informasi Wisata</h3>
+                            <div class="wisata-info-grid">
+                                <div class="info-item">
+                                    <span>📍</span>
+                                    <div>
+                                        <strong>Alamat</strong>
+                                        <?php echo htmlspecialchars($wisata_detail['alamat']); ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span>🕒</span>
+                                    <div>
+                                        <strong>Jam Buka</strong>
+                                        <?php echo htmlspecialchars($wisata_detail['jam_buka']); ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span>🎫</span>
+                                    <div>
+                                        <strong>Harga Tiket</strong>
+                                        <?php echo formatPrice($wisata_detail['harga']); ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span>📂</span>
+                                    <div>
+                                        <strong>Kategori</strong>
+                                        <?php echo ucfirst($wisata_detail['kategori']); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-actions">
+                                <a href="https://www.google.com/maps?q=<?php echo urlencode($wisata_detail['alamat']); ?>" 
+                                   target="_blank" class="btn btn-primary">
+                                    🗺️ Lihat di Google Maps
+                                </a>
+                                
+                                <button onclick="sharePage()" class="btn btn-secondary">
+                                    📤 Bagikan Wisata
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php if (count($related_wisata) > 0): ?>
+                <div class="articles-grid" style="margin-top: 50px;">
+                    <div style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: white; font-size: 2rem;">🌟 Wisata Terkait</h3>
+                        <p style="color: rgba(255,255,255,0.9); margin-top: 10px;">Jelajahi wisata lainnya dengan kategori yang sama</p>
+                    </div>
+                    <?php foreach ($related_wisata as $related): ?>
+                        <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $related['id']; ?>'">
+                            <div class="article-image">
+                                <?php if ($related['photo']): ?>
+                                    <img src="../uploads/<?php echo htmlspecialchars($related['photo']); ?>" 
+                                         alt="<?php echo htmlspecialchars($related['judul']); ?>">
+                                <?php else: ?>
+                                    <div class="placeholder-image">
+                                        🏝️
+                                    </div>
+                                <?php endif; ?>
+                                <div class="card-category category-<?php echo $related['kategori']; ?>">
+                                    <?php
+                                    $kategori_icons = [
+                                        'budaya' => '🎭 Budaya',
+                                        'alam' => '🌿 Alam'
+                                    ];
+                                    echo $kategori_icons[$related['kategori']] ?? ucfirst($related['kategori']);
+                                    ?>
+                                </div>
+                            </div>
+                            
+                            <div class="article-card-content">
+                                <h4 class="article-card-title"><?php echo htmlspecialchars($related['judul']); ?></h4>
+                                <div class="article-card-price"><?php echo formatPrice($related['harga']); ?></div>
+                                <div class="card-description">
+                                    <?php echo truncateText(htmlspecialchars($related['deskripsi']), 80); ?>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="no-data">
-                        <p>Tidak ada data wisata yang ditemukan.</p>
-                    </div>
+                </div>
                 <?php endif; ?>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Wisata Modal -->
-    <div id="wisataModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img id="modalImage" src="" alt="">
-                <span class="close" onclick="closeModal('wisataModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <h2 id="modalTitle" class="modal-title"></h2>
-                <span id="modalCategory" class="modal-category"></span>
-                <div id="modalPrice" class="modal-price"></div>
-                <p id="modalDescription" class="modal-description"></p>
-                <div class="modal-info">
-                    <div class="info-item">
-                        <h4>📍 Alamat</h4>
-                        <p id="modalAlamat"></p>
-                    </div>
-                    <div class="info-item">
-                        <h4>🕒 Jam Buka</h4>
-                        <p id="modalJamBuka"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Profile Modals -->
-    <div id="profileModal" class="profile-modal">
-        <div class="profile-modal-content">
-            <div class="profile-modal-header">
-                <h2>✏️ Edit Profil</h2>
-            </div>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label for="full_name">Nama Lengkap</label>
-                    <input type="text" id="full_name" name="full_name" value="<?php echo htmlspecialchars($user_data['full_name'] ?? ''); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Nomor Telepon</label>
-                    <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user_data['phone'] ?? ''); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="address">Alamat</label>
-                    <textarea id="address" name="address" rows="3"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('profileModal')">Batal</button>
-                    <button type="submit" class="btn-primary">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <div id="passwordModal" class="profile-modal">
-        <div class="profile-modal-content">
-            <div class="profile-modal-header">
-                <h2>🔒 Ubah Password</h2>
-            </div>
-            <form id="passwordForm">
-                <div class="form-group">
-                    <label for="current_password">Password Saat Ini</label>
-                    <input type="password" id="current_password" name="current_password" required>
-                </div>
-                <div class="form-group">
-                    <label for="new_password">Password Baru</label>
-                    <input type="password" id="new_password" name="new_password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm_password">Konfirmasi Password Baru</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('passwordModal')">Batal</button>
-                    <button type="submit" class="btn-primary">Ubah Password</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <div id="photoModal" class="profile-modal">
-        <div class="profile-modal-content">
-            <div class="profile-modal-header">
-                <h2>📷 Ubah Foto Profil</h2>
-            </div>
-            <form id="photoForm" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="profile_image">Pilih Foto</label>
-                    <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('photoModal')">Batal</button>
-                    <button type="submit" class="btn-primary">Upload</button>
-                </div>
-            </form>
+            <?php endif; ?>
         </div>
     </div>
     
     <script>
-        function openWisataModal(wisata) {
-            document.getElementById('modalImage').src = '../uploads/' + wisata.photo;
-            document.getElementById('modalTitle').textContent = wisata.judul;
-            document.getElementById('modalCategory').textContent = wisata.kategori.toUpperCase();
-            document.getElementById('modalPrice').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(wisata.harga);
-            document.getElementById('modalDescription').textContent = wisata.deskripsi;
-            document.getElementById('modalAlamat').textContent = wisata.alamat;
-            document.getElementById('modalJamBuka').textContent = wisata.jam_buka;
-            
-            document.getElementById('wisataModal').style.display = 'block';
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modals = ['wisataModal', 'profileModal', 'passwordModal', 'photoModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        }
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const modals = ['wisataModal', 'profileModal', 'passwordModal', 'photoModal'];
-                modals.forEach(modalId => {
-                    document.getElementById(modalId).style.display = 'none';
+        function sharePage() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '<?php echo htmlspecialchars($wisata_detail['judul'] ?? ''); ?>',
+                    text: 'Lihat wisata menarik ini di Papua!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link berhasil disalin ke clipboard!');
                 });
             }
+        }
+        
+        // Smooth scroll animation for back button
+        document.querySelector('.back-button')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.history.back();
         });
         
-        // Profile form submission
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your profile update logic here
-            alert('Profil berhasil diperbarui!');
-            closeModal('profileModal');
-        });
-        
-        // Password form submission
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            
-            if (newPassword !== confirmPassword) {
-                alert('Password baru dan konfirmasi password tidak cocok!');
-                return;
-            }
-            
-            // Add your password update logic here
-            alert('Password berhasil diubah!');
-            closeModal('passwordModal');
-        });
-        
-        // Photo form submission
-        document.getElementById('photoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your photo upload logic here
-            alert('Foto profil berhasil diperbarui!');
-            closeModal('photoModal');
+        // Add loading animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.article-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
         });
     </script>
 </body>
