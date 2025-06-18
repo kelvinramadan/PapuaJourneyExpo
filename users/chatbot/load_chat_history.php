@@ -19,6 +19,46 @@ $userId = $_SESSION['user_id'];
 $database = new Database();
 $conn = $database->getConnection();
 
+// Handle POST requests (delete, etc.)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if ($input['action'] === 'delete' && !empty($input['conversation_id'])) {
+        $conversationId = $input['conversation_id'];
+        
+        // Verify ownership before deleting
+        $stmt = $conn->prepare("
+            DELETE FROM chat_conversations 
+            WHERE conversation_id = ? AND user_id = ?
+        ");
+        $stmt->bind_param("si", $conversationId, $userId);
+        $success = $stmt->execute();
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        
+        // Also delete from sessions table
+        if ($affectedRows > 0) {
+            $stmt = $conn->prepare("
+                DELETE FROM chat_conversation_sessions 
+                WHERE conversation_id = ? AND user_id = ?
+            ");
+            $stmt->bind_param("si", $conversationId, $userId);
+            $stmt->execute();
+            $stmt->close();
+        }
+        
+        // Clear session if deleting current conversation
+        if ($_SESSION['conversation_id'] === $conversationId) {
+            $_SESSION['conversation_id'] = null;
+            $_SESSION['conversation_history'] = [];
+        }
+        
+        $conn->close();
+        echo json_encode(['success' => $success && $affectedRows > 0]);
+        exit();
+    }
+}
+
 // Check if we need to load a specific conversation or the current one
 $conversationId = isset($_GET['conversation_id']) ? $_GET['conversation_id'] : ($_SESSION['conversation_id'] ?? null);
 

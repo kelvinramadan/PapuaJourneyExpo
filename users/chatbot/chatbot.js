@@ -2,11 +2,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
+    const conversationList = document.getElementById('conversation-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const conversationSidebar = document.getElementById('conversation-sidebar');
+    const conversationSearch = document.getElementById('conversation-search');
+    
     let isTyping = false;
     let currentConversationId = null;
+    let conversations = [];
 
-    // Load conversation history on page load
+    // Initialize
+    loadConversationList();
     loadConversationHistory();
+
+    // Event listeners
+    newChatBtn.addEventListener('click', startNewConversation);
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    conversationSearch.addEventListener('input', filterConversations);
 
     // Listen for modal state changes
     window.addEventListener('modalStateChanged', (e) => {
@@ -74,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Update current conversation ID if returned
                 if (data.conversation_id) {
                     currentConversationId = data.conversation_id;
+                    loadConversationList(); // Refresh conversation list
                 }
             } else {
                 appendMessage('Maaf, saya tidak dapat memahami pertanyaan Anda. Coba tanyakan tentang wisata, kuliner, atau budaya Papua.', 'bot');
@@ -295,8 +309,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to load conversation history
-    function loadConversationHistory() {
-        fetch('load_chat_history.php')
+    function loadConversationHistory(conversationId = null) {
+        const url = conversationId 
+            ? `load_chat_history.php?conversation_id=${conversationId}`
+            : 'load_chat_history.php';
+            
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.messages && data.messages.length > 0) {
@@ -326,19 +344,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to start a new conversation
-    window.startNewConversation = function() {
-        if (confirm('Apakah Anda yakin ingin memulai percakapan baru?')) {
-            fetch('chatbot_process.php?clear_history=1')
-                .then(response => response.json())
-                .then(() => {
-                    currentConversationId = null;
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('Error starting new conversation:', error);
-                });
+    function startNewConversation() {
+        if (currentConversationId && chatBox.querySelectorAll('.message-container').length > 1) {
+            if (!confirm('Apakah Anda yakin ingin memulai percakapan baru?')) {
+                return;
+            }
         }
-    };
+        
+        fetch('chatbot_process.php?clear_history=1')
+            .then(response => response.json())
+            .then(() => {
+                currentConversationId = null;
+                clearChatDisplay();
+                loadConversationList();
+            })
+            .catch(error => {
+                console.error('Error starting new conversation:', error);
+            });
+    }
+    
+    window.startNewConversation = startNewConversation;
 
     // Function to show conversation info
     function showConversationInfo(conversationId, messageCount) {
@@ -363,18 +388,160 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to load conversation list (for future use)
-    window.loadConversationList = function() {
+    // Function to load conversation list
+    function loadConversationList() {
         fetch('load_chat_history.php?list_conversations=1')
             .then(response => response.json())
             .then(data => {
                 if (data.conversations) {
-                    console.log('Available conversations:', data.conversations);
-                    // TODO: Display conversation list in UI
+                    conversations = data.conversations;
+                    displayConversationList(conversations);
                 }
             })
             .catch(error => {
                 console.error('Error loading conversation list:', error);
+                conversationList.innerHTML = '<div class="error-message">Failed to load conversations</div>';
             });
+    }
+    
+    // Display conversations in sidebar
+    function displayConversationList(convs) {
+        if (convs.length === 0) {
+            conversationList.innerHTML = `
+                <div class="no-conversations">
+                    <p>No conversations yet</p>
+                    <p>Start a new chat to begin!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        conversationList.innerHTML = convs.map(conv => `
+            <div class="conversation-item ${conv.conversation_id === currentConversationId ? 'active' : ''}" 
+                 data-conversation-id="${conv.conversation_id}">
+                <div class="conversation-item-header">
+                    <span class="conversation-date">${formatDate(conv.last_message_at)}</span>
+                </div>
+                <div class="conversation-preview">${escapeHtml(conv.preview)}</div>
+                <div class="conversation-message-count">${conv.message_count} messages</div>
+                <div class="conversation-actions">
+                    <button class="delete-conversation-btn" onclick="deleteConversation('${conv.conversation_id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+        
+        // Add click handlers
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('delete-conversation-btn')) {
+                    const conversationId = item.dataset.conversationId;
+                    switchConversation(conversationId);
+                }
+            });
+        });
+    }
+    
+    // Switch to a different conversation
+    function switchConversation(conversationId) {
+        if (conversationId === currentConversationId) return;
+        
+        fetch(`chatbot_process.php?switch_conversation=${conversationId}`)
+            .then(response => response.json())
+            .then(data => {
+                currentConversationId = conversationId;
+                clearChatDisplay();
+                loadConversationHistory(conversationId);
+                
+                // Update active state in sidebar
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.conversationId === conversationId);
+                });
+            })
+            .catch(error => {
+                console.error('Error switching conversation:', error);
+            });
+    }
+    
+    // Delete a conversation
+    window.deleteConversation = function(conversationId) {
+        if (!confirm('Apakah Anda yakin ingin menghapus percakapan ini?')) return;
+        
+        fetch('load_chat_history.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'delete', conversation_id: conversationId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (conversationId === currentConversationId) {
+                    startNewConversation();
+                } else {
+                    loadConversationList();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting conversation:', error);
+        });
     };
+    
+    // Filter conversations based on search
+    function filterConversations() {
+        const searchTerm = conversationSearch.value.toLowerCase();
+        const filtered = conversations.filter(conv => 
+            conv.preview.toLowerCase().includes(searchTerm)
+        );
+        displayConversationList(filtered);
+    }
+    
+    // Toggle sidebar on mobile
+    function toggleSidebar() {
+        conversationSidebar.classList.toggle('active');
+    }
+    
+    // Clear chat display
+    function clearChatDisplay() {
+        chatBox.innerHTML = `
+            <div class="welcome-message">
+                <div class="bot-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-bubble bot-message">
+                        <p>Selamat datang di AI Assistant Papua! 👋</p>
+                        <p>Saya siap membantu Anda menjelajahi keindahan Papua. Anda bisa bertanya tentang:</p>
+                        <ul>
+                            <li>🏝️ Destinasi wisata menarik</li>
+                            <li>🍽️ Kuliner khas Papua</li>
+                            <li>🎭 Budaya dan tradisi lokal</li>
+                            <li>🚗 Transportasi dan akomodasi</li>
+                        </ul>
+                        <p>Silakan ajukan pertanyaan Anda!</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Helper functions
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 3600000) { // Less than 1 hour
+            return Math.floor(diff / 60000) + ' menit lalu';
+        } else if (diff < 86400000) { // Less than 1 day
+            return Math.floor(diff / 3600000) + ' jam lalu';
+        } else if (diff < 604800000) { // Less than 1 week
+            return Math.floor(diff / 86400000) + ' hari lalu';
+        } else {
+            return date.toLocaleDateString('id-ID');
+        }
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 });

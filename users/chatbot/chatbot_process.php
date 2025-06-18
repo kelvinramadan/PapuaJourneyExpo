@@ -68,6 +68,40 @@ if (isset($_GET['clear_history'])) {
     exit;
 }
 
+// Handle conversation switching
+if (isset($_GET['switch_conversation'])) {
+    $switchToId = $_GET['switch_conversation'];
+    
+    // Load conversation from database
+    $stmt = $conn->prepare("
+        SELECT message_type, message
+        FROM chat_conversations
+        WHERE conversation_id = ? AND user_id = ?
+        ORDER BY created_at ASC
+    ");
+    $stmt->bind_param("si", $switchToId, $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $conversation_history = [];
+    while ($row = $result->fetch_assoc()) {
+        if ($row['message_type'] === 'user') {
+            $conversation_history[] = ['user' => $row['message'], 'assistant' => ''];
+        } else if (!empty($conversation_history)) {
+            $conversation_history[count($conversation_history) - 1]['assistant'] = $row['message'];
+        }
+    }
+    
+    $_SESSION['conversation_id'] = $switchToId;
+    $_SESSION['conversation_history'] = array_slice($conversation_history, -5); // Keep last 5 turns
+    
+    $stmt->close();
+    $conn->close();
+    
+    echo json_encode(['success' => true, 'conversation_id' => $switchToId]);
+    exit;
+}
+
 // Initialize or clear conversation history if needed
 if (!isset($_SESSION['conversation_history'])) {
     $_SESSION['conversation_history'] = [];

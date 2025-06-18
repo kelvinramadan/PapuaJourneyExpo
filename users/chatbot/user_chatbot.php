@@ -24,22 +24,56 @@ $user_email = $_SESSION['user_email'];
 <body>
     <?php include '../components/navbar.php'; ?>
     
-    <div class="chat-main-container">
-        <div class="chat-header">
-            <div class="chat-header-content">
-                <div class="chat-title">
-                    <h2>🤖 AI Assistant Papua</h2>
-                    <p>Tanyakan apapun tentang wisata, kuliner, dan budaya Papua</p>
-                </div>
-                <div class="chat-status">
-                    <div class="status-indicator online"></div>
-                    <span>Online</span>
+    <div class="chat-app-container">
+        <!-- Conversation Sidebar -->
+        <div class="conversation-sidebar" id="conversation-sidebar">
+            <div class="sidebar-header">
+                <h3>Conversations</h3>
+                <button class="new-chat-btn" id="new-chat-btn" title="Start new conversation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="conversation-search">
+                <input type="text" id="conversation-search" placeholder="Search conversations..." />
+            </div>
+            <div class="conversation-list" id="conversation-list">
+                <!-- Conversations will be loaded here -->
+                <div class="loading-conversations">
+                    <div class="spinner"></div>
+                    <span>Loading conversations...</span>
                 </div>
             </div>
         </div>
         
-        <div class="chat-container">
-            <div class="chat-box" id="chat-box">
+        <!-- Toggle Button for Mobile -->
+        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle conversation list">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-main-container">
+            <div class="chat-header">
+                <div class="chat-header-content">
+                    <div class="chat-title">
+                        <h2>🤖 AI Assistant Papua</h2>
+                        <p>Tanyakan apapun tentang wisata, kuliner, dan budaya Papua</p>
+                    </div>
+                    <div class="chat-status">
+                        <div class="status-indicator online"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-box" id="chat-box">
                 <div class="welcome-message">
                     <div class="bot-avatar">
                         🤖
@@ -80,6 +114,7 @@ $user_email = $_SESSION['user_email'];
                 </div>
             </div>
         </div>
+    </div>
     </div>
     
     <script src="chatbot.js"></script>
