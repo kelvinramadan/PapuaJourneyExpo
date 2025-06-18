@@ -21,9 +21,10 @@ $user_email = $_SESSION['user_email'];
     <title>AI Assistant - Omaki Platform</title>
     <link rel="stylesheet" href="chatbot.css">
 </head>
-<body>    <?php include '../users/navbar.php'; ?>
+<body>
+    <?php include '../navbar.php'; ?>
     
-    <div class="container">
+    <div class="chat-main-container">
         <div class="chat-header">
             <div class="chat-header-content">
                 <div class="chat-title">

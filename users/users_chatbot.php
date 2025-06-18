@@ -24,7 +24,7 @@ $user_email = $_SESSION['user_email'];
 <body>
     <?php include 'navbar.php'; ?>
     
-    <div class="container">
+    <div class="chat-main-container">
         <div class="chat-header">
             <div class="chat-header-content">
                 <div class="chat-title">
