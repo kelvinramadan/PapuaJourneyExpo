@@ -3,21 +3,21 @@
 
 CREATE TABLE `chat_conversations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `conversation_id` varchar(36) NOT NULL COMMENT 'Unique ID for each conversation session',
+  `conversation_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Unique ID for each conversation session',
   `user_id` int(11) NOT NULL,
-  `message_type` enum('user','bot') NOT NULL,
-  `message` text NOT NULL,
+  `message_type` enum('user','bot') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_conversation_id` (`conversation_id`),
   KEY `idx_user_id` (`user_id`),
   KEY `idx_created_at` (`created_at`),
   CONSTRAINT `fk_chat_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Optional: Add a conversations summary table to track conversation metadata
 CREATE TABLE `chat_conversation_sessions` (
-  `conversation_id` varchar(36) NOT NULL,
+  `conversation_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int(11) NOT NULL,
   `started_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_message_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -27,4 +27,4 @@ CREATE TABLE `chat_conversation_sessions` (
   KEY `idx_user_id` (`user_id`),
   KEY `idx_last_message` (`last_message_at`),
   CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -17,8 +17,8 @@ class Database {
                 die('Could not establish database connection: ' . $this->conn->connect_error);
             }
             
-            // Set charset to utf8
-            $this->conn->set_charset("utf8");
+            // Set charset to utf8mb4 to support emojis
+            $this->conn->set_charset("utf8mb4");
             
         } catch(Exception $e) {
             die('Database connection failed: ' . $e->getMessage());
@@ -40,7 +40,7 @@ function getDbConnection() {
     if ($db->connect_error) {
         die('Could not establish database connection, please review your settings');
     }
-    $db->set_charset("utf8");
+    $db->set_charset("utf8mb4");
     return $db;
 }
 ?>
