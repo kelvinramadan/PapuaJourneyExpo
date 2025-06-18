@@ -20,6 +20,12 @@ $user_email = $_SESSION['user_email'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant - Omaki Platform</title>
     <link rel="stylesheet" href="chatbot.css">
+    <style>
+        /* Override navbar's body padding for chatbot page */
+        body {
+            padding-top: 0 !important;
+        }
+    </style>
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>

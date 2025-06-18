@@ -10,20 +10,17 @@ body {
     background-color: #ffffff;
     color: #1a1a1a;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 /* Main Wrapper */
 .chat-app-wrapper {
     display: flex;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding-top: var(--navbar-height, 80px); /* Dynamic navbar height */
+    height: calc(100vh - var(--navbar-height, 80px));
+    position: relative;
     background-color: #ffffff;
-    box-sizing: border-box;
+    margin-top: var(--navbar-height, 80px);
 }
 
 /* Sidebar Backdrop for Mobile */
