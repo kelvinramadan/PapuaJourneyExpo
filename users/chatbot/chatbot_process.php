@@ -42,9 +42,10 @@ $history_b64 = base64_encode($history_json);
 $escaped_message = escapeshellarg($userMessage);
 $escaped_history = escapeshellarg($history_b64);
 
+// Update path to point to rag_py folder in chatbot directory
 $command = "python " . __DIR__ . "/rag_py/rag_query.py " . $escaped_message . " " . $escaped_history;
 // Redirect stderr to stdout to capture Python errors
-$command .= " 2>&1"; 
+$command .= " 2>&1";
 
 $reply = shell_exec($command);
 

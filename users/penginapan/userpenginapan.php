@@ -6,11 +6,11 @@ if (!isset($_SESSION)) {
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
-require_once '../config/database.php';
+require_once '../../config/database.php';
 
 // Initialize database connection
 $database = new Database();
@@ -609,7 +609,7 @@ $database->closeConnection();
     </style>
 </head>
 <body>
-    <?php include 'navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
     <!-- Page Header -->
     <div class="page-header">
         <h1>🏨 Penginapan Papua</h1>
@@ -645,7 +645,7 @@ $database->closeConnection();
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $penginapan['id']; ?>'">
                                 <div class="article-image">
                                     <?php if ($penginapan['photo'] && file_exists('../uploads/' . $penginapan['photo'])): ?>
-                                        <img src="../uploads/<?php echo htmlspecialchars($penginapan['photo']); ?>" 
+                                        <img src="../../uploads/<?php echo htmlspecialchars($penginapan['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($penginapan['judul']); ?>">
                                     <?php else: ?>
                                         <div class="placeholder-image">
@@ -717,7 +717,7 @@ $database->closeConnection();
                 <div class="article-detail">
                     <div class="article-header">
                         <?php if ($penginapan_detail['photo'] && file_exists('../uploads/' . $penginapan_detail['photo'])): ?>
-                            <img src="../uploads/<?php echo htmlspecialchars($penginapan_detail['photo']); ?>" 
+                            <img src="../../uploads/<?php echo htmlspecialchars($penginapan_detail['photo']); ?>" 
                                  alt="<?php echo htmlspecialchars($penginapan_detail['judul']); ?>">
                         <?php else: ?>
                             <div class="placeholder-image" style="height: 400px;">

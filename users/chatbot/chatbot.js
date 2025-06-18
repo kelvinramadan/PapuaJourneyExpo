@@ -46,9 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userInput.style.height = 'auto';
         
         // Show typing indicator
-        showTypingIndicator();
-
-        // Send request
+        showTypingIndicator();        // Send request
         fetch('chatbot_process.php', {
             method: 'POST',
             headers: {
