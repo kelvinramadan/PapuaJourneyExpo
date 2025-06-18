@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const conversationSidebar = document.getElementById('conversation-sidebar');
     const conversationSearch = document.getElementById('conversation-search');
     const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+    const sidebarToggleFloating = document.getElementById('sidebar-toggle-floating');
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const sidebarBackdrop = document.getElementById('sidebar-backdrop');
     
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listeners
     newChatBtn.addEventListener('click', startNewConversation);
     sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
+    sidebarToggleFloating.addEventListener('click', toggleSidebarCollapse);
     mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
     sidebarBackdrop.addEventListener('click', closeMobileSidebar);
     conversationSearch.addEventListener('input', filterConversations);

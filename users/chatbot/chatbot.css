@@ -52,6 +52,41 @@ body {
     margin-left: -260px;
 }
 
+/* Floating Sidebar Toggle Button */
+.sidebar-toggle-floating {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: 1px solid #e5e5e7;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    padding: 12px 8px;
+    cursor: pointer;
+    z-index: 998;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-toggle-floating:hover {
+    background-color: #f7f7f8;
+    padding-right: 12px;
+}
+
+/* Show floating button when sidebar is collapsed */
+.conversation-sidebar.collapsed ~ .sidebar-toggle-floating {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar-toggle-floating svg {
+    display: block;
+    color: #6e6e80;
+}
+
 .sidebar-content {
     display: flex;
     flex-direction: column;
@@ -616,6 +651,10 @@ body {
     
     .sidebar-collapse-btn {
         display: none;
+    }
+    
+    .sidebar-toggle-floating {
+        display: none !important;
     }
     
     .mobile-header {
