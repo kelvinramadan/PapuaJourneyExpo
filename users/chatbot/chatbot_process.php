@@ -1,22 +1,76 @@
 <?php
 session_start(); // Start the session to store conversation history
 
+// Include database configuration
+require_once '../../config/database.php';
+
 // Basic logging function
 function log_message($message) {
     file_put_contents('chatbot_debug.log', date('Y-m-d H:i:s') . ' - ' . $message . "\n", FILE_APPEND);
+}
+
+// Function to generate unique conversation ID
+function generateConversationId() {
+    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+        mt_rand(0, 0xffff),
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
+        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+    );
+}
+
+// Function to save message to database
+function saveMessageToDatabase($conn, $conversationId, $userId, $messageType, $message) {
+    $stmt = $conn->prepare("INSERT INTO chat_conversations (conversation_id, user_id, message_type, message) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("siss", $conversationId, $userId, $messageType, $message);
+    $result = $stmt->execute();
+    $stmt->close();
+    
+    if ($result) {
+        // Update conversation session
+        $updateStmt = $conn->prepare("
+            INSERT INTO chat_conversation_sessions (conversation_id, user_id, message_count) 
+            VALUES (?, ?, 1) 
+            ON DUPLICATE KEY UPDATE 
+            last_message_at = CURRENT_TIMESTAMP, 
+            message_count = message_count + 1
+        ");
+        $updateStmt->bind_param("si", $conversationId, $userId);
+        $updateStmt->execute();
+        $updateStmt->close();
+    }
+    
+    return $result;
 }
 
 log_message("Received request.");
 
 header('Content-Type: application/json');
 
-// Initialize or clear conversation history if needed
-if (!isset($_SESSION['conversation_history']) || isset($_GET['clear_history'])) {
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['error' => 'User not logged in']);
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
+
+// Initialize database connection
+$database = new Database();
+$conn = $database->getConnection();
+
+// Handle clear history request
+if (isset($_GET['clear_history'])) {
     $_SESSION['conversation_history'] = [];
-    if (isset($_GET['clear_history'])) {
-        echo json_encode(['reply' => 'Riwayat percakapan telah dihapus.']);
-        exit;
-    }
+    $_SESSION['conversation_id'] = null;
+    echo json_encode(['reply' => 'Riwayat percakapan telah dihapus.']);
+    exit;
+}
+
+// Initialize or clear conversation history if needed
+if (!isset($_SESSION['conversation_history'])) {
+    $_SESSION['conversation_history'] = [];
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -28,11 +82,23 @@ if (!$input) {
 $userMessage = $input['message'];
 log_message("User message: " . $userMessage);
 
-
 if (empty($userMessage)) {
     log_message("Error: Empty message.");
     echo json_encode(['reply' => 'Please enter a message.']);
     exit;
+}
+
+// Generate conversation ID if this is the first message
+if (!isset($_SESSION['conversation_id']) || empty($_SESSION['conversation_id'])) {
+    $_SESSION['conversation_id'] = generateConversationId();
+    log_message("Generated new conversation ID: " . $_SESSION['conversation_id']);
+}
+
+$conversationId = $_SESSION['conversation_id'];
+
+// Save user message to database
+if (!saveMessageToDatabase($conn, $conversationId, $userId, 'user', $userMessage)) {
+    log_message("Failed to save user message to database");
 }
 
 // Base64 encode the history to safely pass it as a command line argument
@@ -68,6 +134,17 @@ if (count($_SESSION['conversation_history']) > 5) {
     $_SESSION['conversation_history'] = array_slice($_SESSION['conversation_history'], -5);
 }
 
-echo json_encode(['reply' => $clean_reply]);
+// Save bot reply to database
+if (!saveMessageToDatabase($conn, $conversationId, $userId, 'bot', $clean_reply)) {
+    log_message("Failed to save bot message to database");
+}
+
+// Close database connection
+$conn->close();
+
+echo json_encode([
+    'reply' => $clean_reply,
+    'conversation_id' => $conversationId
+]);
 
 ?>

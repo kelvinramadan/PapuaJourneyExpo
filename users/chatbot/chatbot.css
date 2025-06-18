@@ -330,6 +330,39 @@ body {
     }
 }
 
+/* Conversation Info Styling */
+.conversation-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.conversation-info span {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+
+.new-conversation-btn {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.new-conversation-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
 /* Scrollbar Styling */
 .chat-box::-webkit-scrollbar {
     width: 6px;

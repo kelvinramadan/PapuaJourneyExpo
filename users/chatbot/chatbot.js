@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     let isTyping = false;
+    let currentConversationId = null;
+
+    // Load conversation history on page load
+    loadConversationHistory();
 
     // Listen for modal state changes
     window.addEventListener('modalStateChanged', (e) => {
@@ -67,6 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add bot response
             if (data.reply) {
                 appendMessage(data.reply, 'bot');
+                // Update current conversation ID if returned
+                if (data.conversation_id) {
+                    currentConversationId = data.conversation_id;
+                }
             } else {
                 appendMessage('Maaf, saya tidak dapat memahami pertanyaan Anda. Coba tanyakan tentang wisata, kuliner, atau budaya Papua.', 'bot');
             }
@@ -285,4 +293,88 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload();
         }
     }
+
+    // Function to load conversation history
+    function loadConversationHistory() {
+        fetch('load_chat_history.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.messages && data.messages.length > 0) {
+                    // Remove welcome message if we have history
+                    const welcomeMessage = chatBox.querySelector('.welcome-message');
+                    if (welcomeMessage) {
+                        welcomeMessage.remove();
+                    }
+
+                    // Display all messages from history
+                    data.messages.forEach(msg => {
+                        appendMessage(msg.message, msg.type);
+                    });
+
+                    // Update current conversation ID
+                    currentConversationId = data.conversation_id;
+                    
+                    // Show conversation info if available
+                    if (data.conversation_id) {
+                        showConversationInfo(data.conversation_id, data.total_messages);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading conversation history:', error);
+            });
+    }
+
+    // Function to start a new conversation
+    window.startNewConversation = function() {
+        if (confirm('Apakah Anda yakin ingin memulai percakapan baru?')) {
+            fetch('chatbot_process.php?clear_history=1')
+                .then(response => response.json())
+                .then(() => {
+                    currentConversationId = null;
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error starting new conversation:', error);
+                });
+        }
+    };
+
+    // Function to show conversation info
+    function showConversationInfo(conversationId, messageCount) {
+        const existingInfo = document.querySelector('.conversation-info');
+        if (existingInfo) {
+            existingInfo.remove();
+        }
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'conversation-info';
+        infoDiv.innerHTML = `
+            <span>ID Percakapan: ${conversationId.substring(0, 8)}...</span>
+            <span>Jumlah pesan: ${messageCount}</span>
+            <button onclick="startNewConversation()" class="new-conversation-btn">
+                Percakapan Baru
+            </button>
+        `;
+
+        const chatHeader = document.querySelector('.chat-header-content');
+        if (chatHeader) {
+            chatHeader.appendChild(infoDiv);
+        }
+    }
+
+    // Function to load conversation list (for future use)
+    window.loadConversationList = function() {
+        fetch('load_chat_history.php?list_conversations=1')
+            .then(response => response.json())
+            .then(data => {
+                if (data.conversations) {
+                    console.log('Available conversations:', data.conversations);
+                    // TODO: Display conversation list in UI
+                }
+            })
+            .catch(error => {
+                console.error('Error loading conversation list:', error);
+            });
+    };
 });
