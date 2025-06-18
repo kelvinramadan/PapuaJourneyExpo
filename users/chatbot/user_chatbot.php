@@ -21,9 +21,11 @@ $user_email = $_SESSION['user_email'];
     <title>AI Assistant - Omaki Platform</title>
     <link rel="stylesheet" href="chatbot.css">
     <style>
-        /* Override navbar's body padding for chatbot page */
-        body {
-            padding-top: 0 !important;
+        /* Ensure html and body take full height */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
