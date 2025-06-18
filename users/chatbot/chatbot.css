@@ -349,15 +349,15 @@ body {
 }
 
 .chat-messages {
-    max-width: 768px;
-    margin: 0 auto;
-    padding: 24px 16px 32px;
+    width: 100%;
+    padding: 24px 32px 32px;
 }
 
 /* Welcome Message */
 .welcome-message {
     text-align: center;
-    padding: 48px 24px;
+    padding: 48px 32px;
+    width: 100%;
 }
 
 .welcome-message .bot-avatar {
@@ -427,7 +427,7 @@ body {
 
 .message-content {
     flex: 1;
-    max-width: 85%;
+    max-width: 70%;
 }
 
 .message-bubble {
@@ -525,9 +525,8 @@ body {
 }
 
 .chat-input-container {
-    max-width: 768px;
-    margin: 0 auto;
-    padding: 16px;
+    width: 100%;
+    padding: 16px 32px;
 }
 
 .input-group {
@@ -674,7 +673,7 @@ body {
     }
     
     .chat-messages {
-        padding: 16px;
+        padding: 16px 20px;
     }
     
     .message-content {
