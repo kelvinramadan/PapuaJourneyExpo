@@ -4,9 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
     let isTyping = false;
 
+    // Listen for modal state changes
+    window.addEventListener('modalStateChanged', (e) => {
+        console.log('Modal state changed:', e.detail.isOpen);
+    });
+
     // Event listeners
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
+        // Check if any modal is open using global flag
+        if (window.isModalOpen) return; // Don't process if modal is open
+        
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
@@ -248,8 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add some helpful keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-        // Focus input when typing (except when in input already)
-        if (e.target !== userInput && e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        // Check if any modal is open using global flag
+        if (window.isModalOpen) return; // Don't process keyboard shortcuts if modal is open
+        
+        // Focus input when typing (except when in input already or in other form fields)
+        const isInFormField = e.target.tagName === 'INPUT' || 
+                            e.target.tagName === 'TEXTAREA' || 
+                            e.target.tagName === 'SELECT';
+        
+        if (!isInFormField && e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
             userInput.focus();
         }
         

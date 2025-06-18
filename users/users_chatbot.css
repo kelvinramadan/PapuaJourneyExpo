@@ -8,11 +8,12 @@ body {
     line-height: 1.6;
 }
 
-.container {
+/* Main Container - renamed to avoid conflict with navbar */
+.chat-main-container {
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem 1rem;
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 80px); /* Account for fixed navbar */
 }
 
 /* Chat Header */
@@ -114,7 +115,7 @@ body {
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.user-avatar {
+.message-container .user-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;

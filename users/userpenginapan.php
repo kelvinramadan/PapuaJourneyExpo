@@ -133,7 +133,7 @@ $database->closeConnection();
             color: #333;
         }
 
-        .header {
+        .page-header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -142,13 +142,13 @@ $database->closeConnection();
             color: white;
         }
 
-        .header h1 {
+        .page-header h1 {
             font-size: 3rem;
             margin-bottom: 10px;
             font-weight: bold;
         }
 
-        .header p {
+        .page-header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
@@ -594,7 +594,7 @@ $database->closeConnection();
                 flex-direction: column;
             }
 
-            .header h1 {
+            .page-header h1 {
                 font-size: 2rem;
             }
 
@@ -610,8 +610,8 @@ $database->closeConnection();
 </head>
 <body>
     <?php include 'navbar.php'; ?>
-    <!-- Header -->
-    <div class="header">
+    <!-- Page Header -->
+    <div class="page-header">
         <h1>🏨 Penginapan Papua</h1>
         <p>Temukan penginapan terbaik untuk petualangan Anda di tanah surga Indonesia</p>
     </div>
@@ -1013,11 +1013,11 @@ $database->closeConnection();
     <style>
         /* Perbaikan untuk mobile */
         @media (max-width: 576px) {
-            .header h1 {
+            .page-header h1 {
                 font-size: 1.8rem;
             }
             
-            .header p {
+            .page-header p {
                 font-size: 1rem;
             }
             
