@@ -7,7 +7,7 @@ if (!isset($_SESSION)) {
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
@@ -551,7 +551,7 @@ mysqli_close($db);
     </style>
 </head>
 <body>
-    <?php include 'navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
     
     <div class="main-content">
         <div class="container">
@@ -584,7 +584,7 @@ mysqli_close($db);
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $wisata['id']; ?>'">
                                 <div class="article-image">
                                     <?php if ($wisata['photo']): ?>
-                                        <img src="../uploads/<?php echo htmlspecialchars($wisata['photo']); ?>" 
+                                        <img src="../../uploads/<?php echo htmlspecialchars($wisata['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($wisata['judul']); ?>">
                                     <?php else: ?>
                                         <div class="placeholder-image">
@@ -639,7 +639,7 @@ mysqli_close($db);
                 <div class="article-detail">
                     <div class="article-header">
                         <?php if ($wisata_detail['photo']): ?>
-                            <img src="../uploads/<?php echo htmlspecialchars($wisata_detail['photo']); ?>" 
+                            <img src="../../uploads/<?php echo htmlspecialchars($wisata_detail['photo']); ?>" 
                                  alt="<?php echo htmlspecialchars($wisata_detail['judul']); ?>">
                         <?php else: ?>
                             <div class="placeholder-image" style="height: 400px;">

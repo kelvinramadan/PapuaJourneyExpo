@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in and is a regular user
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'user') {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
@@ -19,10 +19,10 @@ $user_email = $_SESSION['user_email'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant - Omaki Platform</title>
-    <link rel="stylesheet" href="users_chatbot.css">
+    <link rel="stylesheet" href="chatbot.css">
 </head>
 <body>
-    <?php include 'navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
     
     <div class="chat-main-container">
         <div class="chat-header">
@@ -82,6 +82,6 @@ $user_email = $_SESSION['user_email'];
         </div>
     </div>
     
-    <script src="users_chatbot.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 </html>

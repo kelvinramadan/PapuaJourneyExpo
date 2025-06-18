@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['user_email'] = $row['email'];
                     $_SESSION['user_name'] = $row['full_name'];
                     $_SESSION['user_type'] = 'user';
-                    header('Location: users/user_dashboard.php');
+                    header('Location: users/dashboard/user_dashboard.php');
                     exit();
                 } else {
                     // Enhanced status checking for UMKM

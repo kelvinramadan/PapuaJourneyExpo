@@ -3,7 +3,7 @@ session_start(); // Start the session to store conversation history
 
 // Basic logging function
 function log_message($message) {
-    file_put_contents('chatbot_debug.log', date('Y-m-d H:i:s') . ' - ' . $message . "\n", FILE_APPEND);
+    file_put_contents('users_chatbot_debug.log', date('Y-m-d H:i:s') . ' - ' . $message . "\n", FILE_APPEND);
 }
 
 log_message("Received request.");
@@ -42,9 +42,10 @@ $history_b64 = base64_encode($history_json);
 $escaped_message = escapeshellarg($userMessage);
 $escaped_history = escapeshellarg($history_b64);
 
-$command = "python " . __DIR__ . "/rag_py/rag_query.py " . $escaped_message . " " . $escaped_history;
+// Update path to point to rag_py folder in chatbot directory
+$command = "python " . __DIR__ . "/chatbot/rag_py/rag_query.py " . $escaped_message . " " . $escaped_history;
 // Redirect stderr to stdout to capture Python errors
-$command .= " 2>&1"; 
+$command .= " 2>&1";
 
 $reply = shell_exec($command);
 

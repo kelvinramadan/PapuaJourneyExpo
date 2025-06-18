@@ -6,29 +6,27 @@ if (!isset($_SESSION)) {
 
 // Determine base path based on current directory
 $current_dir = dirname($_SERVER['PHP_SELF']);
-$in_chatbot = strpos($current_dir, '/chatbot') !== false;
-$in_users = strpos($current_dir, '/users') !== false && !$in_chatbot;
+$in_dashboard = strpos($current_dir, '/users/dashboard') !== false;
+$in_wisata = strpos($current_dir, '/users/wisata') !== false;
+$in_penginapan = strpos($current_dir, '/users/penginapan') !== false;
+$in_chatbot = strpos($current_dir, '/users/chatbot') !== false;
+$in_components = strpos($current_dir, '/users/components') !== false;
 
 // Set up path prefixes based on location
-if ($in_chatbot) {
+if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components) {
+    // We're in a subfolder within users
     $base_path = '../../';
     $users_path = '../';
     $config_path = '../../config/';
     $uploads_path = '../../uploads/';
     $logout_path = '../../logout.php';
-} elseif ($in_users) {
+} else {
+    // Default paths if navbar is included from root or users folder
     $base_path = '../';
     $users_path = '';
     $config_path = '../config/';
     $uploads_path = '../uploads/';
     $logout_path = '../logout.php';
-} else {
-    // Default paths if navbar is included from root
-    $base_path = '';
-    $users_path = 'users/';
-    $config_path = 'config/';
-    $uploads_path = 'uploads/';
-    $logout_path = 'logout.php';
 }
 
 // Pastikan user sudah login
@@ -502,16 +500,16 @@ body {
         </div>
         
         <div class="nav-links">
-            <a href="<?php echo $users_path; ?>user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
+            <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
                 🏠 Home
             </a>
-            <a href="<?php echo $users_path; ?>userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
+            <a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
                 🏝️ Wisata
             </a>    
-            <a href="<?php echo $users_path; ?>userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
+            <a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
                 🏨 Penginapan
             </a>
-            <a href="<?php echo $users_path; ?>users_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'users_chatbot.php' || basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot ? 'active' : ''; ?>">
+            <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot ? 'active' : ''; ?>">
                 🤖 AI Assistant
             </a>
         </div>
@@ -576,7 +574,7 @@ body {
     <div class="modal-content">
         <span class="close" onclick="closeModal('photoModal')">&times;</span>
         <h3>Upload Foto Profil</h3>
-        <form method="POST" enctype="multipart/form-data" action="<?php echo $users_path; ?>user_dashboard.php">
+        <form method="POST" enctype="multipart/form-data" action="<?php echo $users_path; ?>dashboard/user_dashboard.php">
             <div class="form-group">
                 <label for="profile_photo">Pilih Foto:</label>
                 <input type="file" name="profile_photo" id="profile_photo" accept="image/*" required>
@@ -593,7 +591,7 @@ body {
     <div class="modal-content">
         <span class="close" onclick="closeModal('profileModal')">&times;</span>
         <h3>Edit Profil</h3>
-        <form method="POST" action="<?php echo $users_path; ?>user_dashboard.php">
+        <form method="POST" action="<?php echo $users_path; ?>dashboard/user_dashboard.php">
             <div class="form-group">
                 <label for="full_name">Nama Lengkap:</label>
                 <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($user_data['full_name'] ?? ''); ?>" required>
@@ -621,7 +619,7 @@ body {
     <div class="modal-content">
         <span class="close" onclick="closeModal('passwordModal')">&times;</span>
         <h3>Ubah Password</h3>
-        <form method="POST" action="<?php echo $users_path; ?>user_dashboard.php">
+        <form method="POST" action="<?php echo $users_path; ?>dashboard/user_dashboard.php">
             <div class="form-group">
                 <label for="current_password">Password Lama:</label>
                 <input type="password" name="current_password" id="current_password" required>

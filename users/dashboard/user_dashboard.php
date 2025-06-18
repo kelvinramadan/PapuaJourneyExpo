@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in and is a regular user
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'user') {
-    header('Location: ../login.php');
+    header('Location: ../../login.php');
     exit();
 }
 
@@ -12,7 +12,7 @@ $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 $user_email = $_SESSION['user_email'];
 
-require_once '../config/database.php';
+require_once '../../config/database.php';
 
 $message = '';
 $error_message = '';
@@ -303,7 +303,7 @@ function truncateText($text, $length) {
     <link rel="stylesheet" href="userdashboard.css">
 </head>
 <body>
-    <?php include 'navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
 
     <div class="container">
         <?php if ($message): ?>
@@ -379,7 +379,7 @@ function truncateText($text, $length) {
                         <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $artikel['id']; ?>'">
                             <div class="article-image">
                                 <?php if ($artikel['gambar']): ?>
-                                    <img src="../uploads/artikel_images/<?php echo htmlspecialchars($artikel['gambar']); ?>" 
+                                    <img src="../../uploads/artikel_images/<?php echo htmlspecialchars($artikel['gambar']); ?>" 
                                          alt="<?php echo htmlspecialchars($artikel['judul']); ?>">
                                 <?php else: ?>
                                     <div class="placeholder-image">
@@ -410,7 +410,7 @@ function truncateText($text, $length) {
                                 
                                 <div class="card-umkm">
                                     <?php if ($artikel['umkm_image']): ?>
-                                        <img src="../uploads/profile_images/<?php echo htmlspecialchars($artikel['umkm_image']); ?>" 
+                                        <img src="../../uploads/profile_images/<?php echo htmlspecialchars($artikel['umkm_image']); ?>" 
                                              alt="<?php echo htmlspecialchars($artikel['business_name']); ?>" class="umkm-avatar">
                                     <?php else: ?>
                                         <div class="umkm-avatar" style="background: #D2691E; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">
@@ -478,7 +478,7 @@ function truncateText($text, $length) {
             <div class="article-detail">
                 <div class="article-header">
                     <?php if ($article['gambar']): ?>
-                        <img src="../uploads/artikel_images/<?php echo htmlspecialchars($article['gambar']); ?>" 
+                        <img src="../../uploads/artikel_images/<?php echo htmlspecialchars($article['gambar']); ?>" 
                              alt="<?php echo htmlspecialchars($article['judul']); ?>">
                     <?php else: ?>
                         <div class="placeholder-image">
@@ -517,7 +517,7 @@ function truncateText($text, $length) {
                     <div class="umkm-section">
                         <div class="umkm-header">
                             <?php if ($article['umkm_image']): ?>
-                                <img src="../uploads/profile_images/<?php echo htmlspecialchars($article['umkm_image']); ?>" 
+                                <img src="../../uploads/profile_images/<?php echo htmlspecialchars($article['umkm_image']); ?>" 
                                      alt="<?php echo htmlspecialchars($article['business_name']); ?>" class="umkm-avatar">
                             <?php else: ?>
                                 <div class="umkm-avatar-placeholder">
