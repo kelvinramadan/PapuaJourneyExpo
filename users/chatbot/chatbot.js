@@ -15,6 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentConversationId = null;
     let conversations = [];
 
+    // Set navbar height CSS variable
+    function updateNavbarHeight() {
+        const navbar = document.querySelector('.navbar-header');
+        if (navbar) {
+            const navbarHeight = navbar.offsetHeight;
+            document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
+        }
+    }
+    
+    // Update navbar height on load and resize
+    updateNavbarHeight();
+    window.addEventListener('resize', updateNavbarHeight);
+
     // Initialize sidebar state from localStorage
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     if (sidebarCollapsed && window.innerWidth > 768) {

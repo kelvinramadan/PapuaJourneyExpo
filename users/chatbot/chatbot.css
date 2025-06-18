@@ -15,9 +15,15 @@ body {
 /* Main Wrapper */
 .chat-app-wrapper {
     display: flex;
-    height: calc(100vh - 60px); /* Adjust for navbar height */
-    position: relative;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: var(--navbar-height, 80px); /* Dynamic navbar height */
     background-color: #ffffff;
+    box-sizing: border-box;
 }
 
 /* Sidebar Backdrop for Mobile */
@@ -634,7 +640,7 @@ body {
     .conversation-sidebar {
         position: fixed;
         left: 0;
-        top: 60px; /* Navbar height */
+        top: var(--navbar-height, 80px); /* Dynamic navbar height */
         bottom: 0;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
