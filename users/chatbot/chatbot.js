@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Show typing indicator
         showTypingIndicator();        // Send request
-        fetch('users_chatbot_process.php', {
+        fetch('chatbot_process.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
