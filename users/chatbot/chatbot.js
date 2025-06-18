@@ -4,13 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
     const conversationList = document.getElementById('conversation-list');
     const newChatBtn = document.getElementById('new-chat-btn');
-    const sidebarToggle = document.getElementById('sidebar-toggle');
     const conversationSidebar = document.getElementById('conversation-sidebar');
     const conversationSearch = document.getElementById('conversation-search');
+    const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
     
     let isTyping = false;
     let currentConversationId = null;
     let conversations = [];
+
+    // Initialize sidebar state from localStorage
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (sidebarCollapsed && window.innerWidth > 768) {
+        conversationSidebar.classList.add('collapsed');
+    }
 
     // Initialize
     loadConversationList();
@@ -18,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event listeners
     newChatBtn.addEventListener('click', startNewConversation);
-    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
+    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+    sidebarBackdrop.addEventListener('click', closeMobileSidebar);
     conversationSearch.addEventListener('input', filterConversations);
 
     // Listen for modal state changes
@@ -38,10 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Auto-resize input
+    // Auto-resize textarea
     userInput.addEventListener('input', () => {
         userInput.style.height = 'auto';
-        userInput.style.height = userInput.scrollHeight + 'px';
+        userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+    });
+    
+    // Handle Enter key in textarea (without Shift)
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
 
     // Quick message function for suggestion buttons
@@ -151,10 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Smooth scroll to bottom
         setTimeout(() => {
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
+            const messagesContainer = document.querySelector('.chat-messages-container');
+            if (messagesContainer) {
+                messagesContainer.scrollTo({
+                    top: messagesContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
         }, 100);
     }
 
@@ -250,10 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.appendChild(messageContainer);
         
         // Scroll to bottom
-        chatBox.scrollTo({
-            top: chatBox.scrollHeight,
-            behavior: 'smooth'
-        });
+        const messagesContainer = document.querySelector('.chat-messages-container');
+        if (messagesContainer) {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
     }
 
     function hideTypingIndicator() {
@@ -367,25 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to show conversation info
     function showConversationInfo(conversationId, messageCount) {
-        const existingInfo = document.querySelector('.conversation-info');
-        if (existingInfo) {
-            existingInfo.remove();
-        }
-
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'conversation-info';
-        infoDiv.innerHTML = `
-            <span>ID Percakapan: ${conversationId.substring(0, 8)}...</span>
-            <span>Jumlah pesan: ${messageCount}</span>
-            <button onclick="startNewConversation()" class="new-conversation-btn">
-                Percakapan Baru
-            </button>
-        `;
-
-        const chatHeader = document.querySelector('.chat-header-content');
-        if (chatHeader) {
-            chatHeader.appendChild(infoDiv);
-        }
+        // Info is now integrated in the UI, no need to add dynamically
     }
 
     // Function to load conversation list
@@ -456,6 +462,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.conversation-item').forEach(item => {
                     item.classList.toggle('active', item.dataset.conversationId === conversationId);
                 });
+                
+                // Close mobile sidebar after selection
+                if (window.innerWidth <= 768) {
+                    closeMobileSidebar();
+                }
             })
             .catch(error => {
                 console.error('Error switching conversation:', error);
@@ -495,31 +506,53 @@ document.addEventListener('DOMContentLoaded', () => {
         displayConversationList(filtered);
     }
     
+    // Toggle sidebar collapse on desktop
+    function toggleSidebarCollapse() {
+        conversationSidebar.classList.toggle('collapsed');
+        const isCollapsed = conversationSidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+    }
+    
     // Toggle sidebar on mobile
-    function toggleSidebar() {
+    function toggleMobileSidebar() {
         conversationSidebar.classList.toggle('active');
+        sidebarBackdrop.classList.toggle('active');
+    }
+    
+    // Close mobile sidebar
+    function closeMobileSidebar() {
+        conversationSidebar.classList.remove('active');
+        sidebarBackdrop.classList.remove('active');
     }
     
     // Clear chat display
     function clearChatDisplay() {
-        chatBox.innerHTML = `
-            <div class="welcome-message">
-                <div class="bot-avatar">🤖</div>
-                <div class="message-content">
-                    <div class="message-bubble bot-message">
-                        <p>Selamat datang di AI Assistant Papua! 👋</p>
-                        <p>Saya siap membantu Anda menjelajahi keindahan Papua. Anda bisa bertanya tentang:</p>
-                        <ul>
-                            <li>🏝️ Destinasi wisata menarik</li>
-                            <li>🍽️ Kuliner khas Papua</li>
-                            <li>🎭 Budaya dan tradisi lokal</li>
-                            <li>🚗 Transportasi dan akomodasi</li>
-                        </ul>
-                        <p>Silakan ajukan pertanyaan Anda!</p>
+        chatBox.innerHTML = '';
+        showWelcomeMessage();
+    }
+    
+    // Show welcome message
+    function showWelcomeMessage() {
+        if (!chatBox.querySelector('.welcome-message')) {
+            chatBox.innerHTML = `
+                <div class="welcome-message">
+                    <div class="bot-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-bubble bot-message">
+                            <p>Selamat datang di AI Assistant Papua! 👋</p>
+                            <p>Saya siap membantu Anda menjelajahi keindahan Papua. Anda bisa bertanya tentang:</p>
+                            <ul>
+                                <li>🏝️ Destinasi wisata menarik</li>
+                                <li>🍽️ Kuliner khas Papua</li>
+                                <li>🎭 Budaya dan tradisi lokal</li>
+                                <li>🚗 Transportasi dan akomodasi</li>
+                            </ul>
+                            <p>Silakan ajukan pertanyaan Anda!</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     }
     
     // Helper functions

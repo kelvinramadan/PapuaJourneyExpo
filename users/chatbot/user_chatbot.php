@@ -24,56 +24,61 @@ $user_email = $_SESSION['user_email'];
 <body>
     <?php include '../components/navbar.php'; ?>
     
-    <div class="chat-app-container">
+    <div class="chat-app-wrapper">
+        <!-- Backdrop for mobile sidebar -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+        
         <!-- Conversation Sidebar -->
-        <div class="conversation-sidebar" id="conversation-sidebar">
-            <div class="sidebar-header">
-                <h3>Conversations</h3>
-                <button class="new-chat-btn" id="new-chat-btn" title="Start new conversation">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="conversation-search">
-                <input type="text" id="conversation-search" placeholder="Search conversations..." />
-            </div>
-            <div class="conversation-list" id="conversation-list">
-                <!-- Conversations will be loaded here -->
-                <div class="loading-conversations">
-                    <div class="spinner"></div>
-                    <span>Loading conversations...</span>
+        <aside class="conversation-sidebar" id="conversation-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Toggle sidebar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="sidebar-title">
+                        <h3>Chat History</h3>
+                    </div>
+                    <button class="new-chat-btn" id="new-chat-btn" title="New chat">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="conversation-search">
+                    <input type="text" id="conversation-search" placeholder="Search chats..." />
+                </div>
+                <div class="conversation-list-wrapper">
+                    <div class="conversation-list" id="conversation-list">
+                        <!-- Conversations will be loaded here -->
+                        <div class="loading-conversations">
+                            <div class="spinner"></div>
+                            <span>Loading chats...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Toggle Button for Mobile -->
-        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle conversation list">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        </button>
+        </aside>
         
         <!-- Main Chat Area -->
-        <div class="chat-main-container">
-            <div class="chat-header">
-                <div class="chat-header-content">
-                    <div class="chat-title">
-                        <h2>🤖 AI Assistant Papua</h2>
-                        <p>Tanyakan apapun tentang wisata, kuliner, dan budaya Papua</p>
-                    </div>
-                    <div class="chat-status">
-                        <div class="status-indicator online"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
+        <main class="chat-main">
+            <!-- Mobile Header with Menu Button -->
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h2>AI Assistant Papua</h2>
             </div>
             
-            <div class="chat-container">
-                <div class="chat-box" id="chat-box">
+            <!-- Chat Messages Area -->
+            <div class="chat-messages-container">
+                <div class="chat-messages" id="chat-box">
                 <div class="welcome-message">
                     <div class="bot-avatar">
                         🤖
@@ -94,27 +99,29 @@ $user_email = $_SESSION['user_email'];
                 </div>
             </div>
             
-            <div class="chat-input-container">
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Ketik pertanyaan Anda tentang Papua..." autocomplete="off">
-                    <button id="send-btn" type="button">
-                        <span class="send-icon">📤</span>
-                    </button>
-                </div>
-                <div class="quick-suggestions">
-                    <button class="suggestion-btn" onclick="sendQuickMessage('Apa saja tempat wisata populer di Jayapura?')">
-                        🏝️ Wisata Jayapura
-                    </button>
-                    <button class="suggestion-btn" onclick="sendQuickMessage('Rekomendasi kuliner khas Papua')">
-                        🍽️ Kuliner Papua
-                    </button>
-                    <button class="suggestion-btn" onclick="sendQuickMessage('Bagaimana transportasi di Papua?')">
-                        🚗 Transportasi
-                    </button>
+            <!-- Chat Input Area -->
+            <div class="chat-input-wrapper">
+                <div class="chat-input-container">
+                    <div class="input-group">
+                        <textarea 
+                            id="user-input" 
+                            placeholder="Ketik pertanyaan Anda tentang Papua..." 
+                            autocomplete="off"
+                            rows="1"
+                        ></textarea>
+                        <button id="send-btn" type="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="input-helper-text">
+                        <span>Tanyakan tentang wisata, kuliner, dan budaya Papua</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </main>
     </div>
     
     <script src="chatbot.js"></script>
