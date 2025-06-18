@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_address = trim($_POST['address']);
         
         if (empty($new_name) || empty($new_email)) {
-            $error_message = 'Nama dan email harus diisi!';
+            $_SESSION['error_message'] = 'Nama dan email harus diisi!';
         } else {
             // Check if email already exists (excluding current user)
             $check_stmt = $db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $check_result = $check_stmt->get_result();
             
             if ($check_result->num_rows > 0) {
-                $error_message = 'Email sudah digunakan oleh user lain!';
+                $_SESSION['error_message'] = 'Email sudah digunakan oleh user lain!';
             } else {
                 $update_stmt = $db->prepare("UPDATE users SET full_name = ?, email = ?, phone = ?, address = ? WHERE id = ?");
                 $update_stmt->bind_param("ssssi", $new_name, $new_email, $new_phone, $new_address, $user_id);
@@ -170,13 +170,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($update_stmt->execute()) {
                     $_SESSION['user_name'] = $new_name;
                     $_SESSION['user_email'] = $new_email;
-                    $user_data['full_name'] = $new_name;
-                    $user_data['email'] = $new_email;
-                    $user_data['phone'] = $new_phone;
-                    $user_data['address'] = $new_address;
-                    $message = 'Profil berhasil diperbarui!';
+                    $_SESSION['message'] = 'Profil berhasil diperbarui!';
+                    // Redirect to refresh the page and show the message
+                    header('Location: user_dashboard.php');
+                    exit();
                 } else {
                     $error_message = 'Gagal memperbarui profil!';
+                    $_SESSION['error_message'] = $error_message;
                 }
                 $update_stmt->close();
             }
@@ -191,11 +191,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $confirm_password = $_POST['confirm_password'];
         
         if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-            $error_message = 'Semua field password harus diisi!';
+            $_SESSION['error_message'] = 'Semua field password harus diisi!';
         } elseif ($new_password !== $confirm_password) {
-            $error_message = 'Konfirmasi password tidak cocok!';
+            $_SESSION['error_message'] = 'Konfirmasi password tidak cocok!';
         } elseif (strlen($new_password) < 6) {
-            $error_message = 'Password baru minimal 6 karakter!';
+            $_SESSION['error_message'] = 'Password baru minimal 6 karakter!';
         } else {
             // Verify current password
             $pass_stmt = $db->prepare("SELECT password FROM users WHERE id = ?");
@@ -210,13 +210,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $update_pass_stmt->bind_param("si", $hashed_password, $user_id);
                 
                 if ($update_pass_stmt->execute()) {
-                    $message = 'Password berhasil diubah!';
+                    $_SESSION['message'] = 'Password berhasil diubah!';
+                    // Redirect to refresh the page and show the message
+                    header('Location: user_dashboard.php');
+                    exit();
                 } else {
                     $error_message = 'Gagal mengubah password!';
+                    $_SESSION['error_message'] = $error_message;
                 }
                 $update_pass_stmt->close();
             } else {
-                $error_message = 'Password lama tidak benar!';
+                $_SESSION['error_message'] = 'Password lama tidak benar!';
             }
             $pass_stmt->close();
         }
@@ -232,11 +236,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file_size = $_FILES['profile_photo']['size'];
             
             if (!in_array($file_type, $allowed_types)) {
-                $error_message = 'Format file tidak didukung! Gunakan JPG, PNG, atau GIF.';
+                $_SESSION['error_message'] = 'Format file tidak didukung! Gunakan JPG, PNG, atau GIF.';
             } elseif ($file_size > $max_size) {
-                $error_message = 'Ukuran file terlalu besar! Maksimal 5MB.';
+                $_SESSION['error_message'] = 'Ukuran file terlalu besar! Maksimal 5MB.';
             } else {
-                $upload_dir = '../uploads/profile_images/';
+                $upload_dir = '../../uploads/profile_images/';
                 if (!file_exists($upload_dir)) {
                     mkdir($upload_dir, 0777, true);
                 }
@@ -261,16 +265,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($photo_stmt->execute()) {
                         $user_data['profile_image'] = $new_filename;
                         $message = 'Foto profil berhasil diperbarui!';
+                        $_SESSION['message'] = $message;
+                        // Redirect to refresh the page and show the message
+                        header('Location: user_dashboard.php');
+                        exit();
                     } else {
                         $error_message = 'Gagal menyimpan foto profil!';
+                        $_SESSION['error_message'] = $error_message;
                     }
                     $photo_stmt->close();
                 } else {
-                    $error_message = 'Gagal mengupload foto!';
+                    $_SESSION['error_message'] = 'Gagal mengupload foto!';
                 }
             }
         } else {
-            $error_message = 'Pilih file foto terlebih dahulu!';
+            $_SESSION['error_message'] = 'Pilih file foto terlebih dahulu!';
         }
     }
 }
@@ -306,14 +315,6 @@ function truncateText($text, $length) {
     <?php include '../components/navbar.php'; ?>
 
     <div class="container">
-        <?php if ($message): ?>
-            <div class="message success"><?php echo htmlspecialchars($message); ?></div>
-        <?php endif; ?>
-        
-        <?php if ($error_message): ?>
-            <div class="message error"><?php echo htmlspecialchars($error_message); ?></div>
-        <?php endif; ?>
-        
         <?php if ($view_mode === 'dashboard'): ?>
             <div class="welcome-section">
                 <h2>Selamat Datang, <?php echo htmlspecialchars($user_name); ?>!</h2>
@@ -602,121 +603,9 @@ function truncateText($text, $length) {
         <?php endif; ?>
     </div>
 
-    <!-- Photo Upload Modal -->
-    <div id="photoModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('photoModal')">&times;</span>
-            <h3>Upload Foto Profil</h3>
-            <form method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="profile_photo">Pilih Foto:</label>
-                    <input type="file" name="profile_photo" id="profile_photo" accept="image/*" required>
-                    <small>Format: JPG, PNG, GIF. Maksimal 5MB.</small>
-                </div>
-                <button type="submit" name="upload_photo" class="btn">Upload</button>
-                <button type="button" onclick="closeModal('photoModal')" class="btn btn-secondary">Batal</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Profile Edit Modal -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('profileModal')">&times;</span>
-            <h3>Edit Profil</h3>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="full_name">Nama Lengkap:</label>
-                    <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($user_data['full_name']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user_data['email']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Nomor Telepon:</label>
-                    <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($user_data['phone'] ?? ''); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="address">Alamat:</label>
-                    <textarea name="address" id="address" rows="3"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
-                </div>
-                <button type="submit" name="update_profile" class="btn">Simpan</button>
-                <button type="button" onclick="closeModal('profileModal')" class="btn btn-secondary">Batal</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Password Change Modal -->
-    <div id="passwordModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('passwordModal')">&times;</span>
-            <h3>Ubah Password</h3>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="current_password">Password Lama:</label>
-                    <input type="password" name="current_password" id="current_password" required>
-                </div>
-                <div class="form-group">
-                    <label for="new_password">Password Baru:</label>
-                    <input type="password" name="new_password" id="new_password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm_password">Konfirmasi Password Baru:</label>
-                    <input type="password" name="confirm_password" id="confirm_password" required>
-                </div>
-                <button type="submit" name="change_password" class="btn">Ubah Password</button>
-                <button type="button" onclick="closeModal('passwordModal')" class="btn btn-secondary">Batal</button>
-            </form>
-        </div>
-    </div>
-
     <script>
-        function toggleDropdown() {
-            const dropdown = document.getElementById('profileDropdown');
-            dropdown.classList.toggle('active');
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            // Close dropdown when opening modal
-            document.getElementById('profileDropdown').classList.remove('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('profileDropdown');
-            if (!dropdown.contains(event.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
-
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        }
-
-        // Close messages after 5 seconds
-        setTimeout(function() {
-            const messages = document.querySelectorAll('.message');
-            messages.forEach(message => {
-                message.style.opacity = '0';
-                message.style.transition = 'opacity 0.5s';
-                setTimeout(() => message.remove(), 500);
-            });
-        }, 5000);
-
         // Auto submit search form on Enter
-        document.querySelector('input[name="search"]').addEventListener('keypress', function(e) {
+        document.querySelector('input[name="search"]')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 this.form.submit();
             }

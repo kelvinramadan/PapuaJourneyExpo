@@ -700,4 +700,15 @@ window.onclick = function(event) {
         window.dispatchEvent(new CustomEvent('modalStateChanged', { detail: { isOpen: false } }));
     }
 }
+// Auto-hide success/error messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const messages = document.querySelectorAll('[style*="position: fixed"][style*="top: 90px"]');
+    messages.forEach(message => {
+        setTimeout(() => {
+            message.style.transition = 'opacity 0.5s';
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+        }, 5000);
+    });
+});
 </script>
