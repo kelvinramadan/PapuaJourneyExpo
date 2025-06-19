@@ -26,6 +26,39 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 $stmt->close();
 
+// Handle ticket booking
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_ticket'])) {
+    $artikel_id = intval($_POST['artikel_id']);
+    $jumlah_tiket = intval($_POST['jumlah_tiket']);
+    $tanggal_kunjungan = $_POST['tanggal_kunjungan'];
+    $catatan = trim($_POST['catatan']);
+    
+    // Get article price
+    $price_stmt = $db->prepare("SELECT harga FROM artikel WHERE id = ?");
+    $price_stmt->bind_param("i", $artikel_id);
+    $price_stmt->execute();
+    $price_result = $price_stmt->get_result();
+    $artikel_data = $price_result->fetch_assoc();
+    $price_stmt->close();
+    
+    if ($artikel_data && $jumlah_tiket > 0) {
+        $total_harga = $artikel_data['harga'] * $jumlah_tiket;
+        
+        // Insert booking
+        $booking_stmt = $db->prepare("INSERT INTO pemesanan_tiket (user_id, artikel_id, jumlah_tiket, total_harga, nama_pemesan, email_pemesan, phone_pemesan, tanggal_kunjungan, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $booking_stmt->bind_param("iiidsssss", $user_id, $artikel_id, $jumlah_tiket, $total_harga, $user_data['full_name'], $user_data['email'], $user_data['phone'], $tanggal_kunjungan, $catatan);
+        
+        if ($booking_stmt->execute()) {
+            $message = "Pemesanan tiket berhasil! Silakan tunggu konfirmasi dari admin.";
+        } else {
+            $error_message = "Gagal melakukan pemesanan. Silakan coba lagi.";
+        }
+        $booking_stmt->close();
+    } else {
+        $error_message = "Data tidak valid.";
+    }
+}
+
 // Get filters and search parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : '';
@@ -169,11 +202,130 @@ function truncateText($text, $length) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Wisatawan - Omaki Platform</title>
     <link rel="stylesheet" href="userdashboard.css">
+    <style>
+        .booking-form {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .booking-form h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .total-price {
+            background: #e8f4fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .total-price h4 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .btn-book {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .btn-book:hover {
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>
 
     <div class="container">
+        <?php if ($message): ?>
+            <div class="alert alert-success">
+                ✅ <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if ($error_message): ?>
+            <div class="alert alert-error">
+                ❌ <?php echo htmlspecialchars($error_message); ?>
+            </div>
+        <?php endif; ?>
+
         <?php if ($view_mode === 'dashboard'): ?>
             
             <!-- Filters Section -->
@@ -278,7 +430,7 @@ function truncateText($text, $length) {
                                 
                                 <div class="card-actions">
                                     <a href="?view=detail&id=<?php echo $artikel['id']; ?>" class="btn-detail">
-                                        📖 Lihat Selengkapnya
+                                        🎫 Pesan Tiket
                                     </a>
                                     <span class="card-date">
                                         <?php echo formatDate($artikel['created_at']); ?>
@@ -360,7 +512,7 @@ function truncateText($text, $length) {
                     <h1 class="article-title"><?php echo htmlspecialchars($article['judul']); ?></h1>
                     
                     <div class="article-meta">
-                        <div class="article-price"><?php echo formatPrice($article['harga']); ?></div>
+                        <div class="article-price"><?php echo formatPrice($article['harga']); ?> / tiket</div>
                         <div class="article-date">
                             📅 <?php echo formatDate($article['created_at']); ?>
                         </div>
@@ -368,6 +520,51 @@ function truncateText($text, $length) {
                     
                     <div class="article-description">
                         <?php echo nl2br(htmlspecialchars($article['deskripsi'])); ?>
+                    </div>
+                    
+                    <!-- Booking Form -->
+                    <div class="booking-form">
+                        <h3>🎫 Pesan Tiket</h3>
+                        <form method="POST" action="">
+                            <input type="hidden" name="artikel_id" value="<?php echo $article['id']; ?>">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nama_pemesan">Nama Pemesan</label>
+                                    <input type="text" id="nama_pemesan" value="<?php echo htmlspecialchars($user_data['full_name']); ?>" readonly>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email_pemesan">Email</label>
+                                    <input type="email" id="email_pemesan" value="<?php echo htmlspecialchars($user_data['email']); ?>" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="jumlah_tiket">Jumlah Tiket *</label>
+                                    <input type="number" name="jumlah_tiket" id="jumlah_tiket" min="1" max="10" value="1" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tanggal_kunjungan">Tanggal Kunjungan *</label>
+                                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="catatan">Catatan Tambahan</label>
+                                <textarea name="catatan" id="catatan" rows="3" placeholder="Catatan khusus untuk pemesanan Anda..."></textarea>
+                            </div>
+                            
+                            <div class="total-price">
+                                <h4>Total: <span id="total-amount"><?php echo formatPrice($article['harga']); ?></span></h4>
+                            </div>
+                            
+                            <button type="submit" name="book_ticket" class="btn-book">
+                                🎫 Pesan Tiket Sekarang
+                            </button>
+                        </form>
                     </div>
                     
                     <div class="umkm-section">
@@ -414,17 +611,6 @@ function truncateText($text, $length) {
                                 </div>
                             </div>
                             <?php endif; ?>
-                        </div>
-                        
-                        <div class="contact-actions">
-                            <a href="https://wa.me/62<?php echo ltrim($article['phone'], '0'); ?>?text=Halo,%20saya%20tertarik%20dengan%20<?php echo urlencode($article['judul']); ?>" 
-                               target="_blank" class="btn btn-primary">
-                                📱 Hubungi via WhatsApp
-                            </a>
-                            
-                            <a href="tel:<?php echo $article['phone']; ?>" class="btn btn-secondary">
-                                📞 Telepon Langsung
-                            </a>
                         </div>
                     </div>
                 </div>
