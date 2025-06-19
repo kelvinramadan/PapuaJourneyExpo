@@ -282,6 +282,7 @@ $wisata_list = mysqli_query($db, "SELECT * FROM wisata ORDER BY created_at DESC"
             <a href="adminwisata.php" class="btn active">🏞️ Admin Wisata</a>
             <a href="adminpenginapan.php" class="btn">🏨 Admin Penginapan</a>
             <a href="adminpemesanan.php" class="btn">🏨 Admin Pemesanan</a>
+            <a href="pesanpenginapan.php" class="btn">🏨 Admin Pemesanan</a>
         </nav>
 
         <div class="user-section">
