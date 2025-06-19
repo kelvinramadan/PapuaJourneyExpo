@@ -632,6 +632,19 @@ if (!file_exists($profile_image_path)) {
                 <span class="status-badge status-<?php echo $umkm_data['status']; ?>">
                     <?php echo ucfirst($umkm_data['status']); ?>
                 </span>
+
+                <div class="nav-links">
+                    <a href="umkm_dashboard.php" class="active">
+                        🏠 Home
+                    </a>
+                    <a href="umkm_pemesanan.php">
+                        🏝️ Pemesanan
+                    </a>    
+                    <a href="penginapan.php">
+                        🏨 Penginapan
+                    </a>
+                </div>
+
                 
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown" id="profileDropdown">

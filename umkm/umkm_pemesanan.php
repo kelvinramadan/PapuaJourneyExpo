@@ -93,7 +93,7 @@ function formatDate($date) {
     <link rel="stylesheet" href="umkm.css">
     <style>
         .pemesanan-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -139,7 +139,7 @@ function formatDate($date) {
             font-size: 0.9rem;
         }
         
-        .pemesanan-table {
+        .table-container {
             background: white;
             border-radius: 10px;
             overflow: hidden;
@@ -157,76 +157,84 @@ function formatDate($date) {
             color: #333;
         }
         
-        .pemesanan-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.3s;
+        .pemesanan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
         }
         
-        .pemesanan-item:hover {
+        .pemesanan-table th {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #5a6fd8;
+        }
+        
+        .pemesanan-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+        
+        .pemesanan-table tr:hover {
             background-color: #f8f9fa;
         }
         
-        .pemesanan-item:last-child {
+        .pemesanan-table tr:last-child td {
             border-bottom: none;
         }
         
-        .pemesanan-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .pemesanan-info {
-            flex: 1;
-        }
-        
-        .pemesanan-title {
-            font-size: 1.2rem;
+        .artikel-info {
             font-weight: bold;
             color: #333;
             margin-bottom: 0.5rem;
         }
         
-        .pemesanan-meta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #666;
+        .kategori-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        .pemesanan-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .detail-group {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-        }
-        
-        .detail-group h4 {
-            margin: 0 0 0.5rem 0;
+        .user-info {
             color: #333;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 500;
         }
         
-        .detail-group p {
-            margin: 0.25rem 0;
+        .pemesan-details {
+            font-size: 0.9rem;
             color: #666;
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+        
+        .tiket-info {
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .tanggal-kunjungan {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        .price-cell {
+            text-align: right;
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1rem;
         }
         
         .status-badge {
+            background: #d4edda;
+            color: #155724;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -234,14 +242,19 @@ function formatDate($date) {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: #d4edda;
-            color: #155724;
         }
         
-        .price-highlight {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #28a745;
+        .date-cell {
+            font-size: 0.9rem;
+            color: #666;
+            white-space: nowrap;
+        }
+        
+        .catatan-cell {
+            max-width: 200px;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
         }
         
         .empty-state {
@@ -281,17 +294,39 @@ function formatDate($date) {
             border-color: #667eea;
         }
         
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .pemesanan-table {
+                font-size: 0.9rem;
+            }
+            
+            .pemesanan-table th,
+            .pemesanan-table td {
+                padding: 0.75rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .pemesanan-container {
                 padding: 1rem;
             }
             
-            .pemesanan-header {
-                flex-direction: column;
+            .table-container {
+                overflow-x: auto;
             }
             
-            .pemesanan-details {
-                grid-template-columns: 1fr;
+            .pemesanan-table {
+                min-width: 800px;
+            }
+            
+            .pemesanan-table th,
+            .pemesanan-table td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .catatan-cell {
+                max-width: 150px;
             }
         }
     </style>
@@ -319,8 +354,8 @@ function formatDate($date) {
             </div>
         </div>
 
-        <!-- Pemesanan List -->
-        <div class="pemesanan-table">
+        <!-- Pemesanan Table -->
+        <div class="table-container">
             <div class="table-header">
                 <h3>📋 Daftar Pemesanan (<?php echo count($pemesanan_list); ?> dari <?php echo $total_pemesanan; ?>)</h3>
             </div>
@@ -332,48 +367,82 @@ function formatDate($date) {
                     <p>Pemesanan tiket dari pelanggan akan muncul di sini.</p>
                 </div>
             <?php else: ?>
-                <?php foreach ($pemesanan_list as $pemesanan): ?>
-                    <div class="pemesanan-item">
-                        <div class="pemesanan-header">
-                            <div class="pemesanan-info">
-                                <div class="pemesanan-title">
-                                    🎫 <?php echo htmlspecialchars($pemesanan['artikel_judul']); ?>
-                                </div>
-                                <div class="pemesanan-meta">
-                                    <span>📅 <?php echo formatDate($pemesanan['created_at']); ?></span>
-                                    <span>👤 <?php echo htmlspecialchars($pemesanan['user_name']); ?></span>
-                                    <span>🏷️ <?php echo ucfirst($pemesanan['kategori']); ?></span>
-                                </div>
-                            </div>
-                            <div class="status-badge">
-                                ✅ Berhasil Dipesan
-                            </div>
-                        </div>
-
-                        <div class="pemesanan-details">
-                            <div class="detail-group">
-                                <h4>📋 Detail Pemesanan</h4>
-                                <p><strong>Jumlah Tiket:</strong> <?php echo $pemesanan['jumlah_tiket']; ?> tiket</p>
-                                <p><strong>Tanggal Kunjungan:</strong> <?php echo formatDate($pemesanan['tanggal_kunjungan']); ?></p>
-                                <p class="price-highlight"><strong>Total Harga:</strong> <?php echo formatPrice($pemesanan['total_harga']); ?></p>
-                            </div>
-
-                            <div class="detail-group">
-                                <h4>👤 Data Pemesan</h4>
-                                <p><strong>Nama:</strong> <?php echo htmlspecialchars($pemesanan['nama_pemesan']); ?></p>
-                                <p><strong>Email:</strong> <?php echo htmlspecialchars($pemesanan['email_pemesan']); ?></p>
-                                <p><strong>Telepon:</strong> <?php echo htmlspecialchars($pemesanan['phone_pemesan']); ?></p>
-                            </div>
-
-                            <?php if ($pemesanan['catatan']): ?>
-                            <div class="detail-group">
-                                <h4>📝 Catatan Tambahan</h4>
-                                <p><?php echo nl2br(htmlspecialchars($pemesanan['catatan'])); ?></p>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                <table class="pemesanan-table">
+                    <thead>
+                        <tr>
+                            <th>🎫 Artikel & Kategori</th>
+                            <th>👤 Pemesan</th>
+                            <th>🎟️ Tiket</th>
+                            <th>💰 Total Harga</th>
+                            <th>📅 Tanggal Pesan</th>
+                            <th>🔔 Status</th>
+                            <th>📝 Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($pemesanan_list as $pemesanan): ?>
+                            <tr>
+                                <!-- Artikel & Kategori -->
+                                <td>
+                                    <div class="artikel-info">
+                                        <?php echo htmlspecialchars($pemesanan['artikel_judul']); ?>
+                                    </div>
+                                    <span class="kategori-badge">
+                                        <?php echo ucfirst($pemesanan['kategori']); ?>
+                                    </span>
+                                </td>
+                                
+                                <!-- Pemesan -->
+                                <td>
+                                    <div class="user-info">
+                                        <?php echo htmlspecialchars($pemesanan['user_name']); ?>
+                                    </div>
+                                    <div class="pemesan-details">
+                                        <strong>Nama:</strong> <?php echo htmlspecialchars($pemesanan['nama_pemesan']); ?><br>
+                                        <strong>Email:</strong> <?php echo htmlspecialchars($pemesanan['email_pemesan']); ?><br>
+                                        <strong>Telepon:</strong> <?php echo htmlspecialchars($pemesanan['phone_pemesan']); ?>
+                                    </div>
+                                </td>
+                                
+                                <!-- Tiket -->
+                                <td>
+                                    <div class="tiket-info">
+                                        <?php echo $pemesanan['jumlah_tiket']; ?> tiket
+                                    </div>
+                                    <div class="tanggal-kunjungan">
+                                        Kunjungan: <?php echo formatDate($pemesanan['tanggal_kunjungan']); ?>
+                                    </div>
+                                </td>
+                                
+                                <!-- Total Harga -->
+                                <td class="price-cell">
+                                    <?php echo formatPrice($pemesanan['total_harga']); ?>
+                                </td>
+                                
+                                <!-- Tanggal Pesan -->
+                                <td class="date-cell">
+                                    <?php echo formatDate($pemesanan['created_at']); ?>
+                                </td>
+                                
+                                <!-- Status -->
+                                <td>
+                                    <span class="status-badge">
+                                        ✅ Berhasil
+                                    </span>
+                                </td>
+                                
+                                <!-- Catatan -->
+                                <td class="catatan-cell">
+                                    <?php if ($pemesanan['catatan']): ?>
+                                        <?php echo nl2br(htmlspecialchars($pemesanan['catatan'])); ?>
+                                    <?php else: ?>
+                                        <span style="color: #ccc; font-style: italic;">-</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             <?php endif; ?>
         </div>
 
