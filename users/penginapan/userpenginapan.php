@@ -644,7 +644,7 @@ $database->closeConnection();
                         <?php foreach ($penginapan_data as $penginapan): ?>
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $penginapan['id']; ?>'">
                                 <div class="article-image">
-                                    <?php if ($penginapan['photo'] && file_exists('../uploads/' . $penginapan['photo'])): ?>
+                                    <?php if ($penginapan['photo'] && file_exists('../../uploads/' . $penginapan['photo'])): ?>
                                         <img src="../../uploads/<?php echo htmlspecialchars($penginapan['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($penginapan['judul']); ?>">
                                     <?php else: ?>
@@ -716,7 +716,7 @@ $database->closeConnection();
                 
                 <div class="article-detail">
                     <div class="article-header">
-                        <?php if ($penginapan_detail['photo'] && file_exists('../uploads/' . $penginapan_detail['photo'])): ?>
+                        <?php if ($penginapan_detail['photo'] && file_exists('../../uploads/' . $penginapan_detail['photo'])): ?>
                             <img src="../../uploads/<?php echo htmlspecialchars($penginapan_detail['photo']); ?>" 
                                  alt="<?php echo htmlspecialchars($penginapan_detail['judul']); ?>">
                         <?php else: ?>
@@ -821,8 +821,8 @@ $database->closeConnection();
                         <?php foreach ($related_penginapan as $related): ?>
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $related['id']; ?>'">
                                 <div class="article-image">
-                                    <?php if ($related['photo'] && file_exists('../uploads/' . $related['photo'])): ?>
-                                        <img src="../uploads/<?php echo htmlspecialchars($related['photo']); ?>" 
+                                    <?php if ($related['photo'] && file_exists('../../uploads/' . $related['photo'])): ?>
+                                        <img src="../../uploads/<?php echo htmlspecialchars($related['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($related['judul']); ?>">
                                     <?php else: ?>
                                         <div class="placeholder-image">
