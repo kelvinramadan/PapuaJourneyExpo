@@ -640,9 +640,6 @@ if (!file_exists($profile_image_path)) {
                     <a href="umkm_pemesanan.php">
                         🏝️ Pemesanan
                     </a>    
-                    <a href="penginapan.php">
-                        🏨 Penginapan
-                    </a>
                 </div>
 
                 
