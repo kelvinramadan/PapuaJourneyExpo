@@ -445,6 +445,7 @@ $db->close();
             <a href="index.php" class="btn active">🏠 Admin Homepage</a>
             <a href="adminwisata.php" class="btn">🏞️ Admin Wisata</a>
             <a href="adminpenginapan.php" class="btn">🏨 Admin Penginapan</a>
+            <a href="adminpemesanan.php" class="btn">🏨 Admin Pemesanan</a>
         </nav>
         
         <div class="user-section">

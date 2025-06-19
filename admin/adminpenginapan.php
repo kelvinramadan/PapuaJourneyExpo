@@ -135,6 +135,7 @@ $result = mysqli_query($db, $query);
             <a href="index.php" class="btn">🏠 Admin Homepage</a>
             <a href="adminwisata.php" class="btn">🏞️ Admin Wisata</a>
             <a href="adminpenginapan.php" class="btn active">🏨 Admin Penginapan</a>
+            <a href="adminpemesanan.php" class="btn">🏨 Admin Pemesanan</a>
         </nav>
         
         <div class="user-section">
