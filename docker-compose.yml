@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mariadb:10.4
+    container_name: omaki_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: omaki_db
+      MYSQL_USER: omaki_user
+      MYSQL_PASSWORD: omaki_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./omaki_db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - omaki_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # PHP Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omaki_web
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=omaki_db
+      - DB_USER=omaki_user
+      - DB_PASSWORD=omaki_password
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+    volumes:
+      - ./:/var/www/html
+      - ./uploads:/var/www/html/uploads
+      - ./users/chatbot/rag_py/.env:/var/www/html/users/chatbot/rag_py/.env
+    ports:
+      - "8090:80"
+    networks:
+      - omaki_network
+
+  # ChromaDB for RAG Chatbot
+  chromadb:
+    build:
+      context: ./users/chatbot/rag_py
+      dockerfile: Dockerfile
+    container_name: omaki_chromadb
+    restart: unless-stopped
+    volumes:
+      - chromadb_data:/chroma/chroma
+    ports:
+      - "8000:8000"
+    networks:
+      - omaki_network
+    environment:
+      - ALLOW_RESET=TRUE
+      - IS_PERSISTENT=TRUE
+
+  # phpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: omaki_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+    ports:
+      - "8081:80"
+    networks:
+      - omaki_network
+
+volumes:
+  mysql_data:
+  chromadb_data:
+
+networks:
+  omaki_network:
+    driver: bridge

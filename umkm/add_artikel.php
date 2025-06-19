@@ -274,7 +274,7 @@ $db->close();
     </div>
     
     <div class="container">
-        <a href="umkm_dashboard.php" class="back-link">← Kembali ke Dashboard</a>
+        <a href="dashboard.php" class="back-link">← Kembali ke Dashboard</a>
         
         <?php if ($success_message): ?>
             <div class="alert alert-success">
@@ -350,7 +350,7 @@ $db->close();
                 
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">✨ Publikasikan Artikel</button>
-                    <a href="umkm_dashboard.php" class="btn btn-secondary">❌ Batal</a>
+                    <a href="dashboard.php" class="btn btn-secondary">❌ Batal</a>
                 </div>
             </form>
         </div>

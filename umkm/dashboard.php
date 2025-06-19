@@ -1,10 +1,8 @@
-
 <?php
-// umkm/umkm_dashboard.php
+// umkm/dashboard.php
 session_start();
 
 require_once '../config/database.php';
-include 'navbar.php';
 
 // Check if user is logged in and is UMKM
 if (!isset($_SESSION['umkm_id']) || $_SESSION['user_type'] != 'umkm') {
@@ -684,7 +682,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'kelola';
                                     </div>
                                     
                                     <div class="article-actions">
-                                        <a href="edit_artikel.php?id=<?php echo $article['id']; ?>" class="btn btn-edit">
+                                        <!-- Edit feature coming soon -->
+                                        <a href="#" class="btn btn-edit" onclick="alert('Fitur edit akan segera hadir!'); return false;">
                                             ✏️ Edit
                                         </a>
                                         <a href="?delete=1&id=<?php echo $article['id']; ?>" 

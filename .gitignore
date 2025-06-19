@@ -13,3 +13,4 @@ claude-*
 *claude*
 .claude-*
 users/chatbot/rag_py/.env
+users/chatbot/chatbot_debug.log

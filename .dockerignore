@@ -1,0 +1,67 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+README_DOCKER.md
+CLAUDE.md
+*.md
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Logs
+*.log
+logs/
+
+# Test files
+tests/
+test_*
+
+# Docker files (we don't need these in the build context)
+docker-compose.override.yml
+.dockerignore
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Database dumps (except the main one)
+*.sql
+!omaki_db.sql
+
+# Local environment files
+.env.local
+.env.*.local
+
+# ChromaDB persistent data
+chromadb_data/
+chroma/
+
+# Node modules (if any)
+node_modules/
+
+# Upload directory (will be mounted as volume)
+# Don't include uploads in build context

@@ -1,8 +1,15 @@
+import sys
+# Patch SQLite before importing chromadb
+try:
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass  # If pysqlite3 is not available, continue with default sqlite3
+
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import chromadb
-import sys
 import json
 
 # Set UTF-8 encoding for output to handle emojis
@@ -17,7 +24,7 @@ load_dotenv()
 try:
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
     text_embedding_model = 'models/embedding-001'
-    generation_model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
+    generation_model = genai.GenerativeModel('gemini-2.5-flash')
 except Exception as e:
     print(f"Error configuring Generative AI: {e}", file=sys.stderr)
     sys.exit(1)
@@ -186,7 +193,10 @@ def main():
             sys.exit(0)
 
     try:
-        client = chromadb.HttpClient(host='localhost', port=8000)
+        # Use environment variable for ChromaDB host, default to localhost
+        chromadb_host = os.getenv('CHROMADB_HOST', 'localhost')
+        chromadb_port = int(os.getenv('CHROMADB_PORT', '8000'))
+        client = chromadb.HttpClient(host=chromadb_host, port=chromadb_port)
         collection = client.get_collection("papua_journey_expo")
     except Exception as e:
         print(f"Error connecting to ChromaDB: {e}", file=sys.stderr)

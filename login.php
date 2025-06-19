@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $_SESSION['umkm_email'] = $row['email'];
                             $_SESSION['umkm_name'] = $row['business_name'];
                             $_SESSION['user_type'] = 'umkm';
-                            header('Location: umkm/umkm_dashboard.php');
+                            header('Location: umkm/dashboard.php');
                             exit();
                             break;
                         

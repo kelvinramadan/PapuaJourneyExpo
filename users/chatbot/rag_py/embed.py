@@ -24,7 +24,14 @@ def get_all_texts_from_json(directory):
                                 texts.append(json.dumps(item))
     return texts
 
-data_directory = '../data/jayapura'
+# Use absolute path when running in Docker, relative path otherwise
+if os.path.exists('/var/www/html'):
+    # Running in Docker container
+    data_directory = '/var/www/html/users/chatbot/data/jayapura'
+else:
+    # Running locally
+    data_directory = '../data/jayapura'
+
 documents = get_all_texts_from_json(data_directory)
 
 if documents:
@@ -33,7 +40,10 @@ if documents:
         content=documents,
         task_type="retrieval_document")
 
-    client = chromadb.HttpClient(host='localhost', port=8000)
+    # Use environment variables for ChromaDB connection
+    chromadb_host = os.getenv('CHROMADB_HOST', 'localhost')
+    chromadb_port = int(os.getenv('CHROMADB_PORT', '8000'))
+    client = chromadb.HttpClient(host=chromadb_host, port=chromadb_port)
     collection = client.get_or_create_collection("papua_journey_expo")
 
     collection.add(
