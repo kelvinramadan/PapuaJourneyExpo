@@ -2,7 +2,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
+    const conversationList = document.getElementById('conversation-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const conversationSidebar = document.getElementById('conversation-sidebar');
+    const conversationSearch = document.getElementById('conversation-search');
+    const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+    const sidebarToggleFloating = document.getElementById('sidebar-toggle-floating');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    
     let isTyping = false;
+    let currentConversationId = null;
+    let conversations = [];
+
+    // Set navbar height CSS variable
+    function updateNavbarHeight() {
+        const navbar = document.querySelector('.navbar-header');
+        if (navbar) {
+            const navbarHeight = navbar.offsetHeight;
+            document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
+        }
+    }
+    
+    // Update navbar height on load and resize
+    updateNavbarHeight();
+    window.addEventListener('resize', updateNavbarHeight);
+
+    // Initialize sidebar state from localStorage
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (sidebarCollapsed && window.innerWidth > 768) {
+        conversationSidebar.classList.add('collapsed');
+    }
+
+    // Initialize
+    loadConversationList();
+    loadConversationHistory();
+
+    // Event listeners
+    newChatBtn.addEventListener('click', startNewConversation);
+    sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
+    sidebarToggleFloating.addEventListener('click', toggleSidebarCollapse);
+    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+    sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+    conversationSearch.addEventListener('input', filterConversations);
 
     // Listen for modal state changes
     window.addEventListener('modalStateChanged', (e) => {
@@ -21,10 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Auto-resize input
+    // Auto-resize textarea
     userInput.addEventListener('input', () => {
         userInput.style.height = 'auto';
-        userInput.style.height = userInput.scrollHeight + 'px';
+        userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+    });
+    
+    // Handle Enter key in textarea (without Shift)
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
 
     // Quick message function for suggestion buttons
@@ -67,6 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add bot response
             if (data.reply) {
                 appendMessage(data.reply, 'bot');
+                // Update current conversation ID if returned
+                if (data.conversation_id) {
+                    currentConversationId = data.conversation_id;
+                    loadConversationList(); // Refresh conversation list
+                }
             } else {
                 appendMessage('Maaf, saya tidak dapat memahami pertanyaan Anda. Coba tanyakan tentang wisata, kuliner, atau budaya Papua.', 'bot');
             }
@@ -129,10 +184,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Smooth scroll to bottom
         setTimeout(() => {
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
+            const messagesContainer = document.querySelector('.chat-messages-container');
+            if (messagesContainer) {
+                messagesContainer.scrollTo({
+                    top: messagesContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
         }, 100);
     }
 
@@ -228,10 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.appendChild(messageContainer);
         
         // Scroll to bottom
-        chatBox.scrollTo({
-            top: chatBox.scrollHeight,
-            behavior: 'smooth'
-        });
+        const messagesContainer = document.querySelector('.chat-messages-container');
+        if (messagesContainer) {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
     }
 
     function hideTypingIndicator() {
@@ -284,5 +345,251 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!chatBox.querySelector('.welcome-message')) {
             location.reload();
         }
+    }
+
+    // Function to load conversation history
+    function loadConversationHistory(conversationId = null) {
+        const url = conversationId 
+            ? `load_chat_history.php?conversation_id=${conversationId}`
+            : 'load_chat_history.php';
+            
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.messages && data.messages.length > 0) {
+                    // Remove welcome message if we have history
+                    const welcomeMessage = chatBox.querySelector('.welcome-message');
+                    if (welcomeMessage) {
+                        welcomeMessage.remove();
+                    }
+
+                    // Display all messages from history
+                    data.messages.forEach(msg => {
+                        appendMessage(msg.message, msg.type);
+                    });
+
+                    // Update current conversation ID
+                    currentConversationId = data.conversation_id;
+                    
+                    // Show conversation info if available
+                    if (data.conversation_id) {
+                        showConversationInfo(data.conversation_id, data.total_messages);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading conversation history:', error);
+            });
+    }
+
+    // Function to start a new conversation
+    function startNewConversation() {
+        if (currentConversationId && chatBox.querySelectorAll('.message-container').length > 1) {
+            if (!confirm('Apakah Anda yakin ingin memulai percakapan baru?')) {
+                return;
+            }
+        }
+        
+        fetch('chatbot_process.php?clear_history=1')
+            .then(response => response.json())
+            .then(() => {
+                currentConversationId = null;
+                clearChatDisplay();
+                loadConversationList();
+            })
+            .catch(error => {
+                console.error('Error starting new conversation:', error);
+            });
+    }
+    
+    window.startNewConversation = startNewConversation;
+
+    // Function to show conversation info
+    function showConversationInfo(conversationId, messageCount) {
+        // Info is now integrated in the UI, no need to add dynamically
+    }
+
+    // Function to load conversation list
+    function loadConversationList() {
+        fetch('load_chat_history.php?list_conversations=1')
+            .then(response => response.json())
+            .then(data => {
+                if (data.conversations) {
+                    conversations = data.conversations;
+                    displayConversationList(conversations);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading conversation list:', error);
+                conversationList.innerHTML = '<div class="error-message">Failed to load conversations</div>';
+            });
+    }
+    
+    // Display conversations in sidebar
+    function displayConversationList(convs) {
+        if (convs.length === 0) {
+            conversationList.innerHTML = `
+                <div class="no-conversations">
+                    <p>No conversations yet</p>
+                    <p>Start a new chat to begin!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        conversationList.innerHTML = convs.map(conv => `
+            <div class="conversation-item ${conv.conversation_id === currentConversationId ? 'active' : ''}" 
+                 data-conversation-id="${conv.conversation_id}">
+                <div class="conversation-item-header">
+                    <span class="conversation-date">${formatDate(conv.last_message_at)}</span>
+                </div>
+                <div class="conversation-preview">${escapeHtml(conv.preview)}</div>
+                <div class="conversation-message-count">${conv.message_count} messages</div>
+                <div class="conversation-actions">
+                    <button class="delete-conversation-btn" onclick="deleteConversation('${conv.conversation_id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+        
+        // Add click handlers
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('delete-conversation-btn')) {
+                    const conversationId = item.dataset.conversationId;
+                    switchConversation(conversationId);
+                }
+            });
+        });
+    }
+    
+    // Switch to a different conversation
+    function switchConversation(conversationId) {
+        if (conversationId === currentConversationId) return;
+        
+        fetch(`chatbot_process.php?switch_conversation=${conversationId}`)
+            .then(response => response.json())
+            .then(data => {
+                currentConversationId = conversationId;
+                clearChatDisplay();
+                loadConversationHistory(conversationId);
+                
+                // Update active state in sidebar
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.conversationId === conversationId);
+                });
+                
+                // Close mobile sidebar after selection
+                if (window.innerWidth <= 768) {
+                    closeMobileSidebar();
+                }
+            })
+            .catch(error => {
+                console.error('Error switching conversation:', error);
+            });
+    }
+    
+    // Delete a conversation
+    window.deleteConversation = function(conversationId) {
+        if (!confirm('Apakah Anda yakin ingin menghapus percakapan ini?')) return;
+        
+        fetch('load_chat_history.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'delete', conversation_id: conversationId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (conversationId === currentConversationId) {
+                    startNewConversation();
+                } else {
+                    loadConversationList();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting conversation:', error);
+        });
+    };
+    
+    // Filter conversations based on search
+    function filterConversations() {
+        const searchTerm = conversationSearch.value.toLowerCase();
+        const filtered = conversations.filter(conv => 
+            conv.preview.toLowerCase().includes(searchTerm)
+        );
+        displayConversationList(filtered);
+    }
+    
+    // Toggle sidebar collapse on desktop
+    function toggleSidebarCollapse() {
+        conversationSidebar.classList.toggle('collapsed');
+        const isCollapsed = conversationSidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+    }
+    
+    // Toggle sidebar on mobile
+    function toggleMobileSidebar() {
+        conversationSidebar.classList.toggle('active');
+        sidebarBackdrop.classList.toggle('active');
+    }
+    
+    // Close mobile sidebar
+    function closeMobileSidebar() {
+        conversationSidebar.classList.remove('active');
+        sidebarBackdrop.classList.remove('active');
+    }
+    
+    // Clear chat display
+    function clearChatDisplay() {
+        chatBox.innerHTML = '';
+        showWelcomeMessage();
+    }
+    
+    // Show welcome message
+    function showWelcomeMessage() {
+        if (!chatBox.querySelector('.welcome-message')) {
+            chatBox.innerHTML = `
+                <div class="welcome-message">
+                    <div class="bot-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-bubble bot-message">
+                            <p>Selamat datang di AI Assistant Papua! 👋</p>
+                            <p>Saya siap membantu Anda menjelajahi keindahan Papua. Anda bisa bertanya tentang:</p>
+                            <ul>
+                                <li>🏝️ Destinasi wisata menarik</li>
+                                <li>🍽️ Kuliner khas Papua</li>
+                                <li>🎭 Budaya dan tradisi lokal</li>
+                                <li>🚗 Transportasi dan akomodasi</li>
+                            </ul>
+                            <p>Silakan ajukan pertanyaan Anda!</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Helper functions
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 3600000) { // Less than 1 hour
+            return Math.floor(diff / 60000) + ' menit lalu';
+        } else if (diff < 86400000) { // Less than 1 day
+            return Math.floor(diff / 3600000) + ' jam lalu';
+        } else if (diff < 604800000) { // Less than 1 week
+            return Math.floor(diff / 86400000) + ' hari lalu';
+        } else {
+            return date.toLocaleDateString('id-ID');
+        }
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 });

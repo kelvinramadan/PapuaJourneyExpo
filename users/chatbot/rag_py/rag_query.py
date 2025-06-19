@@ -63,12 +63,23 @@ def is_jayapura_related(query):
     lower_query = query.lower()
     return any(keyword in lower_query for keyword in jayapura_keywords)
 
-def generate_response(query, passages):
-    """Generates a response using the retrieved passages."""
+def generate_response(query, passages, conversation_history=None):
+    """Generates a response using the retrieved passages and conversation history."""
     if not passages:
         passages = []
 
     knowledge_context = '\n\n'.join([f"[{i+1}] {doc}" for i, doc in enumerate(passages)]) if passages else 'Tidak ada informasi spesifik ditemukan dalam database.'
+    
+    # Format conversation history if available
+    history_context = ""
+    if conversation_history:
+        history_context = "\n\nRIWAYAT PERCAKAPAN SEBELUMNYA:\n"
+        for turn in conversation_history:
+            if turn.get('user'):
+                history_context += f"Pengguna: {turn['user']}\n"
+            if turn.get('assistant'):
+                history_context += f"Anda: {turn['assistant']}\n"
+        history_context += "\n"
 
     prompt = f"""Anda adalah "Papua Journey", seorang tour guide virtual yang ramah dan sangat informatif untuk wilayah Jayapura, Papua.
 
@@ -111,11 +122,11 @@ CONTOH FORMAT MARKDOWN:
 ---
 
 Apakah ada yang ingin ditanyakan lagi tentang wisata Jayapura? 😊
-
+{history_context}
 KONTEKS PENGETAHUAN:
 {knowledge_context}
 
-Berdasarkan aturan di atas, jawab pertanyaan pengguna berikut dengan format Markdown yang menarik:
+Berdasarkan aturan di atas dan dengan memperhatikan riwayat percakapan sebelumnya, jawab pertanyaan pengguna berikut dengan format Markdown yang menarik:
 {query}
 """
     
@@ -142,19 +153,37 @@ def safe_print(text):
 def main():
     """Main function to handle the RAG query process."""
     if len(sys.argv) < 2:
-        print("Usage: python rag_query.py \"<your_question>\"", file=sys.stderr)
+        print("Usage: python rag_query.py \"<your_question>\" [base64_encoded_history]", file=sys.stderr)
         sys.exit(1)
     
     user_query = sys.argv[1]
+    
+    # Parse conversation history if provided
+    conversation_history = None
+    if len(sys.argv) > 2:
+        try:
+            import base64
+            history_b64 = sys.argv[2]
+            history_json = base64.b64decode(history_b64).decode('utf-8')
+            conversation_history = json.loads(history_json)
+        except Exception as e:
+            print(f"Error parsing conversation history: {e}", file=sys.stderr)
+            conversation_history = None
 
     if is_initial_greeting(user_query):
-        final_answer = generate_response(user_query, [])
+        final_answer = generate_response(user_query, [], conversation_history)
         safe_print(final_answer)
         sys.exit(0)
 
     if not is_jayapura_related(user_query):
-        safe_print("Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?")
-        sys.exit(0)
+        # Check if previous conversation context makes it related
+        if conversation_history:
+            # If we have history, it might be a follow-up question
+            # Let the model decide based on context
+            pass
+        else:
+            safe_print("Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?")
+            sys.exit(0)
 
     try:
         client = chromadb.HttpClient(host='localhost', port=8000)
@@ -169,7 +198,7 @@ def main():
         sys.exit(1)
 
     passages = find_best_passages(query_embedding, collection)
-    final_answer = generate_response(user_query, passages)
+    final_answer = generate_response(user_query, passages, conversation_history)
     safe_print(final_answer)
 
 if __name__ == "__main__":

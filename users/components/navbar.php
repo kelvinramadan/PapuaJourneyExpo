@@ -206,7 +206,9 @@ $db->close();
 <style>
 /* Global reset for consistent scrollbar behavior */
 html {
-    overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+    /* Removed overflow-y: scroll to prevent phantom scrollbar space */
+    /* Use scrollbar-gutter for modern browsers if layout shift is a concern */
+    scrollbar-gutter: stable;
 }
 
 /* Reset any conflicting chatbot styles */
