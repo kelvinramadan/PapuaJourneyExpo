@@ -7,6 +7,9 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION[
     exit();
 }
 
+// Include navbar processing logic before any output
+require_once '../components/navbar_process.php';
+
 // Get user information from session
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
@@ -171,7 +174,7 @@ function truncateText($text, $length) {
     <link rel="stylesheet" href="userdashboard.css">
 </head>
 <body>
-    <?php include '../components/navbar.php'; ?>
+    <?php include '../components/navbar_display.php'; ?>
 
     <div class="container">
         <?php if ($view_mode === 'dashboard'): ?>

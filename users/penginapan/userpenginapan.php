@@ -10,6 +10,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Include navbar processing logic before any output
+require_once '../components/navbar_process.php';
+
 require_once '../../config/database.php';
 
 // Initialize database connection
@@ -609,7 +612,7 @@ $database->closeConnection();
     </style>
 </head>
 <body>
-    <?php include '../components/navbar.php'; ?>
+    <?php include '../components/navbar_display.php'; ?>
     <!-- Page Header -->
     <div class="page-header">
         <h1>🏨 Penginapan Papua</h1>

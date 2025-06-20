@@ -11,6 +11,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Include navbar processing logic before any output
+require_once '../components/navbar_process.php';
+
 require_once '../../config/database.php';
 
 $db = getDbConnection();
@@ -551,7 +554,7 @@ mysqli_close($db);
     </style>
 </head>
 <body>
-    <?php include '../components/navbar.php'; ?>
+    <?php include '../components/navbar_display.php'; ?>
     
     <div class="main-content">
         <div class="container">
