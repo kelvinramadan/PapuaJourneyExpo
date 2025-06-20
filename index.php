@@ -131,10 +131,6 @@ session_start();
                     <i class="fas fa-compass"></i>
                     Explore Now
                 </a>
-                <button class="btn btn-secondary" onclick="openChatbot()">
-                    <i class="fas fa-robot"></i>
-                    Chat with AI Guide
-                </button>
             </div>
             <div class="hero-stats">
                 <div class="stat-item">
@@ -465,7 +461,7 @@ session_start();
     </button>
 
     <!-- Scroll to Top Button -->
-    <button class="scroll-to-top" onclick="scrollToTop()" aria-label="Scroll to top">
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">
         <i class="fas fa-arrow-up"></i>
     </button>
 

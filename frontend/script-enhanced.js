@@ -652,13 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     };
 
-    // Scroll to top
-    window.scrollToTop = function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    };
+    // Scroll to top - removed since we're using inline onclick
 
     // Select destination from search
     window.selectDestination = function(destination) {
