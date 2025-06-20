@@ -1,69 +1,82 @@
-<?php
-// UMKM Navigation Bar
-// This file should be included after session_start()
-
-// Ensure user is logged in
-if (!isset($_SESSION['umkm_id'])) {
-    // Don't use header() here since output may have started
-    echo '<script>window.location.href = "../login.php";</script>';
-    exit();
-}
-?>
-
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-brand">
-            <h3>🌺 UMKM Papua</h3>
+            <h2>UMKM Dashboard</h2>
         </div>
-        <ul class="nav-menu">
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="dashboard.php">Kelola Artikel</a></li>
-            <li><a href="add_artikel.php">Tambah Artikel</a></li>
-            <li><a href="dashboard.php#profile">Profil</a></li>
-            <li><a href="../logout.php" onclick="return confirm('Yakin ingin logout?')">Logout</a></li>
-        </ul>
+        
+        <div class="nav-menu">
+            <a href="dashboard.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : ''; ?>">
+                <i class="icon">🏠</i> Dashboard
+            </a>
+            <a href="umkm_pemesanan.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'umkm_pemesanan.php' ? 'active' : ''; ?>">
+                <i class="icon">📦</i> Pemesanan
+            </a>
+            <a href="add_artikel.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'add_artikel.php' ? 'active' : ''; ?>">
+                <i class="icon">➕</i> Tambah Artikel
+            </a>
+            <a href="edit_artikel.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'edit_artikel.php' ? 'active' : ''; ?>">
+                <i class="icon">✏️</i> Edit Artikel
+            </a>
+            <a href="../logout.php" class="nav-link logout">
+                <i class="icon">🚪</i> Logout
+            </a>
+        </div>
     </div>
 </nav>
 
 <style>
 .navbar {
-    background-color: #8B4513;
-    color: white;
-    padding: 1rem 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.nav-brand h3 {
-    margin: 0;
+.nav-brand h2 {
     color: white;
+    margin: 0;
+    font-size: 1.5rem;
 }
 
 .nav-menu {
-    list-style: none;
     display: flex;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
+    gap: 1rem;
+    align-items: center;
 }
 
-.nav-menu a {
+.nav-link {
     color: white;
     text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.nav-menu a:hover {
-    opacity: 0.8;
+.nav-link:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.nav-link.active {
+    background: rgba(255,255,255,0.3);
+}
+
+.nav-link.logout {
+    background: rgba(231, 76, 60, 0.8);
+}
+
+.nav-link.logout:hover {
+    background: rgba(231, 76, 60, 1);
 }
 
 @media (max-width: 768px) {

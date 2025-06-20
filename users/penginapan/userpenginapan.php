@@ -19,6 +19,56 @@ require_once '../../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
+// Get session data
+$user_id = $_SESSION['user_id'];
+$user_name = $_SESSION['user_name'];
+$user_email = $_SESSION['user_email'];
+
+// Handle ticket booking
+$booking_message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_ticket'])) {
+    $penginapan_id = (int)$_POST['penginapan_id'];
+    $jumlah_kamar = (int)$_POST['jumlah_kamar'];
+    $tanggal_checkin = $_POST['tanggal_checkin'];
+    $tanggal_checkout = $_POST['tanggal_checkout'];
+    $catatan = $_POST['catatan'];
+    
+    // Get penginapan details
+    $stmt = $db->prepare("SELECT judul, harga FROM penginapan WHERE id = ?");
+    $stmt->bind_param("i", $penginapan_id);
+    $stmt->execute();
+    $penginapan_result = $stmt->get_result();
+    $penginapan_data = $penginapan_result->fetch_assoc();
+    $stmt->close();
+    
+    if ($penginapan_data && $jumlah_kamar > 0) {
+        // Calculate number of nights
+        $checkin_date = new DateTime($tanggal_checkin);
+        $checkout_date = new DateTime($tanggal_checkout);
+        $interval = $checkin_date->diff($checkout_date);
+        $jumlah_malam = $interval->days;
+        
+        if ($jumlah_malam <= 0) {
+            $booking_message = '<div class="alert alert-error">Tanggal checkout harus setelah tanggal checkin!</div>';
+        } else {
+            $harga_per_malam = $penginapan_data['harga'];
+            $total_harga = $harga_per_malam * $jumlah_kamar * $jumlah_malam;
+            $penginapan_judul = $penginapan_data['judul'];
+            
+            // Insert booking
+            $stmt = $db->prepare("INSERT INTO pesanpenginapan (user_id, user_name, user_email, penginapan_id, penginapan_judul, jumlah_kamar, jumlah_malam, harga_per_malam, total_harga, tanggal_checkin, tanggal_checkout, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issisiididss", $user_id, $user_name, $user_email, $penginapan_id, $penginapan_judul, $jumlah_kamar, $jumlah_malam, $harga_per_malam, $total_harga, $tanggal_checkin, $tanggal_checkout, $catatan);
+            
+            if ($stmt->execute()) {
+                $booking_message = '<div class="alert alert-success">Pemesanan kamar berhasil! Total: ' . formatPrice($total_harga) . ' untuk ' . $jumlah_malam . ' malam</div>';
+            } else {
+                $booking_message = '<div class="alert alert-error">Gagal melakukan pemesanan. Silakan coba lagi.</div>';
+            }
+            $stmt->close();
+        }
+    }
+}
+
 // Get filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $tipe_filter = isset($_GET['tipe']) ? $_GET['tipe'] : '';
@@ -122,494 +172,7 @@ $database->closeConnection();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penginapan Papua - Wisata Indonesia</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .page-header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px 0;
-            text-align: center;
-            color: white;
-        }
-
-        .page-header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .page-header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .filters {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .filters form {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        .filters input,
-        .filters select,
-        .filters button {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            min-width: 200px;
-        }
-
-        .filters input,
-        .filters select {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-
-        .filters input:focus,
-        .filters select:focus {
-            outline: none;
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .filters button {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .filters button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-
-        .reset-btn {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-        }
-
-        .reset-btn:hover {
-            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4) !important;
-        }
-
-        .articles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            padding: 20px 0;
-        }
-
-        .article-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .article-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .article-image {
-            position: relative;
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .article-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .article-card:hover .article-image img {
-            transform: scale(1.1);
-        }
-
-        .placeholder-image {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: #adb5bd;
-        }
-
-        .card-category {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .category-hotel {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-
-        .category-guesthouse {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-
-        .category-villa {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-        }
-
-        .category-resort {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-
-        .article-card-content {
-            padding: 25px;
-        }
-
-        .article-card-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .article-card-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #e74c3c;
-            margin-bottom: 15px;
-        }
-
-        .card-description {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .card-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-detail {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-detail:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
-        .card-date {
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 80px 20px;
-            color: white;
-        }
-
-        .no-results h3 {
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .no-results p {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .back-button {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 25px;
-            text-decoration: none;
-            margin-bottom: 30px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-        }
-
-        .article-detail {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .article-header {
-            position: relative;
-            height: 400px;
-            overflow: hidden;
-        }
-
-        .article-header img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .article-category {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .article-content {
-            padding: 40px;
-        }
-
-        .article-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        .article-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .article-price {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #e74c3c;
-        }
-
-        .article-date {
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .article-description {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 40px;
-        }
-
-        .penginapan-info-section {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 20px;
-            padding: 40px;
-            margin-top: 40px;
-        }
-
-        .penginapan-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-item span {
-            font-size: 1.5rem;
-            width: 40px;
-            text-align: center;
-        }
-
-        .info-item strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #2c3e50;
-            font-size: 1.1rem;
-        }
-
-        .contact-actions {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
-            color: white;
-        }
-
-        .facilities-preview {
-            margin-bottom: 15px;
-        }
-
-        .facility-tag {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            margin: 3px;
-            display: inline-block;
-        }
-
-        .related-section {
-            margin-top: 50px;
-        }
-
-        .related-header {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .related-header h3 {
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .related-header p {
-            color: rgba(255,255,255,0.9);
-        }
-
-        @media (max-width: 768px) {
-            .filters form {
-                flex-direction: column;
-            }
-
-            .filters input,
-            .filters select,
-            .filters button {
-                min-width: 100%;
-            }
-
-            .articles-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .article-meta {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .penginapan-info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-actions {
-                flex-direction: column;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .article-title {
-                font-size: 1.8rem;
-            }
-
-            .article-content {
-                padding: 20px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="userpenginapan.css">
 </head>
 <body>
     <?php include '../components/navbar_display.php'; ?>
@@ -647,7 +210,7 @@ $database->closeConnection();
                         <?php foreach ($penginapan_data as $penginapan): ?>
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $penginapan['id']; ?>'">
                                 <div class="article-image">
-                                    <?php if ($penginapan['photo'] && file_exists('../uploads/' . $penginapan['photo'])): ?>
+                                    <?php if ($penginapan['photo'] && file_exists('../../uploads/' . $penginapan['photo'])): ?>
                                         <img src="../../uploads/<?php echo htmlspecialchars($penginapan['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($penginapan['judul']); ?>">
                                     <?php else: ?>
@@ -717,9 +280,11 @@ $database->closeConnection();
                     ⬅️ Kembali ke Daftar Penginapan
                 </a>
                 
+                <?php echo $booking_message; ?>
+                
                 <div class="article-detail">
                     <div class="article-header">
-                        <?php if ($penginapan_detail['photo'] && file_exists('../uploads/' . $penginapan_detail['photo'])): ?>
+                        <?php if ($penginapan_detail['photo'] && file_exists('../../uploads/' . $penginapan_detail['photo'])): ?>
                             <img src="../../uploads/<?php echo htmlspecialchars($penginapan_detail['photo']); ?>" 
                                  alt="<?php echo htmlspecialchars($penginapan_detail['judul']); ?>">
                         <?php else: ?>
@@ -799,15 +364,46 @@ $database->closeConnection();
                                 <?php endif; ?>
                             </div>
                             
-                            <div class="contact-actions">
-                                <a href="https://www.google.com/maps?q=<?php echo urlencode($penginapan_detail['lokasi']); ?>" 
-                                   target="_blank" class="btn btn-primary">
-                                    🗺️ Lihat di Google Maps
-                                </a>
-                                
-                                <button onclick="sharePage()" class="btn btn-secondary">
-                                    📤 Bagikan Penginapan
-                                </button>
+                            <!-- Booking Form -->
+                            <div class="booking-section">
+                                <h3 style="margin-bottom: 25px; color: #333; font-size: 1.5rem;">🏨 Pesan Kamar</h3>
+                                <form method="POST" class="booking-form">
+                                    <input type="hidden" name="penginapan_id" value="<?php echo $penginapan_detail['id']; ?>">
+                                    
+                                    <div class="form-group">
+                                        <label for="jumlah_kamar">Jumlah Kamar:</label>
+                                        <input type="number" name="jumlah_kamar" id="jumlah_kamar" min="1" max="10" value="1" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="tanggal_checkin">Tanggal Check-in:</label>
+                                        <input type="date" name="tanggal_checkin" id="tanggal_checkin" 
+                                               min="<?php echo date('Y-m-d'); ?>" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="tanggal_checkout">Tanggal Check-out:</label>
+                                        <input type="date" name="tanggal_checkout" id="tanggal_checkout" 
+                                               min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="catatan">Catatan (Opsional):</label>
+                                        <textarea name="catatan" id="catatan" rows="3" 
+                                                  placeholder="Tambahkan catatan khusus untuk reservasi Anda"></textarea>
+                                    </div>
+                                    
+                                    <div class="booking-summary">
+                                        <p><strong>Nama:</strong> <?php echo htmlspecialchars($user_name); ?></p>
+                                        <p><strong>Email:</strong> <?php echo htmlspecialchars($user_email); ?></p>
+                                        <p><strong>Harga per Malam:</strong> <?php echo formatPrice($penginapan_detail['harga']); ?></p>
+                                        <p><strong>Jumlah Malam:</strong> <span id="jumlah-malam">1</span> malam</p>
+                                        <p><strong>Total Estimasi:</strong> <span id="total-price"><?php echo formatPrice($penginapan_detail['harga']); ?></span></p>
+                                    </div>
+                                    <button type="submit" name="book_ticket" class="btn btn-primary">
+                                        🏨 Pesan Kamar Sekarang
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -824,8 +420,8 @@ $database->closeConnection();
                         <?php foreach ($related_penginapan as $related): ?>
                             <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $related['id']; ?>'">
                                 <div class="article-image">
-                                    <?php if ($related['photo'] && file_exists('../uploads/' . $related['photo'])): ?>
-                                        <img src="../uploads/<?php echo htmlspecialchars($related['photo']); ?>" 
+                                    <?php if ($related['photo'] && file_exists('../../uploads/' . $related['photo'])): ?>
+                                        <img src="../../uploads/<?php echo htmlspecialchars($related['photo']); ?>" 
                                              alt="<?php echo htmlspecialchars($related['judul']); ?>">
                                     <?php else: ?>
                                         <div class="placeholder-image">
@@ -889,8 +485,59 @@ $database->closeConnection();
         </div>
     </div>
 
-    <!-- JavaScript untuk Fungsi Tambahan -->
+    <!-- JavaScript untuk Funcionalitas Tambahan -->
     <script>
+        // Calculate total price based on room quantity and dates
+        function calculateTotal() {
+            const jumlahKamar = parseInt(document.getElementById('jumlah_kamar').value) || 1;
+            const checkinDate = document.getElementById('tanggal_checkin').value;
+            const checkoutDate = document.getElementById('tanggal_checkout').value;
+            const pricePerNight = <?php echo $penginapan_detail['harga'] ?? 0; ?>;
+            
+            if (checkinDate && checkoutDate) {
+                const checkin = new Date(checkinDate);
+                const checkout = new Date(checkoutDate);
+                const timeDiff = checkout.getTime() - checkin.getTime();
+                const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                if (daysDiff > 0) {
+                    const jumlahMalam = daysDiff;
+                    const total = jumlahKamar * pricePerNight * jumlahMalam;
+                    
+                    document.getElementById('jumlah-malam').textContent = jumlahMalam;
+                    document.getElementById('total-price').textContent = formatPrice(total);
+                } else {
+                    document.getElementById('jumlah-malam').textContent = '0';
+                    document.getElementById('total-price').textContent = formatPrice(0);
+                }
+            }
+        }
+        
+        // Add event listeners
+        document.getElementById('jumlah_kamar')?.addEventListener('input', calculateTotal);
+        document.getElementById('tanggal_checkin')?.addEventListener('change', function() {
+            const checkinDate = this.value;
+            const checkoutInput = document.getElementById('tanggal_checkout');
+            
+            // Set minimum checkout date to next day after checkin
+            if (checkinDate) {
+                const nextDay = new Date(checkinDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkoutInput.min = nextDay.toISOString().split('T')[0];
+                
+                // If current checkout is before new minimum, reset it
+                if (checkoutInput.value && checkoutInput.value <= checkinDate) {
+                    checkoutInput.value = nextDay.toISOString().split('T')[0];
+                }
+            }
+            calculateTotal();
+        });
+        document.getElementById('tanggal_checkout')?.addEventListener('change', calculateTotal);
+        
+        function formatPrice(price) {
+            return 'Rp ' + price.toLocaleString('id-ID');
+        }
+        
         // Fungsi untuk share page
         function sharePage() {
             if (navigator.share) {

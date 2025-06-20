@@ -472,10 +472,14 @@ body {
             <a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
                 🏨 Penginapan
             </a>
-            <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot ? 'active' : ''; ?>">
+            <a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">
+                💳 Transaksi
+            </a>
+            <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">
                 🤖 AI Assistant
             </a>
         </div>
+
         
         <div class="profile-dropdown" id="profileDropdown">
             <div class="profile-trigger" onclick="toggleDropdown()">
