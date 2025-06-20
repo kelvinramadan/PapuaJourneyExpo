@@ -454,11 +454,6 @@ session_start();
         </div>
     </section>
 
-    <!-- Floating Chatbot Button -->
-    <button class="chatbot-float" onclick="openChatbot()" aria-label="Open AI Travel Assistant">
-        <i class="fas fa-robot"></i>
-        <span class="chatbot-badge">AI Guide</span>
-    </button>
 
     <!-- Scroll to Top Button -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top">
