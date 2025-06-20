@@ -10,18 +10,18 @@ session_start();
     <meta name="description" content="Explore Papua's breathtaking landscapes, rich cultures, and unforgettable adventures. Connect with local businesses and plan your perfect journey.">
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="frontend/assets/logo.png" as="image">
-    <link rel="preload" href="frontend/assets/banner.jpg" as="image">
+    <link rel="preload" href="assets/logo.png" as="image">
+    <link rel="preload" href="assets/banner.jpg" as="image">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="frontend/style-enhanced.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     
     <!-- Scripts -->
-    <script src="frontend/script-enhanced.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -38,7 +38,7 @@ session_start();
     <header class="header">
         <nav class="navbar">
             <div class="logo">
-                <img src="frontend/assets/logo.png" alt="Papua Journey Logo"> 
+                <img src="assets/logo.png" alt="Papua Journey Logo"> 
                 <p>Journey</p>
             </div>
             
@@ -90,7 +90,7 @@ session_start();
         <div class="mobile-nav">
             <div class="mobile-nav-header">
                 <div class="logo">
-                    <img src="frontend/assets/logo.png" alt="Papua Journey Logo"> 
+                    <img src="assets/logo.png" alt="Papua Journey Logo"> 
                     <p>Journey</p>
                 </div>
                 <button class="mobile-nav-close">
@@ -180,7 +180,7 @@ session_start();
             <div class="destination-media">
                 <div class="video-container">
                     <video autoplay muted loop playsinline>
-                        <source src="frontend/assets/destination-video.mp4" type="video/mp4">
+                        <source src="assets/destination-video.mp4" type="video/mp4">
                     </video>
                     <div class="video-play-button" onclick="toggleVideoSound(this)">
                         <i class="fas fa-volume-mute"></i>
@@ -188,11 +188,11 @@ session_start();
                 </div>
                 <div class="destination-cards">
                     <div class="mini-card fade-in">
-                        <img src="frontend/assets/rajaAmpat.jpg" alt="Raja Ampat">
+                        <img src="assets/rajaAmpat.jpg" alt="Raja Ampat">
                         <span>Raja Ampat</span>
                     </div>
                     <div class="mini-card fade-in">
-                        <img src="frontend/assets/TamanNasionalTelukCendrawasih.jpg" alt="Jayapura">
+                        <img src="assets/TamanNasionalTelukCendrawasih.jpg" alt="Jayapura">
                         <span>Jayapura</span>
                     </div>
                 </div>
