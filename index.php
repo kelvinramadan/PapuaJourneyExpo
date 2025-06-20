@@ -250,9 +250,6 @@ session_start();
                             <p>Taste authentic Papuan cuisine</p>
                             <span class="interest-tag">20+ Restaurants</span>
                         </div>
-                        <div class="interest-hover">
-                            <button class="btn-small">Explore</button>
-                        </div>
                     </div>
                     <div class="interest-card culture" data-category="cultural">
                         <div class="interest-overlay"></div>
@@ -261,9 +258,6 @@ session_start();
                             <h3>Culture & Heritage</h3>
                             <p>Experience traditional ceremonies</p>
                             <span class="interest-tag">15+ Villages</span>
-                        </div>
-                        <div class="interest-hover">
-                            <button class="btn-small">Explore</button>
                         </div>
                     </div>
                     <div class="interest-card adventures" data-category="marine">
@@ -274,9 +268,6 @@ session_start();
                             <p>Dive in pristine coral reefs</p>
                             <span class="interest-tag">30+ Dive Sites</span>
                         </div>
-                        <div class="interest-hover">
-                            <button class="btn-small">Explore</button>
-                        </div>
                     </div>
                     <div class="interest-card tracking" data-category="hiking">
                         <div class="interest-overlay"></div>
@@ -286,9 +277,6 @@ session_start();
                             <p>Hike through rainforests</p>
                             <span class="interest-tag">25+ Trails</span>
                         </div>
-                        <div class="interest-hover">
-                            <button class="btn-small">Explore</button>
-                        </div>
                     </div>
                     <div class="interest-card wildlife" data-category="wildlife">
                         <div class="interest-overlay"></div>
@@ -297,9 +285,6 @@ session_start();
                             <h3>Wildlife & Nature</h3>
                             <p>See exotic birds of paradise</p>
                             <span class="interest-tag">40+ Species</span>
-                        </div>
-                        <div class="interest-hover">
-                            <button class="btn-small">Explore</button>
                         </div>
                     </div>
                 </div>
