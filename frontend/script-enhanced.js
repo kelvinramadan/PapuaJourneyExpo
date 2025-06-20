@@ -1,19 +1,65 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
     // Loading Screen
     const loadingScreen = document.getElementById('loadingScreen');
-    window.addEventListener('load', function() {
-        setTimeout(() => {
+    console.log('Loading screen element:', loadingScreen);
+    
+    // Function to hide loading screen
+    function hideLoadingScreen() {
+        console.log('Hiding loading screen');
+        if (loadingScreen) {
             loadingScreen.classList.add('hide');
-        }, 1000);
+            // Remove from DOM after transition
+            setTimeout(() => {
+                if (loadingScreen && loadingScreen.parentNode) {
+                    loadingScreen.parentNode.removeChild(loadingScreen);
+                    console.log('Loading screen removed from DOM');
+                }
+            }, 500);
+        } else {
+            console.warn('Loading screen element not found');
+        }
+    }
+    
+    // Hide loading screen when window fully loads
+    window.addEventListener('load', function() {
+        console.log('Window loaded - hiding loading screen in 1 second');
+        setTimeout(hideLoadingScreen, 1000);
     });
+    
+    // Fallback: Hide loading screen after 5 seconds regardless
+    setTimeout(function() {
+        console.log('5-second fallback triggered');
+        hideLoadingScreen();
+    }, 5000);
+    
+    // Additional fallback: Hide if all images are loaded
+    const images = Array.from(document.images);
+    console.log('Total images found:', images.length);
+    
+    if (images.length === 0) {
+        // No images, hide loading screen immediately
+        setTimeout(hideLoadingScreen, 500);
+    } else {
+        Promise.all(images.filter(img => !img.complete).map(img => new Promise(resolve => {
+            img.addEventListener('load', resolve);
+            img.addEventListener('error', resolve);
+        }))).then(() => {
+            console.log('All images loaded');
+            setTimeout(hideLoadingScreen, 500);
+        });
+    }
 
     // Scroll Progress Bar
     const scrollProgressBar = document.querySelector('.scroll-progress-bar');
-    window.addEventListener('scroll', () => {
-        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (window.scrollY / windowHeight) * 100;
-        scrollProgressBar.style.width = scrolled + '%';
-    });
+    if (scrollProgressBar) {
+        window.addEventListener('scroll', () => {
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            scrollProgressBar.style.width = scrolled + '%';
+        });
+    }
 
     // Enhanced Smooth Scrolling
     const navLinks = document.querySelectorAll('a[href^="#"]');
@@ -80,23 +126,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileNavClose = document.querySelector('.mobile-nav-close');
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
 
-    mobileMenuToggle.addEventListener('click', function() {
-        this.classList.toggle('active');
-        mobileNav.classList.toggle('active');
-        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
-    });
+    if (mobileMenuToggle && mobileNav) {
+        mobileMenuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        });
+    }
 
-    mobileNavClose.addEventListener('click', function() {
-        mobileNav.classList.remove('active');
-        mobileMenuToggle.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', function() {
+    if (mobileNavClose && mobileNav && mobileMenuToggle) {
+        mobileNavClose.addEventListener('click', function() {
             mobileNav.classList.remove('active');
             mobileMenuToggle.classList.remove('active');
             document.body.style.overflow = '';
+        });
+    }
+
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (mobileNav && mobileMenuToggle) {
+                mobileNav.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         });
     });
 
@@ -111,38 +163,40 @@ document.addEventListener('DOMContentLoaded', function() {
         'Lake Sentani', 'Asmat', 'Merauke', 'Biak'
     ];
     
-    searchInput.addEventListener('focus', function() {
-        searchBox.classList.add('active');
-    });
-    
-    searchInput.addEventListener('blur', function() {
-        setTimeout(() => {
-            if (this.value === '') {
-                searchBox.classList.remove('active');
-            }
-            searchSuggestions.classList.remove('active');
-        }, 200);
-    });
+    if (searchInput && searchBox && searchSuggestions) {
+        searchInput.addEventListener('focus', function() {
+            searchBox.classList.add('active');
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (this.value === '') {
+                    searchBox.classList.remove('active');
+                }
+                searchSuggestions.classList.remove('active');
+            }, 200);
+        });
 
-    searchInput.addEventListener('input', function() {
-        const value = this.value.toLowerCase();
-        if (value.length > 0) {
-            const filtered = destinations.filter(dest => 
-                dest.toLowerCase().includes(value)
-            );
-            
-            if (filtered.length > 0) {
-                searchSuggestions.innerHTML = filtered.map(dest => 
-                    `<div class="search-suggestion" onclick="selectDestination('${dest}')">${dest}</div>`
-                ).join('');
-                searchSuggestions.classList.add('active');
+        searchInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            if (value.length > 0) {
+                const filtered = destinations.filter(dest => 
+                    dest.toLowerCase().includes(value)
+                );
+                
+                if (filtered.length > 0) {
+                    searchSuggestions.innerHTML = filtered.map(dest => 
+                        `<div class="search-suggestion" onclick="selectDestination('${dest}')">${dest}</div>`
+                    ).join('');
+                    searchSuggestions.classList.add('active');
+                } else {
+                    searchSuggestions.classList.remove('active');
+                }
             } else {
                 searchSuggestions.classList.remove('active');
             }
-        } else {
-            searchSuggestions.classList.remove('active');
-        }
-    });
+        });
+    }
 
     // Hero Section Animations
     const statNumbers = document.querySelectorAll('.stat-number');
@@ -481,16 +535,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Simulate processing
             setTimeout(() => {
-                // Check if user is logged in
-                <?php if(isset($_SESSION['username'])): ?>
-                    showNotification('Search completed! Redirecting to results...', 'success');
-                    // Here you would redirect to search results
-                <?php else: ?>
-                    showNotification('Please sign in to complete your booking', 'info');
-                    setTimeout(() => {
-                        window.location.href = 'login.php';
-                    }, 2000);
-                <?php endif; ?>
+                // For demo purposes, show notification
+                showNotification('Please sign in to complete your booking', 'info');
+                setTimeout(() => {
+                    window.location.href = '../login.php';
+                }, 2000);
                 
                 submitBtn.innerHTML = submitBtn.textContent.replace('Processing...', 'Search');
                 submitBtn.disabled = false;
@@ -596,15 +645,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Chatbot integration
     window.openChatbot = function() {
-        // Check if user is logged in
-        <?php if(isset($_SESSION['username'])): ?>
-            window.location.href = 'users/chatbot/';
-        <?php else: ?>
-            showNotification('Please sign in to use the AI Travel Assistant', 'info');
-            setTimeout(() => {
-                window.location.href = 'login.php';
-            }, 2000);
-        <?php endif; ?>
+        // For demo purposes, show notification
+        showNotification('Please sign in to use the AI Travel Assistant', 'info');
+        setTimeout(() => {
+            window.location.href = '../login.php';
+        }, 2000);
     };
 
     // Scroll to top
