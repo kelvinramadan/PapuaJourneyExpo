@@ -225,13 +225,11 @@ body {
 
 .search-box {
     position: relative;
-    width: 200px;
-    transition: width 0.3s ease;
+    width: 250px;
+    /* Removed transition since width won't change */
 }
 
-.search-box.active {
-    width: 300px;
-}
+/* Removed .search-box.active rule - no size change on focus */
 
 .search-box input {
     width: 100%;

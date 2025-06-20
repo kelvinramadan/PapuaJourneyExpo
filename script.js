@@ -164,15 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     
     if (searchInput && searchBox && searchSuggestions) {
+        // Remove the active class functionality - search box stays same size
         searchInput.addEventListener('focus', function() {
-            searchBox.classList.add('active');
+            // Do nothing - no size change
         });
         
         searchInput.addEventListener('blur', function() {
             setTimeout(() => {
-                if (this.value === '') {
-                    searchBox.classList.remove('active');
-                }
                 searchSuggestions.classList.remove('active');
             }, 200);
         });
