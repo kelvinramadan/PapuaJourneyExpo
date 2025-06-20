@@ -154,6 +154,8 @@ body {
     text-align: center;
     color: var(--text-color);
     position: relative;
+    overflow: hidden;
+    will-change: transform;
 }
 
 .hero-content {
@@ -199,6 +201,8 @@ body {
 .destinations {
     padding: 4rem 8rem;
     background-color: var(--background-color);
+    position: relative;
+    z-index: 1;
 }
 
 .destination-container {

@@ -293,12 +293,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Add parallax effect to hero section
+    // Add parallax effect to hero section only
     const hero = document.querySelector('.hero');
+    const heroHeight = hero.offsetHeight;
+    
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.5;
-        hero.style.transform = `translateY(${parallax}px)`;
+        // Only apply parallax when hero is in view
+        if (scrolled < heroHeight) {
+            const parallax = scrolled * 0.5;
+            hero.style.transform = `translateY(${parallax}px)`;
+        }
     });
 
     // Animate numbers/stats if they exist
