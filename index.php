@@ -192,11 +192,11 @@ session_start();
                 </div>
                 <div class="destination-cards">
                     <div class="mini-card fade-in">
-                        <img src="frontend/assets/raja-ampat-thumb.jpg" alt="Raja Ampat">
+                        <img src="frontend/assets/rajaAmpat.jpg" alt="Raja Ampat">
                         <span>Raja Ampat</span>
                     </div>
                     <div class="mini-card fade-in">
-                        <img src="frontend/assets/jayapura-thumb.jpg" alt="Jayapura">
+                        <img src="frontend/assets/TamanNasionalTelukCendrawasih.jpg" alt="Jayapura">
                         <span>Jayapura</span>
                     </div>
                 </div>
@@ -407,7 +407,9 @@ session_start();
                     </div>
                     <p>"The AI chatbot helped me plan the perfect diving trip to Raja Ampat. Found hidden spots I would never have discovered on my own!"</p>
                     <div class="testimonial-author">
-                        <img src="frontend/assets/avatar1.jpg" alt="Sarah M.">
+                        <div class="avatar-icon" style="background-color: #4A90E2;">
+                            <i class="fas fa-user"></i>
+                        </div>
                         <div>
                             <h4>Sarah M.</h4>
                             <span>Adventure Diver</span>
@@ -424,7 +426,9 @@ session_start();
                     </div>
                     <p>"Connected with amazing local guides through the platform. The cultural experiences were authentic and unforgettable."</p>
                     <div class="testimonial-author">
-                        <img src="frontend/assets/avatar2.jpg" alt="John D.">
+                        <div class="avatar-icon" style="background-color: #50C878;">
+                            <i class="fas fa-user"></i>
+                        </div>
                         <div>
                             <h4>John D.</h4>
                             <span>Culture Enthusiast</span>
@@ -441,7 +445,9 @@ session_start();
                     </div>
                     <p>"Best platform for exploring Papua! The local business connections made our trip smooth and supported the community."</p>
                     <div class="testimonial-author">
-                        <img src="frontend/assets/avatar3.jpg" alt="Maria L.">
+                        <div class="avatar-icon" style="background-color: #FF6B6B;">
+                            <i class="fas fa-user"></i>
+                        </div>
                         <div>
                             <h4>Maria L.</h4>
                             <span>Eco-Tourist</span>

@@ -1267,6 +1267,40 @@ body {
     font-size: 0.9rem;
 }
 
+/* Avatar Icon for testimonials */
+.testimonial-author .avatar-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Interest Card Backgrounds */
+.interest-card.food {
+    background: url('assets/food.jpg') center/cover;
+}
+
+.interest-card.culture {
+    background: url('assets/culture.png') center/cover;
+}
+
+.interest-card.adventures {
+    background: url('assets/diving.jpg') center/cover;
+}
+
+.interest-card.tracking {
+    background: url('assets/tracking.png') center/cover;
+}
+
+.interest-card.wildlife {
+    background: url('assets/wildlife.jpg') center/cover;
+}
+
 /* Floating Chatbot Button */
 .chatbot-float {
     position: fixed;
