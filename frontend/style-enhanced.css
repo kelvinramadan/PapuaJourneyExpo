@@ -1002,18 +1002,7 @@ body {
     font-weight: 500;
 }
 
-.interest-hover {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.interest-card:hover .interest-hover {
-    opacity: 1;
-}
+/* Removed interest-hover styles as requested */
 
 /* Enhanced Plan Section */
 .plan-trip {
