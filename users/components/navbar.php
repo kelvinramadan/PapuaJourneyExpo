@@ -371,106 +371,6 @@ $db->close();
     gap: 1rem;
 }
 
-.pj-navbar-wrapper .search-box {
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 25px;
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-}
-
-.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box {
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.pj-navbar-wrapper .search-box:focus-within {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box:focus-within {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.pj-navbar-wrapper .search-box i {
-    color: var(--text-color);
-    font-size: 0.9rem;
-}
-
-.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box i {
-    color: var(--text-color-secondary);
-}
-
-.pj-navbar-wrapper .search-box input {
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text-color);
-    width: 150px;
-    font-size: 0.9rem;
-}
-
-.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box input {
-    color: var(--text-color-secondary);
-}
-
-.pj-navbar-wrapper .search-box input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box input::placeholder {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-/* Search Suggestions */
-.pj-navbar-wrapper .search-suggestions {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    max-height: 300px;
-    overflow-y: auto;
-    display: none;
-    z-index: 100;
-    min-width: 250px;
-}
-
-.pj-navbar-wrapper .search-suggestions.active {
-    display: block;
-}
-
-.pj-navbar-wrapper .search-suggestion-item {
-    padding: 0.75rem 1rem;
-    color: var(--text-color-secondary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.pj-navbar-wrapper .search-suggestion-item:last-child {
-    border-bottom: none;
-}
-
-.pj-navbar-wrapper .search-suggestion-item:hover {
-    background: var(--background-color);
-}
-
-.pj-navbar-wrapper .search-suggestion-item i {
-    color: var(--button-color);
-    font-size: 0.9rem;
-}
-
 /* User Menu */
 .pj-navbar-wrapper .user-menu {
     position: relative;
@@ -713,8 +613,7 @@ body {
         padding: 1rem;
     }
     
-    .pj-navbar-wrapper .nav-links,
-    .pj-navbar-wrapper .search-box {
+    .pj-navbar-wrapper .nav-links {
         display: none;
     }
     
@@ -910,12 +809,6 @@ body {
         </ul>
         
         <div class="search-container">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search destinations..." id="searchInput">
-                <div class="search-suggestions" id="searchSuggestions"></div>
-            </div>
-            
             <div class="user-menu">
                 <div class="user-avatar">
                     <?php if ($user_data['profile_image'] && file_exists($uploads_path . 'profile_images/' . $user_data['profile_image'])): ?>
@@ -1140,62 +1033,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Search functionality
-const searchInput = document.querySelector('.pj-navbar-wrapper #searchInput');
-const searchSuggestions = document.querySelector('.pj-navbar-wrapper #searchSuggestions');
-
-if (searchInput && searchSuggestions) {
-    // Sample search data
-    const searchData = [
-        { icon: 'fas fa-map-marker-alt', text: 'Raja Ampat', type: 'Destination' },
-        { icon: 'fas fa-map-marker-alt', text: 'Jayapura', type: 'Destination' },
-        { icon: 'fas fa-map-marker-alt', text: 'Wamena', type: 'Destination' },
-        { icon: 'fas fa-hotel', text: 'Swiss-Belhotel Papua', type: 'Hotel' },
-        { icon: 'fas fa-hotel', text: 'Aston Jayapura', type: 'Hotel' },
-        { icon: 'fas fa-utensils', text: 'Papuan Cuisine', type: 'Food' },
-        { icon: 'fas fa-hiking', text: 'Trekking Tours', type: 'Activity' }
-    ];
-    
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        
-        if (query.length > 0) {
-            const filtered = searchData.filter(item => 
-                item.text.toLowerCase().includes(query)
-            );
-            
-            if (filtered.length > 0) {
-                searchSuggestions.innerHTML = filtered.map(item => `
-                    <div class="search-suggestion-item">
-                        <i class="${item.icon}"></i>
-                        <div>
-                            <strong>${item.text}</strong>
-                            <small style="display: block; color: #666; font-size: 0.8rem;">${item.type}</small>
-                        </div>
-                    </div>
-                `).join('');
-                searchSuggestions.classList.add('active');
-            } else {
-                searchSuggestions.innerHTML = `
-                    <div class="search-suggestion-item">
-                        <i class="fas fa-search"></i>
-                        <span>No results found for "${query}"</span>
-                    </div>
-                `;
-                searchSuggestions.classList.add('active');
-            }
-        } else {
-            searchSuggestions.classList.remove('active');
-        }
-    });
-    
-    // Close suggestions on outside click
-    document.addEventListener('click', function(event) {
-        if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
-            searchSuggestions.classList.remove('active');
-        }
-    });
-}
 
 // Modal functions
 function openModal(modalId) {
