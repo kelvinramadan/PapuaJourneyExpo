@@ -203,27 +203,23 @@ $stmt->close();
 $db->close();
 ?>
 
+<!-- Include Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <style>
-/* Global reset for consistent scrollbar behavior */
-html {
-    /* Removed overflow-y: scroll to prevent phantom scrollbar space */
-    /* Use scrollbar-gutter for modern browsers if layout shift is a concern */
-    scrollbar-gutter: stable;
-}
-
-/* Reset any conflicting chatbot styles */
-.navbar-header .user-avatar,
-.navbar-header .user-avatar * {
-    all: unset;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Reset styles for navbar to ensure consistency */
-.navbar-header,
-.navbar-header * {
-    box-sizing: border-box;
+/* Root Variables to match index.php */
+:root {
+    --primary-color: #536245;
+    --secondary-color: #d9d9d9;
+    --button-color: #DC9B11;
+    --button-hover-color: #f4b63b;
+    --text-color: #FFFCF7;
+    --text-color-secondary: #191919;
+    --background-color: #EBE7E4;
+    --transition: all 0.3s ease-in-out;
+    --shadow: #333333b2;
+    --success-color: #4CAF50;
+    --error-color: #f44336;
 }
 
 /* Scroll Progress Bar */
@@ -231,146 +227,150 @@ html {
     position: fixed;
     top: 0;
     left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #ffd700, #ffed4e);
-    z-index: 1001;
-    transition: width 0.3s ease;
     width: 0%;
+    height: 3px;
+    background: linear-gradient(to right, var(--button-color), var(--button-hover-color));
+    z-index: 10000;
+    transition: width 0.2s ease-out;
 }
 
-/* Navbar Styles - Using specific class to avoid conflicts */
-.navbar-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 0 !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: fixed; /* Changed from sticky to fixed */
+/* Header - Exact copy from index.php */
+.header {
+    position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin: 0 !important;
     width: 100%;
-    box-sizing: border-box;
-    font-size: 16px !important;
-    line-height: 1.5 !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+    padding: 1rem 2rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
 }
 
-/* Add padding to body to account for fixed navbar */
-body {
-    padding-top: 80px !important; /* Default, adjusted by JS */
-    margin: 0 !important;
-    min-height: 100vh;
+.header.scrolled {
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+/* Navigation */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
-}
-
-.navbar-header .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    transition: transform 0.3s ease;
-}
-
-.navbar-header .logo:hover {
-    transform: translateY(-2px);
-}
-
-.navbar-header .logo img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-}
-
-.navbar-header .logo p {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: bold;
-    background: linear-gradient(45deg, #ffd700, #ffed4e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.navbar-header .nav-container {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex: 1;
-}
-
-.navbar-header .nav-links {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.navbar-header .nav-links a {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 0.5rem 1.2rem;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    position: relative;
-    overflow: hidden;
+.logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    text-decoration: none;
 }
 
-.navbar-header .nav-links a::before {
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo img {
+    height: 45px;
+    width: auto;
+}
+
+.logo p {
+    font-size: 1.5rem;
+    color: var(--button-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--text-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.header.scrolled .mobile-menu-toggle span {
+    background: var(--text-color-secondary);
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    padding: 5px 0;
+}
+
+.header.scrolled .nav-links a {
+    color: var(--text-color-secondary);
+}
+
+.nav-links a:hover {
+    color: var(--button-color);
+}
+
+.nav-links a::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    transition: left 0.3s ease;
-    z-index: -1;
-    border-radius: 25px;
-}
-
-.navbar-header .nav-links a:hover::before {
+    bottom: -2px;
     left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--button-color);
+    transition: width 0.3s ease;
 }
 
-.navbar-header .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-
-.navbar-header .nav-links a.active {
-    background: white;
-    color: #667eea;
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    width: 100%;
 }
 
 /* Search Container */
-.navbar-header .search-container {
+.search-container {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.navbar-header .search-box {
+.search-box {
     position: relative;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 25px;
@@ -382,251 +382,199 @@ body {
     transition: all 0.3s ease;
 }
 
-.navbar-header .search-box:hover,
-.navbar-header .search-box:focus-within {
+.header.scrolled .search-box {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.search-box:focus-within {
     background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-header .search-box i {
-    color: rgba(255, 255, 255, 0.8);
+.header.scrolled .search-box:focus-within {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.search-box i {
+    color: var(--text-color);
     font-size: 0.9rem;
 }
 
-.navbar-header .search-box input {
+.header.scrolled .search-box i {
+    color: var(--text-color-secondary);
+}
+
+.search-box input {
     background: none;
     border: none;
     outline: none;
-    color: white;
-    width: 200px;
+    color: var(--text-color);
+    width: 150px;
     font-size: 0.9rem;
-    font-family: inherit;
 }
 
-.navbar-header .search-box input::placeholder {
+.header.scrolled .search-box input {
+    color: var(--text-color-secondary);
+}
+
+.search-box input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
-.navbar-header .search-suggestions {
+.header.scrolled .search-box input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* Search Suggestions */
+.search-suggestions {
     position: absolute;
     top: calc(100% + 0.5rem);
     left: 0;
     right: 0;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     max-height: 300px;
     overflow-y: auto;
     display: none;
     z-index: 100;
+    min-width: 250px;
 }
 
-.navbar-header .search-suggestions.active {
+.search-suggestions.active {
     display: block;
 }
 
-.navbar-header .search-suggestion-item {
+.search-suggestion-item {
     padding: 0.75rem 1rem;
-    color: #333;
+    color: var(--text-color-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.navbar-header .search-suggestion-item:hover {
-    background: #f5f5f5;
+.search-suggestion-item:last-child {
+    border-bottom: none;
 }
 
-.navbar-header .search-suggestion-item i {
-    color: #667eea;
+.search-suggestion-item:hover {
+    background: var(--background-color);
+}
+
+.search-suggestion-item i {
+    color: var(--button-color);
     font-size: 0.9rem;
 }
 
-/* Profile Dropdown */
-.navbar-header .profile-dropdown {
+/* User Menu */
+.user-menu {
     position: relative;
 }
 
-.navbar-header .profile-trigger {
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--button-color), var(--button-hover-color));
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
+    justify-content: center;
     cursor: pointer;
+    font-weight: bold;
+    color: white;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
 }
 
-.navbar-header .profile-trigger:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+.user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(220, 155, 17, 0.3);
 }
 
-.navbar-header .user-avatar {
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-weight: bold !important;
-    color: #333 !important;
-    overflow: hidden !important;
-    font-size: 1.2rem !important;
-    line-height: 1 !important;
-    text-align: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-}
-
-.navbar-header .user-avatar img {
+.user-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
 }
 
-.navbar-header .user-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.navbar-header .user-info .user-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.navbar-header .user-info .user-email {
-    font-size: 0.75rem;
-    opacity: 0.8;
-}
-
-.navbar-header .dropdown-arrow {
-    font-size: 0.7rem;
-    transition: transform 0.3s ease;
-}
-
-.navbar-header .profile-dropdown.active .dropdown-arrow {
-    transform: rotate(180deg);
-}
-
-.navbar-header .dropdown-menu {
+/* User Dropdown */
+.user-dropdown {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     min-width: 220px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.1);
     overflow: hidden;
 }
 
-.navbar-header .profile-dropdown.active .dropdown-menu {
+.user-menu:hover .user-dropdown {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-.navbar-header .user-greeting {
+.user-greeting {
     display: block;
     padding: 1rem;
     font-weight: 600;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
+    color: var(--text-color-secondary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--background-color);
 }
 
-.navbar-header .dropdown-item {
+.user-dropdown a,
+.user-dropdown button {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    width: 100%;
     padding: 0.75rem 1rem;
-    color: #333;
+    color: var(--text-color-secondary);
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     border: none;
     background: none;
+    width: 100%;
     text-align: left;
     font-size: 0.9rem;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    font-family: inherit;
 }
 
-.navbar-header .dropdown-item i {
-    width: 20px;
-    text-align: center;
-    color: #667eea;
-}
-
-.navbar-header .dropdown-item.logout-link {
-    color: #dc3545;
-}
-
-.navbar-header .dropdown-item.logout-link i {
-    color: #dc3545;
-}
-
-
-.navbar-header .dropdown-item:hover {
-    background: #f8f9fa;
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+    background: var(--background-color);
     padding-left: 1.5rem;
 }
 
-.navbar-header .dropdown-item.logout-link:hover {
-    background: #fff5f5;
+.user-dropdown i {
+    color: var(--button-color);
+    width: 16px;
+    text-align: center;
 }
 
-.navbar-header .dropdown-separator {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #eee, transparent);
-    margin: 0.5rem 0;
-}
-
-/* Mobile Menu Toggle */
-.navbar-header .mobile-menu-toggle {
-    display: none;
-    background: none;
+.user-dropdown hr {
+    margin: 0;
     border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    flex-direction: column;
-    gap: 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.navbar-header .mobile-menu-toggle span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: white;
-    border-radius: 3px;
-    transition: all 0.3s ease;
+.logout-link {
+    color: var(--error-color) !important;
 }
 
-.navbar-header .mobile-menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.navbar-header .mobile-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.navbar-header .mobile-menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
+.logout-link i {
+    color: var(--error-color) !important;
 }
 
 /* Mobile Navigation */
@@ -635,7 +583,7 @@ body {
     top: 0;
     right: -100%;
     width: 80%;
-    max-width: 400px;
+    max-width: 300px;
     height: 100vh;
     background: white;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
@@ -649,7 +597,7 @@ body {
 }
 
 .mobile-nav-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     padding: 1.5rem;
     display: flex;
     justify-content: space-between;
@@ -668,10 +616,9 @@ body {
 }
 
 .mobile-nav-header .logo p {
-    margin: 0;
     color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
+    margin: 0;
+    font-size: 1.3rem;
 }
 
 .mobile-nav-close {
@@ -690,7 +637,7 @@ body {
 }
 
 .mobile-nav-links li {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .mobile-nav-links a {
@@ -698,37 +645,39 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.5rem;
-    color: #333;
+    color: var(--text-color-secondary);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
 .mobile-nav-links a:hover {
-    background: #f5f5f5;
-    color: #667eea;
+    background: var(--background-color);
+    color: var(--button-color);
     padding-left: 2rem;
 }
 
 .mobile-nav-links a i {
-    font-size: 1.2rem;
-    width: 25px;
+    font-size: 1.1rem;
+    width: 20px;
     text-align: center;
+    color: var(--button-color);
 }
 
 .mobile-user-info {
     padding: 1.5rem;
-    background: #f8f9fa;
-    border-top: 1px solid #eee;
+    background: var(--background-color);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .mobile-user-info span {
     display: block;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #333;
+    color: var(--text-color-secondary);
 }
 
-.mobile-profile-btn, .mobile-logout {
+.mobile-profile-btn,
+.mobile-logout {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -740,113 +689,101 @@ body {
     width: 100%;
     border: none;
     background: white;
-    color: #333;
+    color: var(--text-color-secondary);
     font-size: 0.9rem;
     cursor: pointer;
+    font-family: inherit;
 }
 
-.mobile-profile-btn:hover, .mobile-logout:hover {
-    background: #667eea;
+.mobile-profile-btn:hover,
+.mobile-logout:hover {
+    background: var(--button-color);
     color: white;
 }
 
-/* Updated nav-links styling */
-.navbar-header .nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+/* Adjust body padding for fixed header */
+body {
+    padding-top: 80px;
 }
 
-.navbar-header .nav-links li {
-    list-style: none;
-}
-
-/* Mobile Responsive */
+/* Media Queries */
 @media (max-width: 768px) {
-    .navbar-header .mobile-menu-toggle {
+    .header {
+        padding: 1rem;
+    }
+    
+    .nav-links,
+    .search-box {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
         display: flex;
     }
     
-    .navbar-header .nav-container,
-    .navbar-header .search-box {
-        display: none;
-    }
-    
-    .navbar-header-content {
-        justify-content: space-between;
-        padding: 0 1rem;
-    }
-    
-    .navbar-header .logo p {
-        font-size: 1.5rem;
-    }
-    
-    .navbar-header .profile-trigger {
-        padding: 0.5rem 0.75rem;
-    }
-    
-    .navbar-header .user-info {
-        display: none;
-    }
-    
-    .navbar-header .dropdown-menu {
-        right: 0;
-        min-width: 200px;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar-header .logo p {
-        font-size: 1.3rem;
-    }
-    
-    .navbar-header .logo img {
+    .user-avatar {
         width: 35px;
         height: 35px;
-    }
-    
-    .navbar-header .user-avatar {
-        width: 35px !important;
-        height: 35px !important;
+        font-size: 1rem;
     }
 }
 
-/* Modal Styles - with higher specificity to override any page styles */
+/* Notification Messages */
+.notification-message {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1500;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.notification-error {
+    background: var(--error-color);
+    color: white;
+}
+
+/* Modal Styles */
 .modal {
-    display: none !important;
-    position: fixed !important;
-    z-index: 2000 !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(5px) !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.modal[style*="display: block"] {
-    display: block !important;
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background: white !important;
-    margin: 5% auto !important;
-    padding: 2rem !important;
-    border-radius: 20px !important;
-    width: 90% !important;
-    max-width: 500px !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-    animation: modalSlideIn 0.3s ease !important;
-    position: relative !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    font-size: 16px !important;
-    line-height: 1.5 !important;
-    color: #333 !important;
+    background: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
 }
 
 @keyframes modalSlideIn {
@@ -875,58 +812,48 @@ body {
 }
 
 .modal h3 {
-    color: #333;
+    color: var(--text-color-secondary);
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
 }
 
 .modal .form-group {
-    margin-bottom: 1.5rem !important;
-    width: 100% !important;
+    margin-bottom: 1.5rem;
 }
 
 .modal .form-group label {
-    display: block !important;
-    margin-bottom: 0.5rem !important;
-    font-weight: 600 !important;
-    color: #555 !important;
-    font-size: 1rem !important;
-    line-height: 1.5 !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
 }
 
 .modal .form-group input,
 .modal .form-group textarea {
-    width: 100% !important;
-    padding: 0.75rem !important;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    line-height: 1.5 !important;
-    transition: border-color 0.3s !important;
-    background: white !important;
-    color: #333 !important;
-    box-sizing: border-box !important;
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    font-family: inherit;
 }
 
 .modal .form-group input:focus,
 .modal .form-group textarea:focus {
-    outline: none !important;
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none;
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
 }
 
 .modal .form-group small {
-    display: block !important;
-    margin-top: 0.25rem !important;
-    color: #666 !important;
-    font-size: 0.875rem !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
 }
 
 .modal .btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: var(--button-color);
     color: white;
     border: none;
     padding: 0.75rem 2rem;
@@ -939,8 +866,9 @@ body {
 }
 
 .modal .btn:hover {
+    background: var(--button-hover-color);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(220, 155, 17, 0.3);
 }
 
 .modal .btn-secondary {
@@ -949,15 +877,15 @@ body {
 
 .modal .btn-secondary:hover {
     background: #5a6268;
-    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
 }
 </style>
 
 <!-- Scroll Progress Bar -->
 <div class="scroll-progress-bar"></div>
 
-<header class="header navbar-header">
-    <nav class="navbar-header-content">
+<header class="header" id="header">
+    <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
             <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
             <p>Journey</p>
@@ -970,25 +898,13 @@ body {
             <span></span>
         </button>
         
-        <div class="nav-container">
-            <ul class="nav-links">
-                <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-home"></i> Home
-                </a></li>
-                <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-map-marked-alt"></i> Wisata
-                </a></li>    
-                <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-bed"></i> Penginapan
-                </a></li>
-                <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-receipt"></i> Transaksi
-                </a></li>
-                <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">
-                    <i class="fas fa-robot"></i> AI Assistant
-                </a></li>
-            </ul>
-        </div>
+        <ul class="nav-links">
+            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">Dashboard</a></li>
+            <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">Wisata</a></li>
+            <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">Penginapan</a></li>
+            <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">Transaksi</a></li>
+            <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a></li>
+        </ul>
         
         <div class="search-container">
             <div class="search-box">
@@ -997,40 +913,23 @@ body {
                 <div class="search-suggestions" id="searchSuggestions"></div>
             </div>
             
-            <div class="profile-dropdown" id="profileDropdown">
-            <div class="profile-trigger" onclick="toggleDropdown()">
+            <div class="user-menu">
                 <div class="user-avatar">
                     <?php if ($user_data['profile_image'] && file_exists($uploads_path . 'profile_images/' . $user_data['profile_image'])): ?>
                         <img src="<?php echo $uploads_path; ?>profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
                     <?php else: ?>
-                        <?php echo strtoupper(substr($user_name, 0, 1)); ?>
+                        <span><?php echo strtoupper(substr($user_name, 0, 1)); ?></span>
                     <?php endif; ?>
                 </div>
-                <div class="user-info">
-                    <div class="user-name"><?php echo htmlspecialchars($user_name); ?></div>
-                    <small class="user-email"><?php echo htmlspecialchars($user_email); ?></small>
+                <div class="user-dropdown">
+                    <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
+                    <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <button onclick="openModal('profileModal')"><i class="fas fa-user"></i> Edit Profile</button>
+                    <button onclick="openModal('photoModal')"><i class="fas fa-camera"></i> Change Photo</button>
+                    <button onclick="openModal('passwordModal')"><i class="fas fa-lock"></i> Change Password</button>
+                    <hr>
+                    <a href="<?php echo $logout_path; ?>" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
-                <span class="dropdown-arrow">▼</span>
-            </div>
-            
-            <div class="dropdown-menu">
-                <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
-                <button class="dropdown-item" onclick="openModal('photoModal')">
-                    <i class="fas fa-camera"></i> Ubah Foto Profil
-                </button>
-                <button class="dropdown-item" onclick="openModal('profileModal')">
-                    <i class="fas fa-user"></i> Edit Profil
-                </button>
-                <button class="dropdown-item" onclick="openModal('passwordModal')">
-                    <i class="fas fa-lock"></i> Ubah Password
-                </button>
-                <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-                <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid #eee;">
-                <a href="<?php echo $logout_path; ?>" class="dropdown-item logout-link">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
             </div>
         </div>
     </nav>
@@ -1048,7 +947,7 @@ body {
         </div>
         <ul class="mobile-nav-links">
             <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php">
-                <i class="fas fa-home"></i> Home
+                <i class="fas fa-home"></i> Dashboard
             </a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php">
                 <i class="fas fa-map-marked-alt"></i> Wisata
@@ -1077,7 +976,7 @@ body {
 
 <!-- Display Messages if any -->
 <?php if (isset($_SESSION['message'])): ?>
-<div style="position: fixed; top: 90px; right: 20px; background: #28a745; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1500;">
+<div class="notification-message notification-success">
     <?php 
     echo htmlspecialchars($_SESSION['message']); 
     unset($_SESSION['message']); 
@@ -1086,7 +985,7 @@ body {
 <?php endif; ?>
 
 <?php if (isset($_SESSION['error_message'])): ?>
-<div style="position: fixed; top: 90px; right: 20px; background: #dc3545; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1500;">
+<div class="notification-message notification-error">
     <?php 
     echo htmlspecialchars($_SESSION['error_message']); 
     unset($_SESSION['error_message']); 
@@ -1099,15 +998,15 @@ body {
 <div id="photoModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('photoModal')">&times;</span>
-        <h3>Upload Foto Profil</h3>
+        <h3>Upload Profile Photo</h3>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="profile_photo">Pilih Foto:</label>
+                <label for="profile_photo">Choose Photo:</label>
                 <input type="file" name="profile_photo" id="profile_photo" accept="image/*" required>
-                <small>Format: JPG, PNG, GIF. Maksimal 5MB.</small>
+                <small>Format: JPG, PNG, GIF. Max 5MB.</small>
             </div>
             <button type="submit" name="upload_photo" class="btn">Upload</button>
-            <button type="button" onclick="closeModal('photoModal')" class="btn btn-secondary">Batal</button>
+            <button type="button" onclick="closeModal('photoModal')" class="btn btn-secondary">Cancel</button>
         </form>
     </div>
 </div>
@@ -1116,10 +1015,10 @@ body {
 <div id="profileModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('profileModal')">&times;</span>
-        <h3>Edit Profil</h3>
-        <form method="POST" action="<?php echo $users_path; ?>dashboard/user_dashboard.php">
+        <h3>Edit Profile</h3>
+        <form method="POST">
             <div class="form-group">
-                <label for="full_name">Nama Lengkap:</label>
+                <label for="full_name">Full Name:</label>
                 <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($user_data['full_name'] ?? ''); ?>" required>
             </div>
             <div class="form-group">
@@ -1127,15 +1026,15 @@ body {
                 <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>" required>
             </div>
             <div class="form-group">
-                <label for="phone">Nomor Telepon:</label>
+                <label for="phone">Phone Number:</label>
                 <input type="tel" name="phone" id="phone" value="<?php echo htmlspecialchars($user_data['phone'] ?? ''); ?>">
             </div>
             <div class="form-group">
-                <label for="address">Alamat:</label>
+                <label for="address">Address:</label>
                 <textarea name="address" id="address" rows="3"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
             </div>
-            <button type="submit" name="update_profile" class="btn">Simpan</button>
-            <button type="button" onclick="closeModal('profileModal')" class="btn btn-secondary">Batal</button>
+            <button type="submit" name="update_profile" class="btn">Save</button>
+            <button type="button" onclick="closeModal('profileModal')" class="btn btn-secondary">Cancel</button>
         </form>
     </div>
 </div>
@@ -1144,51 +1043,31 @@ body {
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('passwordModal')">&times;</span>
-        <h3>Ubah Password</h3>
-        <form method="POST" action="<?php echo $users_path; ?>dashboard/user_dashboard.php">
+        <h3>Change Password</h3>
+        <form method="POST">
             <div class="form-group">
-                <label for="current_password">Password Lama:</label>
+                <label for="current_password">Current Password:</label>
                 <input type="password" name="current_password" id="current_password" required>
             </div>
             <div class="form-group">
-                <label for="new_password">Password Baru:</label>
+                <label for="new_password">New Password:</label>
                 <input type="password" name="new_password" id="new_password" required>
-                <small>Minimal 6 karakter</small>
+                <small>Minimum 6 characters</small>
             </div>
             <div class="form-group">
-                <label for="confirm_password">Konfirmasi Password Baru:</label>
+                <label for="confirm_password">Confirm New Password:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
             </div>
-            <button type="submit" name="change_password" class="btn">Ubah Password</button>
-            <button type="button" onclick="closeModal('passwordModal')" class="btn btn-secondary">Batal</button>
+            <button type="submit" name="change_password" class="btn">Change Password</button>
+            <button type="button" onclick="closeModal('passwordModal')" class="btn btn-secondary">Cancel</button>
         </form>
     </div>
 </div>
 
 <script>
-// Adjust body padding based on actual navbar height
-document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.querySelector('.navbar-header');
-    if (navbar) {
-        const navbarHeight = navbar.offsetHeight;
-        document.body.style.paddingTop = navbarHeight + 'px';
-    }
-    
-    // Initialize scroll progress
-    updateScrollProgress();
-    
-    // Initialize search functionality
-    initializeSearch();
-});
-
-// Handle window resize
-window.addEventListener('resize', function() {
-    const navbar = document.querySelector('.navbar-header');
-    if (navbar) {
-        const navbarHeight = navbar.offsetHeight;
-        document.body.style.paddingTop = navbarHeight + 'px';
-    }
-});
+// Get header element
+const header = document.getElementById('header');
+let lastScroll = 0;
 
 // Scroll Progress Bar
 function updateScrollProgress() {
@@ -1202,6 +1081,27 @@ function updateScrollProgress() {
         });
     }
 }
+
+// Header scroll behavior
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    // Add/remove scrolled class
+    if (currentScroll > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+    
+    // Hide/show header on scroll
+    if (currentScroll > lastScroll && currentScroll > 100) {
+        header.classList.add('header-hidden');
+    } else {
+        header.classList.remove('header-hidden');
+    }
+    
+    lastScroll = currentScroll;
+});
 
 // Mobile Menu Toggle
 const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
@@ -1236,113 +1136,91 @@ document.addEventListener('click', function(event) {
 });
 
 // Search functionality
-function initializeSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchSuggestions = document.getElementById('searchSuggestions');
+const searchInput = document.getElementById('searchInput');
+const searchSuggestions = document.getElementById('searchSuggestions');
+
+if (searchInput && searchSuggestions) {
+    // Sample search data
+    const searchData = [
+        { icon: 'fas fa-map-marker-alt', text: 'Raja Ampat', type: 'Destination' },
+        { icon: 'fas fa-map-marker-alt', text: 'Jayapura', type: 'Destination' },
+        { icon: 'fas fa-map-marker-alt', text: 'Wamena', type: 'Destination' },
+        { icon: 'fas fa-hotel', text: 'Swiss-Belhotel Papua', type: 'Hotel' },
+        { icon: 'fas fa-hotel', text: 'Aston Jayapura', type: 'Hotel' },
+        { icon: 'fas fa-utensils', text: 'Papuan Cuisine', type: 'Food' },
+        { icon: 'fas fa-hiking', text: 'Trekking Tours', type: 'Activity' }
+    ];
     
-    if (searchInput && searchSuggestions) {
-        // Sample search data
-        const searchData = [
-            { icon: 'fas fa-map-marker-alt', text: 'Raja Ampat', type: 'Destination' },
-            { icon: 'fas fa-map-marker-alt', text: 'Jayapura', type: 'Destination' },
-            { icon: 'fas fa-map-marker-alt', text: 'Wamena', type: 'Destination' },
-            { icon: 'fas fa-hotel', text: 'Swiss-Belhotel Papua', type: 'Hotel' },
-            { icon: 'fas fa-hotel', text: 'Aston Jayapura', type: 'Hotel' },
-            { icon: 'fas fa-utensils', text: 'Papuan Cuisine', type: 'Food' },
-            { icon: 'fas fa-hiking', text: 'Trekking Tours', type: 'Activity' }
-        ];
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
         
-        searchInput.addEventListener('input', function() {
-            const query = this.value.toLowerCase().trim();
+        if (query.length > 0) {
+            const filtered = searchData.filter(item => 
+                item.text.toLowerCase().includes(query)
+            );
             
-            if (query.length > 0) {
-                const filtered = searchData.filter(item => 
-                    item.text.toLowerCase().includes(query)
-                );
-                
-                if (filtered.length > 0) {
-                    searchSuggestions.innerHTML = filtered.map(item => `
-                        <div class="search-suggestion-item">
-                            <i class="${item.icon}"></i>
-                            <div>
-                                <strong>${item.text}</strong>
-                                <small style="display: block; color: #666;">${item.type}</small>
-                            </div>
+            if (filtered.length > 0) {
+                searchSuggestions.innerHTML = filtered.map(item => `
+                    <div class="search-suggestion-item">
+                        <i class="${item.icon}"></i>
+                        <div>
+                            <strong>${item.text}</strong>
+                            <small style="display: block; color: #666; font-size: 0.8rem;">${item.type}</small>
                         </div>
-                    `).join('');
-                    searchSuggestions.classList.add('active');
-                } else {
-                    searchSuggestions.innerHTML = `
-                        <div class="search-suggestion-item">
-                            <i class="fas fa-search"></i>
-                            <span>No results found for "${query}"</span>
-                        </div>
-                    `;
-                    searchSuggestions.classList.add('active');
-                }
+                    </div>
+                `).join('');
+                searchSuggestions.classList.add('active');
             } else {
-                searchSuggestions.classList.remove('active');
+                searchSuggestions.innerHTML = `
+                    <div class="search-suggestion-item">
+                        <i class="fas fa-search"></i>
+                        <span>No results found for "${query}"</span>
+                    </div>
+                `;
+                searchSuggestions.classList.add('active');
             }
-        });
-        
-        // Close suggestions on outside click
-        document.addEventListener('click', function(event) {
-            if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
-                searchSuggestions.classList.remove('active');
-            }
-        });
-    }
+        } else {
+            searchSuggestions.classList.remove('active');
+        }
+    });
+    
+    // Close suggestions on outside click
+    document.addEventListener('click', function(event) {
+        if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
+            searchSuggestions.classList.remove('active');
+        }
+    });
 }
 
-function toggleDropdown() {
-    const dropdown = document.getElementById('profileDropdown');
-    dropdown.classList.toggle('active');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('profileDropdown');
-    if (!dropdown.contains(event.target)) {
-        dropdown.classList.remove('active');
-    }
-});
-
-// Close dropdown when opening modal
-// Global flag to track modal state
-window.isModalOpen = false;
-
+// Modal functions
 function openModal(modalId) {
     document.getElementById(modalId).style.display = 'block';
-    document.getElementById('profileDropdown').classList.remove('active');
-    window.isModalOpen = true;
-    
-    // Dispatch custom event for chatbot to listen
-    window.dispatchEvent(new CustomEvent('modalStateChanged', { detail: { isOpen: true } }));
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
-    window.isModalOpen = false;
-    
-    // Dispatch custom event for chatbot to listen
-    window.dispatchEvent(new CustomEvent('modalStateChanged', { detail: { isOpen: false } }));
+    document.body.style.overflow = '';
 }
 
-// Close modal when clicking outside of it
+// Close modal when clicking outside
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.style.display = 'none';
-        window.isModalOpen = false;
-        window.dispatchEvent(new CustomEvent('modalStateChanged', { detail: { isOpen: false } }));
+        document.body.style.overflow = '';
     }
 }
-// Auto-hide success/error messages after 5 seconds
+
+// Auto-hide notification messages
 document.addEventListener('DOMContentLoaded', function() {
-    const messages = document.querySelectorAll('[style*="position: fixed"][style*="top: 90px"]');
+    updateScrollProgress();
+    
+    const messages = document.querySelectorAll('.notification-message');
     messages.forEach(message => {
         setTimeout(() => {
-            message.style.transition = 'opacity 0.5s';
+            message.style.transition = 'opacity 0.5s, transform 0.5s';
             message.style.opacity = '0';
+            message.style.transform = 'translateX(100%)';
             setTimeout(() => message.remove(), 500);
         }, 5000);
     });
