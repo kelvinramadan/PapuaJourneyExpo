@@ -241,7 +241,8 @@ $db->close();
     transition: all 0.3s ease;
 }
 
-.pj-navbar-wrapper .pj-navbar-header.scrolled {
+.pj-navbar-wrapper .pj-navbar-header.scrolled,
+.pj-navbar-wrapper .pj-navbar-header.white-navbar {
     background-color: rgba(255, 255, 255, 0.98);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
@@ -772,7 +773,7 @@ body {
 
 <!-- Papua Journey Navbar Component -->
 <div class="pj-navbar-wrapper">
-    <header class="pj-navbar-header" id="header">
+    <header class="pj-navbar-header <?php echo (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'wisata/userwisata.php') !== false) ? 'white-navbar' : ''; ?>" id="header">
     <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
             <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
@@ -953,6 +954,11 @@ const header = document.getElementById('header');
 if (header && header.classList.contains('pj-navbar-header')) {
 let lastScroll = 0;
 
+// Check if page requires white navbar from start
+const requiresWhiteNavbar = document.body.hasAttribute('data-navbar-white');
+if (requiresWhiteNavbar) {
+    header.classList.add('white-navbar');
+}
 
 // Header scroll behavior
 window.addEventListener('scroll', () => {
@@ -963,6 +969,10 @@ window.addEventListener('scroll', () => {
         header.classList.add('scrolled');
     } else {
         header.classList.remove('scrolled');
+        // Keep white navbar if required by page
+        if (requiresWhiteNavbar) {
+            header.classList.add('white-navbar');
+        }
     }
     
     // Hide/show header on scroll

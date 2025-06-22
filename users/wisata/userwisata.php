@@ -145,7 +145,7 @@ mysqli_close($db);
     <title>Wisata Papua - Jelajahi Keindahan Papua</title>
     <link rel="stylesheet" href="userwisata.css">
 </head>
-<body>
+<body data-navbar-white="true">
     <?php include '../components/navbar.php'; ?>
     
     <div class="main-content">
