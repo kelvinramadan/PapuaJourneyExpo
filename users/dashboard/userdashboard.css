@@ -11,16 +11,7 @@ body {
     color: #333;
 }
 
-.header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-}
+/* Removed conflicting .header styles - now using navbar.php component */
 
 .header-content {
     max-width: 1200px;
@@ -37,112 +28,7 @@ body {
     font-weight: 700;
 }
 
-/* Profile Dropdown Styles */
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.profile-trigger {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background 0.3s;
-}
-
-.profile-trigger:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    overflow: hidden;
-}
-
-.user-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.dropdown-arrow {
-    font-size: 0.8rem;
-    transition: transform 0.3s;
-}
-
-.profile-dropdown.active .dropdown-arrow {
-    transform: rotate(180deg);
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s;
-    z-index: 1000;
-}
-
-.profile-dropdown.active .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    color: #333;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    font-size: 0.9rem;
-}
-
-.dropdown-item:hover {
-    background: #f8f9fa;
-}
-
-.dropdown-item:first-child {
-    border-radius: 8px 8px 0 0;
-}
-
-.dropdown-item:last-child {
-    border-radius: 0 0 8px 8px;
-    color: #dc3545;
-}
-
-.dropdown-item:last-child:hover {
-    background: #f5f5f5;
-}
-
-.dropdown-separator {
-    height: 1px;
-    background: #e9ecef;
-    margin: 0.5rem 0;
-}
+/* Removed conflicting dropdown styles - now using navbar.php component */
 
 .container {
     max-width: 1200px;

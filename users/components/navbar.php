@@ -222,8 +222,13 @@ $db->close();
     --error-color: #f44336;
 }
 
+/* Papua Journey Navbar Specific Styles - Using unique class prefix to avoid conflicts */
+.pj-navbar-wrapper * {
+    box-sizing: border-box;
+}
+
 /* Scroll Progress Bar */
-.scroll-progress-bar {
+.pj-navbar-wrapper .scroll-progress-bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -235,7 +240,7 @@ $db->close();
 }
 
 /* Header - Exact copy from index.php */
-.header {
+.pj-navbar-wrapper .pj-navbar-header {
     position: fixed;
     top: 0;
     width: 100%;
@@ -247,13 +252,13 @@ $db->close();
     transition: all 0.3s ease;
 }
 
-.header.scrolled {
+.pj-navbar-wrapper .pj-navbar-header.scrolled {
     background-color: rgba(255, 255, 255, 0.98);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Navigation */
-.navbar {
+.pj-navbar-wrapper .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -261,7 +266,7 @@ $db->close();
     margin: 0 auto;
 }
 
-.logo {
+.pj-navbar-wrapper .logo {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -270,16 +275,16 @@ $db->close();
     text-decoration: none;
 }
 
-.logo:hover {
+.pj-navbar-wrapper .logo:hover {
     transform: scale(1.05);
 }
 
-.logo img {
+.pj-navbar-wrapper .logo img {
     height: 45px;
     width: auto;
 }
 
-.logo p {
+.pj-navbar-wrapper .logo p {
     font-size: 1.5rem;
     color: var(--button-color);
     font-weight: 600;
@@ -287,7 +292,7 @@ $db->close();
 }
 
 /* Mobile Menu Toggle */
-.mobile-menu-toggle {
+.pj-navbar-wrapper .mobile-menu-toggle {
     display: none;
     flex-direction: column;
     gap: 4px;
@@ -297,7 +302,7 @@ $db->close();
     padding: 5px;
 }
 
-.mobile-menu-toggle span {
+.pj-navbar-wrapper .mobile-menu-toggle span {
     width: 25px;
     height: 3px;
     background: var(--text-color);
@@ -305,24 +310,24 @@ $db->close();
     transition: all 0.3s ease;
 }
 
-.header.scrolled .mobile-menu-toggle span {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .mobile-menu-toggle span {
     background: var(--text-color-secondary);
 }
 
-.mobile-menu-toggle.active span:nth-child(1) {
+.pj-navbar-wrapper .mobile-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
 
-.mobile-menu-toggle.active span:nth-child(2) {
+.pj-navbar-wrapper .mobile-menu-toggle.active span:nth-child(2) {
     opacity: 0;
 }
 
-.mobile-menu-toggle.active span:nth-child(3) {
+.pj-navbar-wrapper .mobile-menu-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -6px);
 }
 
 /* Navigation Links */
-.nav-links {
+.pj-navbar-wrapper .nav-links {
     display: flex;
     list-style: none;
     gap: 2rem;
@@ -330,7 +335,7 @@ $db->close();
     padding: 0;
 }
 
-.nav-links a {
+.pj-navbar-wrapper .nav-links a {
     text-decoration: none;
     color: var(--text-color);
     font-weight: 500;
@@ -339,15 +344,15 @@ $db->close();
     padding: 5px 0;
 }
 
-.header.scrolled .nav-links a {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .nav-links a {
     color: var(--text-color-secondary);
 }
 
-.nav-links a:hover {
+.pj-navbar-wrapper .nav-links a:hover {
     color: var(--button-color);
 }
 
-.nav-links a::after {
+.pj-navbar-wrapper .nav-links a::after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -358,19 +363,19 @@ $db->close();
     transition: width 0.3s ease;
 }
 
-.nav-links a:hover::after,
-.nav-links a.active::after {
+.pj-navbar-wrapper .nav-links a:hover::after,
+.pj-navbar-wrapper .nav-links a.active::after {
     width: 100%;
 }
 
 /* Search Container */
-.search-container {
+.pj-navbar-wrapper .search-container {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.search-box {
+.pj-navbar-wrapper .search-box {
     position: relative;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 25px;
@@ -382,30 +387,30 @@ $db->close();
     transition: all 0.3s ease;
 }
 
-.header.scrolled .search-box {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.search-box:focus-within {
+.pj-navbar-wrapper .search-box:focus-within {
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.header.scrolled .search-box:focus-within {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box:focus-within {
     background: rgba(0, 0, 0, 0.08);
 }
 
-.search-box i {
+.pj-navbar-wrapper .search-box i {
     color: var(--text-color);
     font-size: 0.9rem;
 }
 
-.header.scrolled .search-box i {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box i {
     color: var(--text-color-secondary);
 }
 
-.search-box input {
+.pj-navbar-wrapper .search-box input {
     background: none;
     border: none;
     outline: none;
@@ -414,20 +419,20 @@ $db->close();
     font-size: 0.9rem;
 }
 
-.header.scrolled .search-box input {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box input {
     color: var(--text-color-secondary);
 }
 
-.search-box input::placeholder {
+.pj-navbar-wrapper .search-box input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
-.header.scrolled .search-box input::placeholder {
+.pj-navbar-wrapper .pj-navbar-header.scrolled .search-box input::placeholder {
     color: rgba(0, 0, 0, 0.5);
 }
 
 /* Search Suggestions */
-.search-suggestions {
+.pj-navbar-wrapper .search-suggestions {
     position: absolute;
     top: calc(100% + 0.5rem);
     left: 0;
@@ -442,11 +447,11 @@ $db->close();
     min-width: 250px;
 }
 
-.search-suggestions.active {
+.pj-navbar-wrapper .search-suggestions.active {
     display: block;
 }
 
-.search-suggestion-item {
+.pj-navbar-wrapper .search-suggestion-item {
     padding: 0.75rem 1rem;
     color: var(--text-color-secondary);
     cursor: pointer;
@@ -457,25 +462,25 @@ $db->close();
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.search-suggestion-item:last-child {
+.pj-navbar-wrapper .search-suggestion-item:last-child {
     border-bottom: none;
 }
 
-.search-suggestion-item:hover {
+.pj-navbar-wrapper .search-suggestion-item:hover {
     background: var(--background-color);
 }
 
-.search-suggestion-item i {
+.pj-navbar-wrapper .search-suggestion-item i {
     color: var(--button-color);
     font-size: 0.9rem;
 }
 
 /* User Menu */
-.user-menu {
+.pj-navbar-wrapper .user-menu {
     position: relative;
 }
 
-.user-avatar {
+.pj-navbar-wrapper .user-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -491,19 +496,19 @@ $db->close();
     overflow: hidden;
 }
 
-.user-avatar:hover {
+.pj-navbar-wrapper .user-avatar:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(220, 155, 17, 0.3);
 }
 
-.user-avatar img {
+.pj-navbar-wrapper .user-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
 /* User Dropdown */
-.user-dropdown {
+.pj-navbar-wrapper .user-dropdown {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
@@ -518,13 +523,13 @@ $db->close();
     overflow: hidden;
 }
 
-.user-menu:hover .user-dropdown {
+.pj-navbar-wrapper .user-menu:hover .user-dropdown {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-.user-greeting {
+.pj-navbar-wrapper .user-greeting {
     display: block;
     padding: 1rem;
     font-weight: 600;
@@ -533,8 +538,8 @@ $db->close();
     background: var(--background-color);
 }
 
-.user-dropdown a,
-.user-dropdown button {
+.pj-navbar-wrapper .user-dropdown a,
+.pj-navbar-wrapper .user-dropdown button {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -551,34 +556,34 @@ $db->close();
     font-family: inherit;
 }
 
-.user-dropdown a:hover,
-.user-dropdown button:hover {
+.pj-navbar-wrapper .user-dropdown a:hover,
+.pj-navbar-wrapper .user-dropdown button:hover {
     background: var(--background-color);
     padding-left: 1.5rem;
 }
 
-.user-dropdown i {
+.pj-navbar-wrapper .user-dropdown i {
     color: var(--button-color);
     width: 16px;
     text-align: center;
 }
 
-.user-dropdown hr {
+.pj-navbar-wrapper .user-dropdown hr {
     margin: 0;
     border: none;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.logout-link {
+.pj-navbar-wrapper .logout-link {
     color: var(--error-color) !important;
 }
 
-.logout-link i {
+.pj-navbar-wrapper .logout-link i {
     color: var(--error-color) !important;
 }
 
 /* Mobile Navigation */
-.mobile-nav {
+.pj-navbar-wrapper .mobile-nav {
     position: fixed;
     top: 0;
     right: -100%;
@@ -592,11 +597,11 @@ $db->close();
     overflow-y: auto;
 }
 
-.mobile-nav.active {
+.pj-navbar-wrapper .mobile-nav.active {
     right: 0;
 }
 
-.mobile-nav-header {
+.pj-navbar-wrapper .mobile-nav-header {
     background: var(--primary-color);
     padding: 1.5rem;
     display: flex;
@@ -604,24 +609,24 @@ $db->close();
     align-items: center;
 }
 
-.mobile-nav-header .logo {
+.pj-navbar-wrapper .mobile-nav-header .logo {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.mobile-nav-header .logo img {
+.pj-navbar-wrapper .mobile-nav-header .logo img {
     width: 35px;
     height: 35px;
 }
 
-.mobile-nav-header .logo p {
+.pj-navbar-wrapper .mobile-nav-header .logo p {
     color: white;
     margin: 0;
     font-size: 1.3rem;
 }
 
-.mobile-nav-close {
+.pj-navbar-wrapper .mobile-nav-close {
     background: none;
     border: none;
     color: white;
@@ -630,17 +635,17 @@ $db->close();
     padding: 0.5rem;
 }
 
-.mobile-nav-links {
+.pj-navbar-wrapper .mobile-nav-links {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.mobile-nav-links li {
+.pj-navbar-wrapper .mobile-nav-links li {
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.mobile-nav-links a {
+.pj-navbar-wrapper .mobile-nav-links a {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -650,34 +655,34 @@ $db->close();
     transition: all 0.3s ease;
 }
 
-.mobile-nav-links a:hover {
+.pj-navbar-wrapper .mobile-nav-links a:hover {
     background: var(--background-color);
     color: var(--button-color);
     padding-left: 2rem;
 }
 
-.mobile-nav-links a i {
+.pj-navbar-wrapper .mobile-nav-links a i {
     font-size: 1.1rem;
     width: 20px;
     text-align: center;
     color: var(--button-color);
 }
 
-.mobile-user-info {
+.pj-navbar-wrapper .mobile-user-info {
     padding: 1.5rem;
     background: var(--background-color);
     border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.mobile-user-info span {
+.pj-navbar-wrapper .mobile-user-info span {
     display: block;
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--text-color-secondary);
 }
 
-.mobile-profile-btn,
-.mobile-logout {
+.pj-navbar-wrapper .mobile-profile-btn,
+.pj-navbar-wrapper .mobile-logout {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -695,8 +700,8 @@ $db->close();
     font-family: inherit;
 }
 
-.mobile-profile-btn:hover,
-.mobile-logout:hover {
+.pj-navbar-wrapper .mobile-profile-btn:hover,
+.pj-navbar-wrapper .mobile-logout:hover {
     background: var(--button-color);
     color: white;
 }
@@ -708,20 +713,20 @@ body {
 
 /* Media Queries */
 @media (max-width: 768px) {
-    .header {
+    .pj-navbar-wrapper .pj-navbar-header {
         padding: 1rem;
     }
     
-    .nav-links,
-    .search-box {
+    .pj-navbar-wrapper .nav-links,
+    .pj-navbar-wrapper .search-box {
         display: none;
     }
     
-    .mobile-menu-toggle {
+    .pj-navbar-wrapper .mobile-menu-toggle {
         display: flex;
     }
     
-    .user-avatar {
+    .pj-navbar-wrapper .user-avatar {
         width: 35px;
         height: 35px;
         font-size: 1rem;
@@ -729,7 +734,7 @@ body {
 }
 
 /* Notification Messages */
-.notification-message {
+.pj-navbar-wrapper .notification-message {
     position: fixed;
     top: 90px;
     right: 20px;
@@ -737,10 +742,10 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 1500;
-    animation: slideInRight 0.3s ease;
+    animation: pjSlideInRight 0.3s ease;
 }
 
-@keyframes slideInRight {
+@keyframes pjSlideInRight {
     from {
         transform: translateX(100%);
         opacity: 0;
@@ -751,18 +756,18 @@ body {
     }
 }
 
-.notification-success {
+.pj-navbar-wrapper .notification-success {
     background: var(--success-color);
     color: white;
 }
 
-.notification-error {
+.pj-navbar-wrapper .notification-error {
     background: var(--error-color);
     color: white;
 }
 
 /* Modal Styles */
-.modal {
+.pj-navbar-wrapper .modal {
     display: none;
     position: fixed;
     z-index: 2000;
@@ -774,7 +779,7 @@ body {
     backdrop-filter: blur(5px);
 }
 
-.modal-content {
+.pj-navbar-wrapper .modal-content {
     background: white;
     margin: 5% auto;
     padding: 2rem;
@@ -782,11 +787,11 @@ body {
     width: 90%;
     max-width: 500px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: modalSlideIn 0.3s ease;
+    animation: pjModalSlideIn 0.3s ease;
     position: relative;
 }
 
-@keyframes modalSlideIn {
+@keyframes pjModalSlideIn {
     from {
         opacity: 0;
         transform: translateY(-50px);
@@ -797,7 +802,7 @@ body {
     }
 }
 
-.close {
+.pj-navbar-wrapper .close {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -806,30 +811,30 @@ body {
     transition: color 0.3s;
 }
 
-.close:hover,
-.close:focus {
+.pj-navbar-wrapper .close:hover,
+.pj-navbar-wrapper .close:focus {
     color: #000;
 }
 
-.modal h3 {
+.pj-navbar-wrapper .modal h3 {
     color: var(--text-color-secondary);
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
 }
 
-.modal .form-group {
+.pj-navbar-wrapper .modal .form-group {
     margin-bottom: 1.5rem;
 }
 
-.modal .form-group label {
+.pj-navbar-wrapper .modal .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--text-color-secondary);
 }
 
-.modal .form-group input,
-.modal .form-group textarea {
+.pj-navbar-wrapper .modal .form-group input,
+.pj-navbar-wrapper .modal .form-group textarea {
     width: 100%;
     padding: 0.75rem;
     border: 2px solid #e0e0e0;
@@ -839,20 +844,20 @@ body {
     font-family: inherit;
 }
 
-.modal .form-group input:focus,
-.modal .form-group textarea:focus {
+.pj-navbar-wrapper .modal .form-group input:focus,
+.pj-navbar-wrapper .modal .form-group textarea:focus {
     outline: none;
     border-color: var(--button-color);
     box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
 }
 
-.modal .form-group small {
+.pj-navbar-wrapper .modal .form-group small {
     display: block;
     margin-top: 0.25rem;
     color: #666;
 }
 
-.modal .btn {
+.pj-navbar-wrapper .modal .btn {
     background: var(--button-color);
     color: white;
     border: none;
@@ -865,26 +870,28 @@ body {
     margin-right: 1rem;
 }
 
-.modal .btn:hover {
+.pj-navbar-wrapper .modal .btn:hover {
     background: var(--button-hover-color);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 155, 17, 0.3);
 }
 
-.modal .btn-secondary {
+.pj-navbar-wrapper .modal .btn-secondary {
     background: #6c757d;
 }
 
-.modal .btn-secondary:hover {
+.pj-navbar-wrapper .modal .btn-secondary:hover {
     background: #5a6268;
     box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
 }
 </style>
 
-<!-- Scroll Progress Bar -->
-<div class="scroll-progress-bar"></div>
-
-<header class="header" id="header">
+<!-- Papua Journey Navbar Component -->
+<div class="pj-navbar-wrapper">
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress-bar"></div>
+    
+    <header class="pj-navbar-header" id="header">
     <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
             <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
@@ -974,28 +981,28 @@ body {
     </div>
 </header>
 
-<!-- Display Messages if any -->
-<?php if (isset($_SESSION['message'])): ?>
-<div class="notification-message notification-success">
-    <?php 
-    echo htmlspecialchars($_SESSION['message']); 
-    unset($_SESSION['message']); 
-    ?>
-</div>
-<?php endif; ?>
+    <!-- Display Messages if any -->
+    <?php if (isset($_SESSION['message'])): ?>
+    <div class="notification-message notification-success">
+        <?php 
+        echo htmlspecialchars($_SESSION['message']); 
+        unset($_SESSION['message']); 
+        ?>
+    </div>
+    <?php endif; ?>
 
-<?php if (isset($_SESSION['error_message'])): ?>
-<div class="notification-message notification-error">
-    <?php 
-    echo htmlspecialchars($_SESSION['error_message']); 
-    unset($_SESSION['error_message']); 
-    ?>
-</div>
-<?php endif; ?>
+    <?php if (isset($_SESSION['error_message'])): ?>
+    <div class="notification-message notification-error">
+        <?php 
+        echo htmlspecialchars($_SESSION['error_message']); 
+        unset($_SESSION['error_message']); 
+        ?>
+    </div>
+    <?php endif; ?>
 
-<!-- Modals -->
-<!-- Photo Upload Modal -->
-<div id="photoModal" class="modal">
+    <!-- Modals -->
+    <!-- Photo Upload Modal -->
+    <div id="photoModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('photoModal')">&times;</span>
         <h3>Upload Profile Photo</h3>
@@ -1067,11 +1074,13 @@ body {
 <script>
 // Get header element
 const header = document.getElementById('header');
+// Ensure we're working with the Papua Journey navbar
+if (header && header.classList.contains('pj-navbar-header')) {
 let lastScroll = 0;
 
 // Scroll Progress Bar
 function updateScrollProgress() {
-    const scrollProgress = document.querySelector('.scroll-progress-bar');
+    const scrollProgress = document.querySelector('.pj-navbar-wrapper .scroll-progress-bar');
     if (scrollProgress) {
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -1104,9 +1113,9 @@ window.addEventListener('scroll', () => {
 });
 
 // Mobile Menu Toggle
-const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-const mobileNav = document.querySelector('.mobile-nav');
-const mobileNavClose = document.querySelector('.mobile-nav-close');
+const mobileMenuToggle = document.querySelector('.pj-navbar-wrapper .mobile-menu-toggle');
+const mobileNav = document.querySelector('.pj-navbar-wrapper .mobile-nav');
+const mobileNavClose = document.querySelector('.pj-navbar-wrapper .mobile-nav-close');
 
 if (mobileMenuToggle && mobileNav) {
     mobileMenuToggle.addEventListener('click', function() {
@@ -1136,8 +1145,8 @@ document.addEventListener('click', function(event) {
 });
 
 // Search functionality
-const searchInput = document.getElementById('searchInput');
-const searchSuggestions = document.getElementById('searchSuggestions');
+const searchInput = document.querySelector('.pj-navbar-wrapper #searchInput');
+const searchSuggestions = document.querySelector('.pj-navbar-wrapper #searchSuggestions');
 
 if (searchInput && searchSuggestions) {
     // Sample search data
@@ -1211,11 +1220,13 @@ window.onclick = function(event) {
     }
 }
 
+} // Close the if statement for header check
+
 // Auto-hide notification messages
 document.addEventListener('DOMContentLoaded', function() {
     updateScrollProgress();
     
-    const messages = document.querySelectorAll('.notification-message');
+    const messages = document.querySelectorAll('.pj-navbar-wrapper .notification-message');
     messages.forEach(message => {
         setTimeout(() => {
             message.style.transition = 'opacity 0.5s, transform 0.5s';
@@ -1226,3 +1237,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+</div> <!-- End of pj-navbar-wrapper -->
