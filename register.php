@@ -198,22 +198,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 0.95rem;
         }
         
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group input {
             width: 100%;
-            padding: 0.9rem 1rem;
+            padding: 0.75rem 1rem;
+            height: 48px;
             border: 2px solid var(--secondary-color);
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
-            background-color: #f9f9f9;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            height: 48px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text-color-secondary);
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            transition: var(--transition);
             font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
         }
         
         .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
             height: 100px;
             resize: vertical;
+        }
+        
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            border-color: var(--button-color);
+            background-color: #fafafa;
         }
         
         .form-group input:focus,
@@ -245,11 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         .form-icon select {
-            padding-right: 2.5rem;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-color: #f9f9f9;
+            padding-right: 3rem;
+            background-position: right 2.5rem center;
         }
         
         .btn {
