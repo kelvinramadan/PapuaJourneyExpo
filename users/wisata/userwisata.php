@@ -143,7 +143,7 @@ mysqli_close($db);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wisata Papua - Jelajahi Keindahan Papua</title>
-    <link rel="stylesheet" href="userwisata.css">
+    <link rel="stylesheet" href="userwisata.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>
@@ -347,8 +347,8 @@ mysqli_close($db);
                 <?php if (count($related_wisata) > 0): ?>
                 <div class="articles-grid" style="margin-top: 50px;">
                     <div style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: white; font-size: 2rem;">🌟 Wisata Terkait</h3>
-                        <p style="color: rgba(255,255,255,0.9); margin-top: 10px;">Jelajahi wisata lainnya dengan kategori yang sama</p>
+                        <h3 style="color: #333; font-size: 2rem;">🌟 Wisata Terkait</h3>
+                        <p style="color: #666; margin-top: 10px;">Jelajahi wisata lainnya dengan kategori yang sama</p>
                     </div>
                     <?php foreach ($related_wisata as $related): ?>
                         <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $related['id']; ?>'">
