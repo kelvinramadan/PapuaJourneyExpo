@@ -236,11 +236,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             transform: translateY(-50%);
             color: var(--secondary-color);
             transition: color 0.3s ease;
+            pointer-events: none;
         }
         
         .form-icon input:focus + i,
         .form-icon select:focus + i {
             color: var(--button-color);
+        }
+        
+        .form-icon select {
+            padding-right: 2.5rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #f9f9f9;
         }
         
         .btn {
