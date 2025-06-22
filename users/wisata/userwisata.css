@@ -8,12 +8,31 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f5f5f5;
     min-height: 100vh;
+    padding-top: 80px; /* Account for fixed navbar */
+}
+
+/* Ensure navbar styles are preserved */
+.pj-navbar-wrapper {
+    isolation: isolate;
+    z-index: 1000;
+}
+
+/* Force navbar header to maintain its background */
+.pj-navbar-wrapper .pj-navbar-header {
+    background-color: rgba(255, 255, 255, 0) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.pj-navbar-wrapper .pj-navbar-header.scrolled {
+    background-color: rgba(255, 255, 255, 0.98) !important;
 }
 
 .main-content {
     padding-top: 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    min-height: calc(100vh - 80px);
+    position: relative;
+    z-index: 1;
 }
 
 .container {
