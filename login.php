@@ -8,6 +8,13 @@ session_start();
 require_once 'config/database.php';
 
 $error_message = '';
+$success_message = '';
+
+// Check for success message from registration
+if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']); // Clear the message after displaying
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
@@ -312,6 +319,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 0.9rem;
         }
         
+        .success-message {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--success-color);
+            line-height: 1.5;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 0.5s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .register-link {
             text-align: center;
             margin-top: 2rem;
@@ -412,6 +445,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h1>Selamat Datang</h1>
             <p>Masuk ke akun Papua Journey Anda</p>
         </div>
+        
+        <?php if ($success_message): ?>
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <?php echo htmlspecialchars($success_message); ?>
+            </div>
+        <?php endif; ?>
         
         <?php if ($error_message): ?>
             <?php if (strpos($error_message, 'verifikasi') !== false): ?>

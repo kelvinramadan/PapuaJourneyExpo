@@ -50,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->bind_param("sssss", $email, $hashed_password, $full_name, $phone, $address);
                     
                     if ($stmt->execute()) {
-                        $success_message = 'Registrasi berhasil! Silakan login.';
+                        $_SESSION['success_message'] = 'Registrasi berhasil! Silakan login.';
+                        header('Location: login.php');
+                        exit();
                     } else {
                         $error_message = 'Terjadi kesalahan saat registrasi!';
                     }
@@ -70,7 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->bind_param("ssssssss", $email, $hashed_password, $business_name, $owner_name, $phone, $address, $business_type, $description);
                     
                     if ($stmt->execute()) {
-                        $success_message = 'Registrasi UMKM berhasil! Akun Anda akan diaktivasi setelah verifikasi admin.';
+                        $_SESSION['success_message'] = 'Registrasi UMKM berhasil! Akun Anda akan diaktivasi setelah verifikasi admin.';
+                        header('Location: login.php');
+                        exit();
                     } else {
                         $error_message = 'Terjadi kesalahan saat registrasi!';
                     }
