@@ -226,6 +226,18 @@ html {
     box-sizing: border-box;
 }
 
+/* Scroll Progress Bar */
+.scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    z-index: 1001;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
 /* Navbar Styles - Using specific class to avoid conflicts */
 .navbar-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -255,13 +267,32 @@ body {
 .navbar-header-content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 }
 
-.navbar-header .logo h1 {
+.navbar-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.navbar-header .logo:hover {
+    transform: translateY(-2px);
+}
+
+.navbar-header .logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.navbar-header .logo p {
     margin: 0;
     font-size: 1.8rem;
     font-weight: bold;
@@ -271,24 +302,36 @@ body {
     background-clip: text;
 }
 
+.navbar-header .nav-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+}
+
 .navbar-header .nav-links {
     display: flex;
     gap: 1rem;
     align-items: center;
+    margin: 0 auto;
 }
 
 .navbar-header .nav-links a {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.2rem;
     border-radius: 25px;
     text-decoration: none;
     font-weight: 500;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .navbar-header .nav-links a::before {
@@ -309,9 +352,10 @@ body {
 }
 
 .navbar-header .nav-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .navbar-header .nav-links a.active {
@@ -319,6 +363,89 @@ body {
     color: #667eea;
 }
 
+/* Search Container */
+.navbar-header .search-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-header .search-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.navbar-header .search-box:hover,
+.navbar-header .search-box:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-header .search-box i {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.navbar-header .search-box input {
+    background: none;
+    border: none;
+    outline: none;
+    color: white;
+    width: 200px;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.navbar-header .search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-header .search-suggestions {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+}
+
+.navbar-header .search-suggestions.active {
+    display: block;
+}
+
+.navbar-header .search-suggestion-item {
+    padding: 0.75rem 1rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-header .search-suggestion-item:hover {
+    background: #f5f5f5;
+}
+
+.navbar-header .search-suggestion-item i {
+    color: #667eea;
+    font-size: 0.9rem;
+}
+
+/* Profile Dropdown */
 .navbar-header .profile-dropdown {
     position: relative;
 }
@@ -413,8 +540,19 @@ body {
     transform: translateY(0);
 }
 
-.navbar-header .dropdown-item {
+.navbar-header .user-greeting {
     display: block;
+    padding: 1rem;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+.navbar-header .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     width: 100%;
     padding: 0.75rem 1rem;
     color: #333;
@@ -429,26 +567,28 @@ body {
     overflow: hidden;
 }
 
-.navbar-header .dropdown-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    transition: left 0.3s ease;
-    z-index: -1;
+.navbar-header .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #667eea;
 }
 
-.navbar-header .dropdown-item:hover::before {
-    left: 0;
+.navbar-header .dropdown-item.logout-link {
+    color: #dc3545;
 }
+
+.navbar-header .dropdown-item.logout-link i {
+    color: #dc3545;
+}
+
 
 .navbar-header .dropdown-item:hover {
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    background: #f8f9fa;
+    padding-left: 1.5rem;
+}
+
+.navbar-header .dropdown-item.logout-link:hover {
+    background: #fff5f5;
 }
 
 .navbar-header .dropdown-separator {
@@ -457,21 +597,191 @@ body {
     margin: 0.5rem 0;
 }
 
+/* Mobile Menu Toggle */
+.navbar-header .mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navbar-header .mobile-menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.navbar-header .mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.navbar-header .mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-header .mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 2000;
+    overflow-y: auto;
+}
+
+.mobile-nav.active {
+    right: 0;
+}
+
+.mobile-nav-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-nav-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-nav-header .logo img {
+    width: 35px;
+    height: 35px;
+}
+
+.mobile-nav-header .logo p {
+    margin: 0;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.mobile-nav-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav-links li {
+    border-bottom: 1px solid #eee;
+}
+
+.mobile-nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-links a:hover {
+    background: #f5f5f5;
+    color: #667eea;
+    padding-left: 2rem;
+}
+
+.mobile-nav-links a i {
+    font-size: 1.2rem;
+    width: 25px;
+    text-align: center;
+}
+
+.mobile-user-info {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.mobile-user-info span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.mobile-profile-btn, .mobile-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    border: none;
+    background: white;
+    color: #333;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.mobile-profile-btn:hover, .mobile-logout:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* Updated nav-links styling */
+.navbar-header .nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.navbar-header .nav-links li {
+    list-style: none;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .navbar-header .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .navbar-header .nav-container,
+    .navbar-header .search-box {
+        display: none;
+    }
+    
     .navbar-header-content {
-        flex-direction: column;
-        gap: 1rem;
+        justify-content: space-between;
+        padding: 0 1rem;
     }
     
-    .navbar-header .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .navbar-header .nav-links a {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+    .navbar-header .logo p {
+        font-size: 1.5rem;
     }
     
     .navbar-header .profile-trigger {
@@ -483,28 +793,24 @@ body {
     }
     
     .navbar-header .dropdown-menu {
-        right: auto;
-        left: 50%;
-        transform: translateX(-50%) translateY(-10px);
-    }
-    
-    .navbar-header .profile-dropdown.active .dropdown-menu {
-        transform: translateX(-50%) translateY(0);
+        right: 0;
+        min-width: 200px;
     }
 }
 
 @media (max-width: 480px) {
-    .navbar-header .logo h1 {
-        font-size: 1.5rem;
+    .navbar-header .logo p {
+        font-size: 1.3rem;
     }
     
-    .navbar-header .nav-links {
-        gap: 0.5rem;
+    .navbar-header .logo img {
+        width: 35px;
+        height: 35px;
     }
     
-    .navbar-header .nav-links a {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+    .navbar-header .user-avatar {
+        width: 35px !important;
+        height: 35px !important;
     }
 }
 
@@ -647,32 +953,51 @@ body {
 }
 </style>
 
-<header class="header navbar-header">
-    <div class="header-content navbar-header-content">
-        <div class="logo">
-            <h1>Omaki Platform</h1>
-        </div>
-        
-        <div class="nav-links">
-            <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
-                🏠 Home
-            </a>
-            <a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
-                🏝️ Wisata
-            </a>    
-            <a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
-                🏨 Penginapan
-            </a>
-            <a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">
-                💳 Transaksi
-            </a>
-            <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">
-                🤖 AI Assistant
-            </a>
-        </div>
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress-bar"></div>
 
+<header class="header navbar-header">
+    <nav class="navbar-header-content">
+        <a href="<?php echo $base_path; ?>index.php" class="logo">
+            <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
+            <p>Journey</p>
+        </a>
         
-        <div class="profile-dropdown" id="profileDropdown">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-home"></i> Home
+                </a></li>
+                <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-map-marked-alt"></i> Wisata
+                </a></li>    
+                <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-bed"></i> Penginapan
+                </a></li>
+                <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-receipt"></i> Transaksi
+                </a></li>
+                <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">
+                    <i class="fas fa-robot"></i> AI Assistant
+                </a></li>
+            </ul>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search destinations..." id="searchInput">
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            
+            <div class="profile-dropdown" id="profileDropdown">
             <div class="profile-trigger" onclick="toggleDropdown()">
                 <div class="user-avatar">
                     <?php if ($user_data['profile_image'] && file_exists($uploads_path . 'profile_images/' . $user_data['profile_image'])): ?>
@@ -689,20 +1014,63 @@ body {
             </div>
             
             <div class="dropdown-menu">
+                <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
                 <button class="dropdown-item" onclick="openModal('photoModal')">
-                    📷 Ubah Foto Profil
+                    <i class="fas fa-camera"></i> Ubah Foto Profil
                 </button>
                 <button class="dropdown-item" onclick="openModal('profileModal')">
-                    ✏️ Edit Profil
+                    <i class="fas fa-user"></i> Edit Profil
                 </button>
                 <button class="dropdown-item" onclick="openModal('passwordModal')">
-                    🔒 Ubah Password
+                    <i class="fas fa-lock"></i> Ubah Password
                 </button>
-                <div class="dropdown-separator"></div>
-                <a href="<?php echo $logout_path; ?>" class="dropdown-item">
-                    🚪 Logout
+                <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid #eee;">
+                <a href="<?php echo $logout_path; ?>" class="dropdown-item logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-header">
+            <div class="logo">
+                <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
+                <p>Journey</p>
+            </div>
+            <button class="mobile-nav-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php">
+                <i class="fas fa-home"></i> Home
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>wisata/userwisata.php">
+                <i class="fas fa-map-marked-alt"></i> Wisata
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php">
+                <i class="fas fa-bed"></i> Penginapan
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php">
+                <i class="fas fa-receipt"></i> Transaksi
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php">
+                <i class="fas fa-robot"></i> AI Assistant
+            </a></li>
+        </ul>
+        <div class="mobile-user-info">
+            <span>Welcome, <?php echo htmlspecialchars($user_name); ?></span>
+            <button class="mobile-profile-btn" onclick="openModal('profileModal')">
+                <i class="fas fa-user"></i> Edit Profile
+            </button>
+            <a href="<?php echo $logout_path; ?>" class="mobile-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </div>
     </div>
 </header>
@@ -805,6 +1173,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const navbarHeight = navbar.offsetHeight;
         document.body.style.paddingTop = navbarHeight + 'px';
     }
+    
+    // Initialize scroll progress
+    updateScrollProgress();
+    
+    // Initialize search functionality
+    initializeSearch();
 });
 
 // Handle window resize
@@ -815,6 +1189,110 @@ window.addEventListener('resize', function() {
         document.body.style.paddingTop = navbarHeight + 'px';
     }
 });
+
+// Scroll Progress Bar
+function updateScrollProgress() {
+    const scrollProgress = document.querySelector('.scroll-progress-bar');
+    if (scrollProgress) {
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        });
+    }
+}
+
+// Mobile Menu Toggle
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const mobileNav = document.querySelector('.mobile-nav');
+const mobileNavClose = document.querySelector('.mobile-nav-close');
+
+if (mobileMenuToggle && mobileNav) {
+    mobileMenuToggle.addEventListener('click', function() {
+        mobileMenuToggle.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+    });
+}
+
+if (mobileNavClose && mobileNav) {
+    mobileNavClose.addEventListener('click', function() {
+        mobileMenuToggle.classList.remove('active');
+        mobileNav.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+}
+
+// Close mobile menu on outside click
+document.addEventListener('click', function(event) {
+    if (mobileNav && mobileNav.classList.contains('active') && 
+        !mobileNav.contains(event.target) && 
+        !mobileMenuToggle.contains(event.target)) {
+        mobileMenuToggle.classList.remove('active');
+        mobileNav.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
+// Search functionality
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
+    
+    if (searchInput && searchSuggestions) {
+        // Sample search data
+        const searchData = [
+            { icon: 'fas fa-map-marker-alt', text: 'Raja Ampat', type: 'Destination' },
+            { icon: 'fas fa-map-marker-alt', text: 'Jayapura', type: 'Destination' },
+            { icon: 'fas fa-map-marker-alt', text: 'Wamena', type: 'Destination' },
+            { icon: 'fas fa-hotel', text: 'Swiss-Belhotel Papua', type: 'Hotel' },
+            { icon: 'fas fa-hotel', text: 'Aston Jayapura', type: 'Hotel' },
+            { icon: 'fas fa-utensils', text: 'Papuan Cuisine', type: 'Food' },
+            { icon: 'fas fa-hiking', text: 'Trekking Tours', type: 'Activity' }
+        ];
+        
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            
+            if (query.length > 0) {
+                const filtered = searchData.filter(item => 
+                    item.text.toLowerCase().includes(query)
+                );
+                
+                if (filtered.length > 0) {
+                    searchSuggestions.innerHTML = filtered.map(item => `
+                        <div class="search-suggestion-item">
+                            <i class="${item.icon}"></i>
+                            <div>
+                                <strong>${item.text}</strong>
+                                <small style="display: block; color: #666;">${item.type}</small>
+                            </div>
+                        </div>
+                    `).join('');
+                    searchSuggestions.classList.add('active');
+                } else {
+                    searchSuggestions.innerHTML = `
+                        <div class="search-suggestion-item">
+                            <i class="fas fa-search"></i>
+                            <span>No results found for "${query}"</span>
+                        </div>
+                    `;
+                    searchSuggestions.classList.add('active');
+                }
+            } else {
+                searchSuggestions.classList.remove('active');
+            }
+        });
+        
+        // Close suggestions on outside click
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
+                searchSuggestions.classList.remove('active');
+            }
+        });
+    }
+}
 
 function toggleDropdown() {
     const dropdown = document.getElementById('profileDropdown');
