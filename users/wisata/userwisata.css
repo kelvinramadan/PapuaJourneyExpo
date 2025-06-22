@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
     padding-top: 80px; /* Account for fixed navbar */
 }
@@ -19,7 +19,6 @@ body {
 
 .main-content {
     padding-top: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: calc(100vh - 80px);
     position: relative;
     z-index: 1;
@@ -33,7 +32,7 @@ body {
 
 .page-header {
     text-align: center;
-    color: white;
+    color: #333;
     margin-bottom: 40px;
 }
 
@@ -99,8 +98,8 @@ body {
 .back-button {
     display: inline-flex;
     align-items: center;
-    background: rgba(255,255,255,0.2);
-    color: white;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
     padding: 12px 20px;
     border-radius: 25px;
     text-decoration: none;
@@ -110,7 +109,7 @@ body {
 }
 
 .back-button:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(102, 126, 234, 0.2);
     transform: translateY(-2px);
 }
 
@@ -394,7 +393,7 @@ body {
 
 .no-results {
     text-align: center;
-    color: white;
+    color: #333;
     padding: 80px 20px;
 }
 
