@@ -212,9 +212,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             line-height: 1.5;
             color: var(--text-color-secondary);
             background-color: #ffffff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
             cursor: pointer;
             transition: var(--transition);
-            /* Keep native dropdown arrow for login page */
         }
         
         .form-group input:hover {
@@ -246,10 +248,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             transform: translateY(-50%);
             color: var(--secondary-color);
             transition: color 0.3s ease;
+            pointer-events: none;
         }
         
-        .form-icon input:focus + i {
+        .form-icon input:focus + i,
+        .form-icon select:focus + i {
             color: var(--button-color);
+        }
+        
+        .form-icon select {
+            padding-right: 2.5rem;
         }
         
         .btn {
@@ -428,10 +436,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form method="POST" action="">
             <div class="form-group">
                 <label for="user_type">Tipe Akun</label>
-                <select name="user_type" id="user_type" required>
-                    <option value="user" <?php echo (isset($_POST['user_type']) && $_POST['user_type'] == 'user') ? 'selected' : ''; ?>>Wisatawan</option>
-                    <option value="umkm" <?php echo (isset($_POST['user_type']) && $_POST['user_type'] == 'umkm') ? 'selected' : ''; ?>>UMKM</option>
-                </select>
+                <div class="form-icon">
+                    <select name="user_type" id="user_type" required>
+                        <option value="user" <?php echo (isset($_POST['user_type']) && $_POST['user_type'] == 'user') ? 'selected' : ''; ?>>Wisatawan</option>
+                        <option value="umkm" <?php echo (isset($_POST['user_type']) && $_POST['user_type'] == 'umkm') ? 'selected' : ''; ?>>UMKM</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
             </div>
             
             <div class="form-group">
