@@ -227,17 +227,6 @@ $db->close();
     box-sizing: border-box;
 }
 
-/* Scroll Progress Bar */
-.pj-navbar-wrapper .scroll-progress-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: linear-gradient(to right, var(--button-color), var(--button-hover-color));
-    z-index: 10000;
-    transition: width 0.2s ease-out;
-}
 
 /* Header - Exact copy from index.php */
 .pj-navbar-wrapper .pj-navbar-header {
@@ -783,9 +772,6 @@ body {
 
 <!-- Papua Journey Navbar Component -->
 <div class="pj-navbar-wrapper">
-    <!-- Scroll Progress Bar -->
-    <div class="scroll-progress-bar"></div>
-    
     <header class="pj-navbar-header" id="header">
     <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
@@ -967,18 +953,6 @@ const header = document.getElementById('header');
 if (header && header.classList.contains('pj-navbar-header')) {
 let lastScroll = 0;
 
-// Scroll Progress Bar
-function updateScrollProgress() {
-    const scrollProgress = document.querySelector('.pj-navbar-wrapper .scroll-progress-bar');
-    if (scrollProgress) {
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            scrollProgress.style.width = scrolled + '%';
-        });
-    }
-}
 
 // Header scroll behavior
 window.addEventListener('scroll', () => {
@@ -1057,8 +1031,6 @@ window.onclick = function(event) {
 
 // Auto-hide notification messages
 document.addEventListener('DOMContentLoaded', function() {
-    updateScrollProgress();
-    
     const messages = document.querySelectorAll('.pj-navbar-wrapper .notification-message');
     messages.forEach(message => {
         setTimeout(() => {
