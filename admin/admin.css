@@ -29,6 +29,9 @@ body {
     background-color: #F9FAFB;
     color: var(--text-primary);
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 /* Layout Structure */
@@ -43,11 +46,24 @@ body {
     margin-left: 256px;
     transition: margin-left 0.3s ease;
     min-width: 0;
-    overflow-x: auto;
+    width: calc(100% - 256px);
 }
 
 .main-content.sidebar-collapsed {
     margin-left: 64px;
+    width: calc(100% - 64px);
+}
+
+/* Default collapsed state for smaller screens */
+@media (max-width: 1400px) {
+    .main-content {
+        margin-left: 64px;
+        width: calc(100% - 64px);
+    }
+    
+    .sidebar {
+        width: 64px;
+    }
 }
 
 /* Header */

@@ -259,7 +259,7 @@ $page_title = 'Wisata Management';
     <div class="admin-wrapper">
         <?php include 'components/sidebar.php'; ?>
         
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <?php include 'components/header.php'; ?>
             
             <div class="content-wrapper">

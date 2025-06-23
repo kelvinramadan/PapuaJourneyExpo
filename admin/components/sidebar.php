@@ -12,17 +12,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </div>
     
     <nav class="nav-menu">
-        <a href="index.php" class="btn <?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
+        <a href="index.php" class="btn <?php echo $current_page == 'index.php' ? 'active' : ''; ?>" data-tooltip="Dashboard">
             <span class="btn-icon">🏠</span>
             <span>Dashboard</span>
         </a>
         
-        <a href="adminwisata.php" class="btn <?php echo $current_page == 'adminwisata.php' ? 'active' : ''; ?>">
+        <a href="adminwisata.php" class="btn <?php echo $current_page == 'adminwisata.php' ? 'active' : ''; ?>" data-tooltip="Wisata">
             <span class="btn-icon">🏖️</span>
             <span>Wisata</span>
         </a>
         
-        <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>">
+        <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>" data-tooltip="Penginapan">
             <span class="btn-icon">🏨</span>
             <span>Penginapan</span>
         </a>
@@ -38,11 +38,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span class="user-role">Administrator</span>
             </div>
         </div>
-        <a href="?logout=1" class="logout-btn">
+        <a href="?logout=1" class="logout-btn" data-tooltip="Logout">
             <span class="btn-icon">🚪</span>
             <span>Logout</span>
         </a>
     </div>
 </aside>
 
-<button class="mobile-toggle" onclick="toggleSidebar()">☰</button>

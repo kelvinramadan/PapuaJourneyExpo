@@ -5,13 +5,19 @@ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
     
-    sidebar.classList.toggle('collapsed');
-    if (mainContent) {
-        mainContent.classList.toggle('sidebar-collapsed');
-    }
+    if (!sidebar || !mainContent) return;
     
-    // Save state to localStorage
-    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    // Mobile behavior
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('active');
+    } else {
+        // Desktop behavior
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
+        
+        // Save state to localStorage
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
 }
 
 // Auto-collapse sidebar when expand button is clicked
@@ -30,15 +36,20 @@ function autoCollapseSidebar() {
 
 // Initialize sidebar state from localStorage
 document.addEventListener('DOMContentLoaded', function() {
-    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
     
-    if (sidebarCollapsed && sidebar) {
+    if (!sidebar || !mainContent) return;
+    
+    // Check localStorage or default to collapsed on smaller screens
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true' || window.innerWidth < 1400;
+    
+    if (sidebarCollapsed) {
         sidebar.classList.add('collapsed');
-        if (mainContent) {
-            mainContent.classList.add('sidebar-collapsed');
-        }
+        mainContent.classList.add('sidebar-collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+        mainContent.classList.remove('sidebar-collapsed');
     }
     
     // Initialize tooltips
@@ -51,6 +62,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof initializeCharts === 'function') {
         initializeCharts();
     }
+    
+    // Close sidebar on outside click (mobile)
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+        
+        if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('active')) {
+            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
 });
 
 // Show/Hide Modal

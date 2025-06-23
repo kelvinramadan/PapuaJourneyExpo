@@ -290,7 +290,7 @@ $page_title = 'Penginapan Management';
     <div class="admin-wrapper">
         <?php include 'components/sidebar.php'; ?>
         
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <?php include 'components/header.php'; ?>
             
             <div class="content-wrapper">
