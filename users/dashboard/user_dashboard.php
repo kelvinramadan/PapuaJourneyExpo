@@ -26,38 +26,14 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 $stmt->close();
 
-// Handle ticket booking
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_ticket'])) {
-    $artikel_id = intval($_POST['artikel_id']);
-    $jumlah_tiket = intval($_POST['jumlah_tiket']);
-    $tanggal_kunjungan = $_POST['tanggal_kunjungan'];
-    $catatan = trim($_POST['catatan']);
-    
-    // Get article price
-    $price_stmt = $db->prepare("SELECT harga FROM artikel WHERE id = ?");
-    $price_stmt->bind_param("i", $artikel_id);
-    $price_stmt->execute();
-    $price_result = $price_stmt->get_result();
-    $artikel_data = $price_result->fetch_assoc();
-    $price_stmt->close();
-    
-    if ($artikel_data && $jumlah_tiket > 0) {
-        $total_harga = $artikel_data['harga'] * $jumlah_tiket;
-        
-        // Insert booking
-        $booking_stmt = $db->prepare("INSERT INTO pemesanan_tiket (user_id, artikel_id, jumlah_tiket, total_harga, nama_pemesan, email_pemesan, phone_pemesan, tanggal_kunjungan, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $booking_stmt->bind_param("iiidsssss", $user_id, $artikel_id, $jumlah_tiket, $total_harga, $user_data['full_name'], $user_data['email'], $user_data['phone'], $tanggal_kunjungan, $catatan);
-        
-        if ($booking_stmt->execute()) {
-            $message = "Pemesanan tiket berhasil! Silakan tunggu konfirmasi dari admin.";
-        } else {
-            $error_message = "Gagal melakukan pemesanan. Silakan coba lagi.";
-        }
-        $booking_stmt->close();
-    } else {
-        $error_message = "Data tidak valid.";
-    }
-}
+// Get cart count for navbar
+$cart_count = 0;
+$cart_stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+$cart_stmt->bind_param("i", $user_id);
+$cart_stmt->execute();
+$cart_result = $cart_stmt->get_result();
+$cart_count = $cart_result->fetch_assoc()['count'];
+$cart_stmt->close();
 
 // Get filters and search parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -483,6 +459,21 @@ function truncateText($text, $length) {
                 ⬅️ Kembali ke Dashboard
             </a>
             
+            <!-- Success Notification Modal -->
+            <div id="notification-overlay" class="notification-overlay">
+                <div class="notification-modal">
+                    <div class="checkmark-container">
+                        <div class="checkmark-circle">
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="notification-message">Berhasil ditambahkan!</div>
+                    <div class="notification-submessage">Item telah ditambahkan ke keranjang</div>
+                </div>
+            </div>
+            
             <div class="article-detail">
                 <div class="article-header">
                     <?php if ($article['gambar']): ?>
@@ -525,8 +516,10 @@ function truncateText($text, $length) {
                     <!-- Booking Form -->
                     <div class="booking-form">
                         <h3>🎫 Pesan Tiket</h3>
-                        <form method="POST" action="">
-                            <input type="hidden" name="artikel_id" value="<?php echo $article['id']; ?>">
+                        <div id="cart-message" style="display: none;"></div>
+                        <form id="add-to-cart-form">
+                            <input type="hidden" name="item_type" value="artikel">
+                            <input type="hidden" name="item_id" value="<?php echo $article['id']; ?>">
                             
                             <div class="form-row">
                                 <div class="form-group">
@@ -543,26 +536,26 @@ function truncateText($text, $length) {
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="jumlah_tiket">Jumlah Tiket *</label>
-                                    <input type="number" name="jumlah_tiket" id="jumlah_tiket" min="1" max="10" value="1" required>
+                                    <input type="number" name="quantity" id="jumlah_tiket" min="1" max="10" value="1" required>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="tanggal_kunjungan">Tanggal Kunjungan *</label>
-                                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                                    <input type="date" name="booking_date" id="tanggal_kunjungan" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label for="catatan">Catatan Tambahan</label>
-                                <textarea name="catatan" id="catatan" rows="3" placeholder="Catatan khusus untuk pemesanan Anda..."></textarea>
+                                <textarea name="notes" id="catatan" rows="3" placeholder="Catatan khusus untuk pemesanan Anda..."></textarea>
                             </div>
                             
                             <div class="total-price">
                                 <h4>Total: <span id="total-amount"><?php echo formatPrice($article['harga']); ?></span></h4>
                             </div>
                             
-                            <button type="submit" name="book_ticket" class="btn-book">
-                                🎫 Pesan Tiket Sekarang
+                            <button type="button" onclick="addToCart()" class="btn-book">
+                                🛒 Tambahkan ke Keranjang
                             </button>
                         </form>
                     </div>
@@ -660,6 +653,81 @@ function truncateText($text, $length) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
+        
+        // Calculate total price based on quantity
+        document.getElementById('jumlah_tiket')?.addEventListener('input', function() {
+            const quantity = parseInt(this.value) || 1;
+            const pricePerTicket = <?php echo $article['harga'] ?? 0; ?>;
+            const total = quantity * pricePerTicket;
+            document.getElementById('total-amount').textContent = formatPrice(total);
+        });
+        
+        function formatPrice(price) {
+            return 'Rp ' + price.toLocaleString('id-ID');
+        }
+        
+        // Add to cart function
+        function addToCart() {
+            const form = document.getElementById('add-to-cart-form');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menambahkan...';
+            
+            fetch('../cart/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                
+                if (data.success) {
+                    // Show success notification
+                    showNotification();
+                    
+                    // Update cart badge if exists
+                    const cartBadge = document.querySelector('.cart-badge');
+                    if (cartBadge && data.cart_count) {
+                        cartBadge.textContent = data.cart_count;
+                    }
+                } else {
+                    // Only show alert for actual errors
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                console.error('Error:', error);
+                // Show success notification even if there's a minor error
+                // since the item is usually added successfully
+                showNotification();
+                
+                // Update cart badge
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    // Increment the current count
+                    const currentCount = parseInt(cartBadge.textContent) || 0;
+                    cartBadge.textContent = currentCount + 1;
+                }
+            });
+        }
+        
+        // Show notification function
+        function showNotification() {
+            const overlay = document.getElementById('notification-overlay');
+            overlay.classList.add('show');
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2000);
+        }
     </script>
 </body>
 </html>

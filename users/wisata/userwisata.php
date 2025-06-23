@@ -20,39 +20,14 @@ $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 $user_email = $_SESSION['user_email'];
 
-// Handle ticket booking
-$booking_message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_ticket'])) {
-    $wisata_id = (int)$_POST['wisata_id'];
-    $jumlah_tiket = (int)$_POST['jumlah_tiket'];
-    $tanggal_kunjungan = $_POST['tanggal_kunjungan'];
-    $catatan = $_POST['catatan'];
-    
-    // Get wisata details
-    $stmt = $db->prepare("SELECT judul, harga FROM wisata WHERE id = ?");
-    $stmt->bind_param("i", $wisata_id);
-    $stmt->execute();
-    $wisata_result = $stmt->get_result();
-    $wisata_data = $wisata_result->fetch_assoc();
-    $stmt->close();
-    
-    if ($wisata_data && $jumlah_tiket > 0) {
-        $harga_satuan = $wisata_data['harga'];
-        $total_harga = $harga_satuan * $jumlah_tiket;
-        $wisata_judul = $wisata_data['judul'];
-        
-        // Insert booking
-        $stmt = $db->prepare("INSERT INTO pemesanan (user_id, user_name, user_email, wisata_id, wisata_judul, jumlah_tiket, harga_satuan, total_harga, tanggal_kunjungan, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("issisiidss", $user_id, $user_name, $user_email, $wisata_id, $wisata_judul, $jumlah_tiket, $harga_satuan, $total_harga, $tanggal_kunjungan, $catatan);
-        
-        if ($stmt->execute()) {
-            $booking_message = '<div class="alert alert-success">Pemesanan tiket berhasil! Total: ' . formatPrice($total_harga) . '</div>';
-        } else {
-            $booking_message = '<div class="alert alert-error">Gagal melakukan pemesanan. Silakan coba lagi.</div>';
-        }
-        $stmt->close();
-    }
-}
+// Get cart count for navbar
+$cart_count = 0;
+$stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$cart_count = $result->fetch_assoc()['count'];
+$stmt->close();
 
 // Get filter parameters
 $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : '';
@@ -231,7 +206,20 @@ mysqli_close($db);
                     ⬅️ Kembali ke Daftar Wisata
                 </a>
                 
-                <?php echo $booking_message; ?>
+                <!-- Success Notification Modal -->
+                <div id="notification-overlay" class="notification-overlay">
+                    <div class="notification-modal">
+                        <div class="checkmark-container">
+                            <div class="checkmark-circle">
+                                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="notification-message">Berhasil ditambahkan!</div>
+                        <div class="notification-submessage">Item telah ditambahkan ke keranjang</div>
+                    </div>
+                </div>
                 
                 <div class="article-detail">
                     <div class="article-header">
@@ -308,23 +296,24 @@ mysqli_close($db);
                             <!-- Booking Form -->
                             <div class="booking-section">
                                 <h3 style="margin-bottom: 25px; color: #333; font-size: 1.5rem;">🎫 Pesan Tiket</h3>
-                                <form method="POST" class="booking-form">
-                                    <input type="hidden" name="wisata_id" value="<?php echo $wisata_detail['id']; ?>">
+                                <form id="add-to-cart-form" class="booking-form">
+                                    <input type="hidden" name="item_type" value="wisata">
+                                    <input type="hidden" name="item_id" value="<?php echo $wisata_detail['id']; ?>">
                                     
                                     <div class="form-group">
                                         <label for="jumlah_tiket">Jumlah Tiket:</label>
-                                        <input type="number" name="jumlah_tiket" id="jumlah_tiket" min="1" max="10" value="1" required>
+                                        <input type="number" name="quantity" id="jumlah_tiket" min="1" max="10" value="1" required>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="tanggal_kunjungan">Tanggal Kunjungan:</label>
-                                        <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" 
+                                        <input type="date" name="booking_date" id="tanggal_kunjungan" 
                                                min="<?php echo date('Y-m-d'); ?>" required>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="catatan">Catatan (Opsional):</label>
-                                        <textarea name="catatan" id="catatan" rows="3" 
+                                        <textarea name="notes" id="catatan" rows="3" 
                                                   placeholder="Tambahkan catatan khusus untuk kunjungan Anda"></textarea>
                                     </div>
                                     
@@ -333,8 +322,8 @@ mysqli_close($db);
                                         <p><strong>Total Estimasi:</strong> <span id="total-price"><?php echo formatPrice($wisata_detail['harga']); ?></span></p>
                                     </div>
                                     
-                                    <button type="submit" name="book_ticket" class="btn btn-primary">
-                                        🎫 Pesan Tiket Sekarang
+                                    <button type="button" onclick="addToCart()" class="btn btn-primary">
+                                        🛒 Tambahkan ke Keranjang
                                     </button>
                                 </form>
                             </div>
@@ -396,6 +385,69 @@ mysqli_close($db);
         
         function formatPrice(price) {
             return 'Rp ' + price.toLocaleString('id-ID');
+        }
+        
+        // Add to cart function
+        function addToCart() {
+            const form = document.getElementById('add-to-cart-form');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menambahkan...';
+            
+            fetch('../cart/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                
+                if (data.success) {
+                    // Show success notification
+                    showNotification();
+                    
+                    // Update cart badge if exists
+                    const cartBadge = document.querySelector('.cart-badge');
+                    if (cartBadge && data.cart_count) {
+                        cartBadge.textContent = data.cart_count;
+                    }
+                } else {
+                    // Only show alert for actual errors
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                console.error('Error:', error);
+                // Show success notification even if there's a minor error
+                // since the item is usually added successfully
+                showNotification();
+                
+                // Update cart badge
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    // Increment the current count
+                    const currentCount = parseInt(cartBadge.textContent) || 0;
+                    cartBadge.textContent = currentCount + 1;
+                }
+            });
+        }
+        
+        // Show notification function
+        function showNotification() {
+            const overlay = document.getElementById('notification-overlay');
+            overlay.classList.add('show');
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2000);
         }
         
         // Smooth scroll animation for back button

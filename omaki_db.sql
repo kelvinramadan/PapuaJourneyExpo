@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2025 at 07:44 AM
+-- Generation Time: Jun 23, 2025 at 08:51 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,21 @@ SET time_zone = "+00:00";
 --
 -- Database: `omaki_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_payment_logs`
+--
+
+CREATE TABLE `admin_payment_logs` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `transaksi_id` int(11) NOT NULL,
+  `action` enum('confirmed','rejected') NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -48,6 +63,35 @@ INSERT INTO `artikel` (`id`, `umkm_id`, `judul`, `deskripsi`, `harga`, `kategori
 (1, 1, 'Snokeling Blue', 'kegiatan rekreasi di perairan dangkal yang memungkinkan Anda menikmati keindahan bawah laut tanpa harus menyelam terlalu dalam atau menggunakan peralatan selam skuba. Anda berenang di permukaan atau dekat permukaan sambil mengamati kehidupan laut, seperti ikan, terumbu karang, dan berbagai biota laut lainnya.', 75000.00, 'wisata', 'artikel_1_1748761560.jpg', 'active', '2025-06-01 07:06:00', '2025-06-01 07:06:00'),
 (2, 1, 'Hiu Blue Sky', 'Orang lain berlibur hanya ingin menikmati keindahan pantai dengan pasir putih sambil duduk berjemur dan menikmati sejuknya angin dan suara ombak. Tapi kamu wajib mencoba kegiatan berenang dengan hiu, yang bisa dilakukan di Wayag.\r\n\r\nBerenang dengan segerombolan hiu adalah hal yang langkah bagi banyak orang yang belum pernah liburan ke Wayag Raja Ampat. Karena saat ke Wayag kamu akan kaget dengan banyak hiu yang berenang di sepanjang pinggiran pantai.', 100000.00, 'wisata', 'artikel_1_1748764972.jpg', 'active', '2025-06-01 08:02:52', '2025-06-01 08:02:52'),
 (3, 4, 'Tour Guide', 'Kami menyediakan layanan tour guide profesional yang siap menemani Anda menjelajahi keindahan dan keunikan destinasi wisata dengan cara yang lebih personal dan berkesan. Dengan pengalaman, keramahan, dan pengetahuan lokal yang mendalam, kami tidak hanya menjadi pemandu, tapi juga sahabat perjalanan Anda. Setiap rute kami rancang fleksibel sesuai keinginan Anda, menghadirkan pengalaman wisata yang otentik—mulai dari menikmati alam yang memukau, mengenal budaya dan tradisi lokal, hingga mencicipi kuliner khas yang menggugah selera. Keamanan dan kenyamanan Anda adalah prioritas kami, sehingga Anda bisa menikmati liburan tanpa khawatir. Jadikan setiap perjalanan lebih dari sekadar kunjungan, tetapi petualangan yang meninggalkan kesan mendalam bersama kami.', 200000.00, 'jasa', 'artikel_4_1749613163.jpg', 'active', '2025-06-11 03:39:23', '2025-06-19 05:54:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_items`
+--
+
+CREATE TABLE `cart_items` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `item_type` enum('wisata','penginapan','artikel') NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `price_per_unit` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL,
+  `booking_date` date DEFAULT NULL COMMENT 'For wisata tickets',
+  `checkin_date` date DEFAULT NULL COMMENT 'For penginapan',
+  `checkout_date` date DEFAULT NULL COMMENT 'For penginapan',
+  `notes` text DEFAULT NULL,
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_items`
+--
+
+INSERT INTO `cart_items` (`id`, `user_id`, `item_type`, `item_id`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`, `added_at`, `updated_at`) VALUES
+(22, 8, 'wisata', 5, 2, 409938.00, 819876.00, '2025-06-25', NULL, NULL, '', '2025-06-23 18:50:18', '2025-06-23 18:50:34');
 
 -- --------------------------------------------------------
 
@@ -171,6 +215,65 @@ INSERT INTO `pesanpenginapan` (`id`, `user_id`, `user_name`, `user_email`, `peng
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `transaksi`
+--
+
+CREATE TABLE `transaksi` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `transaction_code` varchar(20) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `payment_status` enum('pending','awaiting_confirmation','paid','rejected','cancelled') DEFAULT 'pending',
+  `payment_method` varchar(50) DEFAULT NULL,
+  `payment_proof` varchar(255) DEFAULT NULL,
+  `user_payment_date` datetime DEFAULT NULL,
+  `payment_confirmed_at` datetime DEFAULT NULL,
+  `payment_confirmed_by` int(11) DEFAULT NULL,
+  `payment_date` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transaksi`
+--
+
+INSERT INTO `transaksi` (`id`, `user_id`, `transaction_code`, `total_amount`, `payment_status`, `payment_method`, `payment_proof`, `user_payment_date`, `payment_confirmed_at`, `payment_confirmed_by`, `payment_date`, `created_at`, `updated_at`) VALUES
+(6, 8, 'TRX202506231845148', 10000.00, 'awaiting_confirmation', 'e_wallet', 'payment_TRX202506231845148_1750697187.jpg', '2025-06-25 14:45:00', NULL, NULL, NULL, '2025-06-23 16:45:14', '2025-06-23 16:46:27'),
+(7, 8, 'TRX202506232048068', 28000000.00, 'awaiting_confirmation', 'e_wallet', 'payment_TRX202506232048068_1750704504.jpg', '2025-06-26 01:51:00', NULL, NULL, NULL, '2025-06-23 18:48:06', '2025-06-23 18:48:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transaksi_items`
+--
+
+CREATE TABLE `transaksi_items` (
+  `id` int(11) NOT NULL,
+  `transaksi_id` int(11) NOT NULL,
+  `item_type` enum('wisata','penginapan','artikel') NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price_per_unit` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL,
+  `booking_date` date DEFAULT NULL,
+  `checkin_date` date DEFAULT NULL,
+  `checkout_date` date DEFAULT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transaksi_items`
+--
+
+INSERT INTO `transaksi_items` (`id`, `transaksi_id`, `item_type`, `item_id`, `item_name`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`) VALUES
+(2, 6, '', 4, '0', 1, 10000.00, 10000.00, '0000-00-00', NULL, NULL, ''),
+(3, 7, '', 4, '0', 8, 3500000.00, 28000000.00, NULL, '2025-06-25', '2025-07-03', '');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `umkm`
 --
 
@@ -222,7 +325,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`, `profile_image`, `created_at`, `updated_at`) VALUES
 (1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domanii', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1750312287.jpg', '2025-05-31 15:34:52', '2025-06-19 05:51:27'),
-(3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05');
+(3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05'),
+(8, 'slemandanpapua@gmail.com', '$2y$10$DR/eR1vDhzZgUHegcbZFMut8Zan6sgUO/w45g8Gv8hgrcMRwa/leK', 'Trendo', '081357426623', 'furia puskopad block a', 'default-user.jpg', '2025-06-23 13:29:50', '2025-06-23 13:29:50');
 
 -- --------------------------------------------------------
 
@@ -256,6 +360,14 @@ INSERT INTO `wisata` (`id`, `judul`, `deskripsi`, `harga`, `kategori`, `alamat`,
 --
 
 --
+-- Indexes for table `admin_payment_logs`
+--
+ALTER TABLE `admin_payment_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `admin_id` (`admin_id`),
+  ADD KEY `transaksi_id` (`transaksi_id`);
+
+--
 -- Indexes for table `artikel`
 --
 ALTER TABLE `artikel`
@@ -263,6 +375,15 @@ ALTER TABLE `artikel`
   ADD KEY `idx_kategori` (`kategori`),
   ADD KEY `idx_status` (`status`),
   ADD KEY `idx_umkm_id` (`umkm_id`);
+
+--
+-- Indexes for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `item_type_id` (`item_type`,`item_id`),
+  ADD KEY `idx_user_cart` (`user_id`,`item_type`,`item_id`);
 
 --
 -- Indexes for table `pemesanan`
@@ -296,6 +417,24 @@ ALTER TABLE `pesanpenginapan`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `transaction_code` (`transaction_code`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_user_transactions` (`user_id`,`payment_status`),
+  ADD KEY `idx_payment_status_proof` (`payment_status`,`payment_proof`);
+
+--
+-- Indexes for table `transaksi_items`
+--
+ALTER TABLE `transaksi_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `transaksi_id` (`transaksi_id`),
+  ADD KEY `idx_transaction_items` (`transaksi_id`,`item_type`);
+
+--
 -- Indexes for table `umkm`
 --
 ALTER TABLE `umkm`
@@ -320,10 +459,22 @@ ALTER TABLE `wisata`
 --
 
 --
+-- AUTO_INCREMENT for table `admin_payment_logs`
+--
+ALTER TABLE `admin_payment_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `artikel`
 --
 ALTER TABLE `artikel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
@@ -350,6 +501,18 @@ ALTER TABLE `pesanpenginapan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `transaksi_items`
+--
+ALTER TABLE `transaksi_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `umkm`
 --
 ALTER TABLE `umkm`
@@ -359,7 +522,7 @@ ALTER TABLE `umkm`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `wisata`
@@ -390,6 +553,12 @@ ALTER TABLE `pemesanan`
 ALTER TABLE `pemesanan_tiket`
   ADD CONSTRAINT `fk_pemesanan_artikel` FOREIGN KEY (`artikel_id`) REFERENCES `artikel` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pemesanan_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `transaksi_items`
+--
+ALTER TABLE `transaksi_items`
+  ADD CONSTRAINT `fk_transaksi_items` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

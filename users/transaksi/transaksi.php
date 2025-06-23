@@ -17,22 +17,82 @@ require_once '../../config/database.php';
 // Get user details from database
 $db = getDbConnection();
 
-// Get bookings
-$bookings_query = "SELECT pt.*, a.judul, a.gambar, a.kategori, u.business_name
-                   FROM pemesanan_tiket pt 
-                   JOIN artikel a ON pt.artikel_id = a.id
-                   JOIN umkm u ON a.umkm_id = u.id
-                   WHERE pt.user_id = ?
-                   ORDER BY pt.created_at DESC";
+// Get new unified transactions
+$transaksi_query = "SELECT t.*, 
+                    (SELECT COUNT(*) FROM transaksi_items WHERE transaksi_id = t.id) as item_count
+                    FROM transaksi t
+                    WHERE t.user_id = ?
+                    ORDER BY t.created_at DESC";
 
-$bookings_stmt = $db->prepare($bookings_query);
-$bookings_stmt->bind_param("i", $user_id);
-$bookings_stmt->execute();
-$bookings_result = $bookings_stmt->get_result();
-$bookings = $bookings_result->fetch_all(MYSQLI_ASSOC);
-$bookings_stmt->close();
+$transaksi_stmt = $db->prepare($transaksi_query);
+$transaksi_stmt->bind_param("i", $user_id);
+$transaksi_stmt->execute();
+$transaksi_result = $transaksi_stmt->get_result();
+$transactions = $transaksi_result->fetch_all(MYSQLI_ASSOC);
+$transaksi_stmt->close();
 
-$db->close();
+// Get old bookings (for backward compatibility)
+$old_bookings_query = "SELECT 'wisata' as type, 
+                              p.id, 
+                              p.total_harga, 
+                              p.created_at,
+                              w.judul as item_name, 
+                              w.photo as item_image, 
+                              w.kategori,
+                              p.jumlah_tiket,
+                              p.tanggal_kunjungan,
+                              NULL as tanggal_checkin,
+                              NULL as jumlah_kamar
+                       FROM pemesanan p
+                       JOIN wisata w ON p.wisata_id = w.id
+                       WHERE p.user_id = ?
+                       
+                       UNION ALL
+                       
+                       SELECT 'penginapan' as type, 
+                              pp.id, 
+                              pp.total_harga, 
+                              pp.created_at,
+                              p.judul as item_name, 
+                              p.photo as item_image, 
+                              p.tipe as kategori,
+                              NULL as jumlah_tiket,
+                              NULL as tanggal_kunjungan,
+                              pp.tanggal_checkin,
+                              pp.jumlah_kamar
+                       FROM pesanpenginapan pp
+                       JOIN penginapan p ON pp.penginapan_id = p.id
+                       WHERE pp.user_id = ?
+                       
+                       UNION ALL
+                       
+                       SELECT 'artikel' as type, 
+                              pt.id, 
+                              pt.total_harga, 
+                              pt.created_at,
+                              a.judul as item_name, 
+                              a.gambar as item_image, 
+                              a.kategori,
+                              pt.jumlah_tiket,
+                              pt.tanggal_kunjungan,
+                              NULL as tanggal_checkin,
+                              NULL as jumlah_kamar
+                       FROM pemesanan_tiket pt
+                       JOIN artikel a ON pt.artikel_id = a.id
+                       WHERE pt.user_id = ?
+                       
+                       ORDER BY created_at DESC";
+
+$old_stmt = $db->prepare($old_bookings_query);
+if ($old_stmt === false) {
+    // If prepare failed, show the error
+    die("Prepare failed: " . $db->error);
+}
+$old_stmt->bind_param("iii", $user_id, $user_id, $user_id);
+$old_stmt->execute();
+$old_result = $old_stmt->get_result();
+$old_bookings = $old_result->fetch_all(MYSQLI_ASSOC);
+$old_stmt->close();
 
 // Helper functions
 function formatPrice($price) {
@@ -53,9 +113,34 @@ function getCategoryIcon($kategori) {
         'event' => '🎉',
         'kuliner' => '🍽️',
         'kerajinan' => '🎨',
-        'wisata' => '🏝️'
+        'wisata' => '🏝️',
+        'budaya' => '🎭',
+        'alam' => '🌿',
+        'hotel' => '🏨',
+        'villa' => '🏖️',
+        'resort' => '🌴'
     ];
     return $icons[$kategori] ?? '📄';
+}
+
+function getPaymentStatusBadge($status) {
+    $badges = [
+        'pending' => '<span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85rem;">⏳ Menunggu Pembayaran</span>',
+        'awaiting_confirmation' => '<span style="background: #17a2b8; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85rem;">🔍 Menunggu Konfirmasi</span>',
+        'paid' => '<span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85rem;">✅ Dibayar</span>',
+        'rejected' => '<span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85rem;">❌ Pembayaran Ditolak</span>',
+        'cancelled' => '<span style="background: #6c757d; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.85rem;">🚫 Dibatalkan</span>'
+    ];
+    return $badges[$status] ?? $status;
+}
+
+function getPaymentMethodName($method) {
+    $methods = [
+        'bank_transfer' => 'Transfer Bank',
+        'e_wallet' => 'E-Wallet',
+        'credit_card' => 'Kartu Kredit/Debit'
+    ];
+    return $methods[$method] ?? $method;
 }
 ?>
 
@@ -239,6 +324,7 @@ function getCategoryIcon($kategori) {
     </style>
 </head>
 <body>
+    <?php include '../components/navbar.php'; ?>
     
     <div class="container">
         <div class="header">
@@ -247,55 +333,176 @@ function getCategoryIcon($kategori) {
         </div>
 
         <div class="content">
-            <?php if (count($bookings) > 0): ?>
-                <!-- Bookings Table -->
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                    ✅ <?php echo $_SESSION['success_message']; ?>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    ❌ <?php echo $_SESSION['error_message']; ?>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php endif; ?>
+            
+            <?php if (count($transactions) > 0 || count($old_bookings) > 0): ?>
+                
+                <?php if (count($transactions) > 0): ?>
+                <!-- New Transactions -->
+                <h2 style="margin-bottom: 20px; color: #333;">📋 Transaksi Terbaru</h2>
+                <?php 
+                // Re-establish database connection once for all transaction items
+                $db = getDbConnection();
+                
+                foreach ($transactions as $transaction): ?>
+                    <?php
+                    // Get transaction items
+                    $items_query = "SELECT * FROM transaksi_items WHERE transaksi_id = ?";
+                    $items_stmt = $db->prepare($items_query);
+                    $items_stmt->bind_param("i", $transaction['id']);
+                    $items_stmt->execute();
+                    $items_result = $items_stmt->get_result();
+                    $items = $items_result->fetch_all(MYSQLI_ASSOC);
+                    $items_stmt->close();
+                    ?>
+                    
+                    <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 style="margin: 0; color: #333;">Kode: <?php echo htmlspecialchars($transaction['transaction_code']); ?></h3>
+                                <p style="margin: 5px 0; color: #666;">🕒 <?php echo formatDateTime($transaction['created_at']); ?></p>
+                            </div>
+                            <div style="text-align: right;">
+                                <?php echo getPaymentStatusBadge($transaction['payment_status']); ?>
+                                <p style="margin: 5px 0; color: #666; font-size: 0.9rem;"><?php echo getPaymentMethodName($transaction['payment_method']); ?></p>
+                            </div>
+                        </div>
+                        
+                        <div style="border-top: 1px solid #eee; padding-top: 15px;">
+                            <?php foreach ($items as $item): ?>
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5;">
+                                    <div>
+                                        <strong><?php echo htmlspecialchars($item['item_name']); ?></strong>
+                                        <span style="color: #666; font-size: 0.9rem;">
+                                            (<?php echo ucfirst($item['item_type']); ?>)
+                                        </span>
+                                        <?php if ($item['booking_date']): ?>
+                                            <br><small>📅 <?php echo formatDate($item['booking_date']); ?></small>
+                                        <?php endif; ?>
+                                        <?php if ($item['checkin_date'] && $item['checkout_date']): ?>
+                                            <br><small>📅 <?php echo formatDate($item['checkin_date']); ?> - <?php echo formatDate($item['checkout_date']); ?></small>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div>Qty: <?php echo $item['quantity']; ?></div>
+                                        <div style="color: #27ae60; font-weight: 600;"><?php echo formatPrice($item['subtotal']); ?></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <strong style="font-size: 1.2rem;">Total</strong>
+                                <strong style="font-size: 1.3rem; color: #27ae60; margin-left: 10px;"><?php echo formatPrice($transaction['total_amount']); ?></strong>
+                            </div>
+                            
+                            <?php if ($transaction['payment_status'] === 'pending'): ?>
+                            <form action="../checkout/payment_instructions.php" method="POST" style="display: inline;">
+                                <input type="hidden" name="transaction_code" value="<?php echo $transaction['transaction_code']; ?>">
+                                <input type="hidden" name="total_amount" value="<?php echo $transaction['total_amount']; ?>">
+                                <input type="hidden" name="payment_method" value="<?php echo $transaction['payment_method']; ?>">
+                                <input type="hidden" name="transaction_id" value="<?php echo $transaction['id']; ?>">
+                                <?php 
+                                $_SESSION['transaction_code'] = $transaction['transaction_code'];
+                                $_SESSION['total_amount'] = $transaction['total_amount'];
+                                $_SESSION['payment_method'] = $transaction['payment_method'];
+                                $_SESSION['transaction_id'] = $transaction['id'];
+                                ?>
+                                <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">
+                                    💳 Bayar Sekarang
+                                </button>
+                            </form>
+                            <?php elseif ($transaction['payment_status'] === 'rejected'): ?>
+                            <form action="../checkout/payment_instructions.php" method="POST" style="display: inline;">
+                                <input type="hidden" name="transaction_code" value="<?php echo $transaction['transaction_code']; ?>">
+                                <input type="hidden" name="total_amount" value="<?php echo $transaction['total_amount']; ?>">
+                                <input type="hidden" name="payment_method" value="<?php echo $transaction['payment_method']; ?>">
+                                <input type="hidden" name="transaction_id" value="<?php echo $transaction['id']; ?>">
+                                <?php 
+                                $_SESSION['transaction_code'] = $transaction['transaction_code'];
+                                $_SESSION['total_amount'] = $transaction['total_amount'];
+                                $_SESSION['payment_method'] = $transaction['payment_method'];
+                                $_SESSION['transaction_id'] = $transaction['id'];
+                                ?>
+                                <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">
+                                    🔄 Upload Ulang Bukti
+                                </button>
+                            </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+                
+                <?php if (count($old_bookings) > 0): ?>
+                <!-- Old Bookings Table -->
+                <h2 style="margin: 30px 0 20px; color: #333;">📋 Riwayat Pemesanan Lama</h2>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Artikel</th>
-                                <th>UMKM</th>
-                                <th>Jumlah Tiket</th>
+                                <th>Item</th>
+                                <th>Tipe</th>
+                                <th>Jumlah</th>
                                 <th>Total Harga</th>
-                                <th>Tanggal Kunjungan</th>
-                                <th>Tanggal Pesan</th>
+                                <th>Tanggal</th>
+                                <th>Waktu Pesan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($bookings as $index => $booking): ?>
+                            <?php foreach ($old_bookings as $index => $booking): ?>
                                 <tr>
                                     <td><?php echo $index + 1; ?></td>
                                     <td>
                                         <div class="article-info">
-                                            <?php if ($booking['gambar']): ?>
-                                                <img src="../../uploads/artikel_images/<?php echo htmlspecialchars($booking['gambar']); ?>" 
-                                                     alt="<?php echo htmlspecialchars($booking['judul']); ?>" 
+                                            <?php if ($booking['item_image']): ?>
+                                                <?php
+                                                $image_path = ($booking['type'] == 'artikel') 
+                                                    ? '../../uploads/artikel_images/' . $booking['item_image']
+                                                    : '../../uploads/' . $booking['item_image'];
+                                                ?>
+                                                <img src="<?php echo $image_path; ?>" 
+                                                     alt="<?php echo htmlspecialchars($booking['item_name']); ?>" 
                                                      class="article-image">
                                             <?php else: ?>
                                                 <div class="article-image-placeholder">
-                                                    <?php echo getCategoryIcon($booking['kategori']); ?>
+                                                    <?php echo getCategoryIcon($booking['kategori'] ?? $booking['type']); ?>
                                                 </div>
                                             <?php endif; ?>
                                             <div class="article-details">
-                                                <h4><?php echo htmlspecialchars($booking['judul']); ?></h4>
+                                                <h4><?php echo htmlspecialchars($booking['item_name']); ?></h4>
                                                 <div class="category">
-                                                    <?php echo getCategoryIcon($booking['kategori']) . ' ' . ucfirst($booking['kategori']); ?>
+                                                    <?php echo getCategoryIcon($booking['kategori'] ?? $booking['type']) . ' ' . ucfirst($booking['kategori'] ?? $booking['type']); ?>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($booking['business_name']); ?></strong>
+                                        <strong><?php echo ucfirst($booking['type']); ?></strong>
                                     </td>
                                     <td>
-                                        <strong><?php echo $booking['jumlah_tiket']; ?></strong> tiket
+                                        <strong><?php echo $booking['jumlah_tiket'] ?? $booking['jumlah_kamar'] ?? 1; ?></strong>
+                                        <?php echo $booking['type'] == 'penginapan' ? 'kamar' : 'tiket'; ?>
                                     </td>
                                     <td>
                                         <div class="price"><?php echo formatPrice($booking['total_harga']); ?></div>
                                     </td>
                                     <td>
-                                        📅 <?php echo formatDate($booking['tanggal_kunjungan']); ?>
+                                        📅 <?php echo formatDate($booking['tanggal_kunjungan'] ?? $booking['tanggal_checkin'] ?? $booking['created_at']); ?>
                                     </td>
                                     <td>
                                         🕒 <?php echo formatDateTime($booking['created_at']); ?>
@@ -305,6 +512,7 @@ function getCategoryIcon($kategori) {
                         </tbody>
                     </table>
                 </div>
+                <?php endif; ?>
 
             <?php else: ?>
                 <div class="no-data">
@@ -312,7 +520,7 @@ function getCategoryIcon($kategori) {
                     <h3>Belum Ada Transaksi</h3>
                     <p>Anda belum memiliki riwayat pemesanan tiket.</p>
                     <p>Mulai jelajahi dan pesan tiket untuk berbagai aktivitas menarik!</p>
-                    <a href="user_dashboard.php" class="btn btn-primary" style="margin-top: 1rem;">
+                    <a href="../dashboard/user_dashboard.php" class="btn btn-primary" style="margin-top: 1rem;">
                         🎫 Mulai Pesan Tiket
                     </a>
                 </div>

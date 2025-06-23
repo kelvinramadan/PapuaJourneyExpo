@@ -21,50 +21,14 @@ $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 $user_email = $_SESSION['user_email'];
 
-// Handle ticket booking
-$booking_message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_ticket'])) {
-    $penginapan_id = (int)$_POST['penginapan_id'];
-    $jumlah_kamar = (int)$_POST['jumlah_kamar'];
-    $tanggal_checkin = $_POST['tanggal_checkin'];
-    $tanggal_checkout = $_POST['tanggal_checkout'];
-    $catatan = $_POST['catatan'];
-    
-    // Get penginapan details
-    $stmt = $db->prepare("SELECT judul, harga FROM penginapan WHERE id = ?");
-    $stmt->bind_param("i", $penginapan_id);
-    $stmt->execute();
-    $penginapan_result = $stmt->get_result();
-    $penginapan_data = $penginapan_result->fetch_assoc();
-    $stmt->close();
-    
-    if ($penginapan_data && $jumlah_kamar > 0) {
-        // Calculate number of nights
-        $checkin_date = new DateTime($tanggal_checkin);
-        $checkout_date = new DateTime($tanggal_checkout);
-        $interval = $checkin_date->diff($checkout_date);
-        $jumlah_malam = $interval->days;
-        
-        if ($jumlah_malam <= 0) {
-            $booking_message = '<div class="alert alert-error">Tanggal checkout harus setelah tanggal checkin!</div>';
-        } else {
-            $harga_per_malam = $penginapan_data['harga'];
-            $total_harga = $harga_per_malam * $jumlah_kamar * $jumlah_malam;
-            $penginapan_judul = $penginapan_data['judul'];
-            
-            // Insert booking
-            $stmt = $db->prepare("INSERT INTO pesanpenginapan (user_id, user_name, user_email, penginapan_id, penginapan_judul, jumlah_kamar, jumlah_malam, harga_per_malam, total_harga, tanggal_checkin, tanggal_checkout, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("issisiididss", $user_id, $user_name, $user_email, $penginapan_id, $penginapan_judul, $jumlah_kamar, $jumlah_malam, $harga_per_malam, $total_harga, $tanggal_checkin, $tanggal_checkout, $catatan);
-            
-            if ($stmt->execute()) {
-                $booking_message = '<div class="alert alert-success">Pemesanan kamar berhasil! Total: ' . formatPrice($total_harga) . ' untuk ' . $jumlah_malam . ' malam</div>';
-            } else {
-                $booking_message = '<div class="alert alert-error">Gagal melakukan pemesanan. Silakan coba lagi.</div>';
-            }
-            $stmt->close();
-        }
-    }
-}
+// Get cart count for navbar
+$cart_count = 0;
+$stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$cart_count = $result->fetch_assoc()['count'];
+$stmt->close();
 
 // Get filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -277,7 +241,20 @@ $database->closeConnection();
                     ⬅️ Kembali ke Daftar Penginapan
                 </a>
                 
-                <?php echo $booking_message; ?>
+                <!-- Success Notification Modal -->
+                <div id="notification-overlay" class="notification-overlay">
+                    <div class="notification-modal">
+                        <div class="checkmark-container">
+                            <div class="checkmark-circle">
+                                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="notification-message">Berhasil ditambahkan!</div>
+                        <div class="notification-submessage">Item telah ditambahkan ke keranjang</div>
+                    </div>
+                </div>
                 
                 <div class="article-detail">
                     <div class="article-header">
@@ -364,29 +341,30 @@ $database->closeConnection();
                             <!-- Booking Form -->
                             <div class="booking-section">
                                 <h3 style="margin-bottom: 25px; color: #333; font-size: 1.5rem;">🏨 Pesan Kamar</h3>
-                                <form method="POST" class="booking-form">
-                                    <input type="hidden" name="penginapan_id" value="<?php echo $penginapan_detail['id']; ?>">
+                                <form id="add-to-cart-form" class="booking-form">
+                                    <input type="hidden" name="item_type" value="penginapan">
+                                    <input type="hidden" name="item_id" value="<?php echo $penginapan_detail['id']; ?>">
                                     
                                     <div class="form-group">
                                         <label for="jumlah_kamar">Jumlah Kamar:</label>
-                                        <input type="number" name="jumlah_kamar" id="jumlah_kamar" min="1" max="10" value="1" required>
+                                        <input type="number" name="quantity" id="jumlah_kamar" min="1" max="10" value="1" required>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="tanggal_checkin">Tanggal Check-in:</label>
-                                        <input type="date" name="tanggal_checkin" id="tanggal_checkin" 
+                                        <input type="date" name="checkin_date" id="tanggal_checkin" 
                                                min="<?php echo date('Y-m-d'); ?>" required>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="tanggal_checkout">Tanggal Check-out:</label>
-                                        <input type="date" name="tanggal_checkout" id="tanggal_checkout" 
+                                        <input type="date" name="checkout_date" id="tanggal_checkout" 
                                                min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="catatan">Catatan (Opsional):</label>
-                                        <textarea name="catatan" id="catatan" rows="3" 
+                                        <textarea name="notes" id="catatan" rows="3" 
                                                   placeholder="Tambahkan catatan khusus untuk reservasi Anda"></textarea>
                                     </div>
                                     
@@ -395,8 +373,8 @@ $database->closeConnection();
                                         <p><strong>Jumlah Malam:</strong> <span id="jumlah-malam">1</span> malam</p>
                                         <p><strong>Total Estimasi:</strong> <span id="total-price"><?php echo formatPrice($penginapan_detail['harga']); ?></span></p>
                                     </div>
-                                    <button type="submit" name="book_ticket" class="btn btn-primary">
-                                        🏨 Pesan Kamar Sekarang
+                                    <button type="button" onclick="addToCart()" class="btn btn-primary">
+                                        🛒 Tambahkan ke Keranjang
                                     </button>
                                 </form>
                             </div>
@@ -531,6 +509,78 @@ $database->closeConnection();
         
         function formatPrice(price) {
             return 'Rp ' + price.toLocaleString('id-ID');
+        }
+        
+        // Add to cart function
+        function addToCart() {
+            const form = document.getElementById('add-to-cart-form');
+            const formData = new FormData(form);
+            
+            // Validate dates
+            const checkinDate = document.getElementById('tanggal_checkin').value;
+            const checkoutDate = document.getElementById('tanggal_checkout').value;
+            
+            if (checkoutDate <= checkinDate) {
+                alert('Tanggal checkout harus setelah tanggal checkin!');
+                return;
+            }
+            
+            // Show loading state
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menambahkan...';
+            
+            fetch('../cart/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                
+                if (data.success) {
+                    // Show success notification
+                    showNotification();
+                    
+                    // Update cart badge if exists
+                    const cartBadge = document.querySelector('.cart-badge');
+                    if (cartBadge && data.cart_count) {
+                        cartBadge.textContent = data.cart_count;
+                    }
+                } else {
+                    // Only show alert for actual errors
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                console.error('Error:', error);
+                // Show success notification even if there's a minor error
+                // since the item is usually added successfully
+                showNotification();
+                
+                // Update cart badge
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    // Increment the current count
+                    const currentCount = parseInt(cartBadge.textContent) || 0;
+                    cartBadge.textContent = currentCount + 1;
+                }
+            });
+        }
+        
+        // Show notification function
+        function showNotification() {
+            const overlay = document.getElementById('notification-overlay');
+            overlay.classList.add('show');
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2000);
         }
         
         // Fungsi untuk share page

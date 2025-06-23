@@ -11,9 +11,12 @@ $in_wisata = strpos($current_dir, '/users/wisata') !== false;
 $in_penginapan = strpos($current_dir, '/users/penginapan') !== false;
 $in_chatbot = strpos($current_dir, '/users/chatbot') !== false;
 $in_components = strpos($current_dir, '/users/components') !== false;
+$in_cart = strpos($current_dir, '/users/cart') !== false;
+$in_checkout = strpos($current_dir, '/users/checkout') !== false;
+$in_transaksi = strpos($current_dir, '/users/transaksi') !== false;
 
 // Set up path prefixes based on location
-if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components) {
+if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi) {
     // We're in a subfolder within users
     $base_path = '../../';
     $users_path = '../';
@@ -42,6 +45,17 @@ $user_email = $_SESSION['user_email'];
 // Get user data untuk navbar
 require_once $config_path . 'database.php';
 $db = getDbConnection();
+
+// Get cart count
+$cart_count = 0;
+if (isset($_SESSION['user_id'])) {
+    $cart_stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+    $cart_stmt->bind_param("i", $_SESSION['user_id']);
+    $cart_stmt->execute();
+    $cart_result = $cart_stmt->get_result();
+    $cart_count = $cart_result->fetch_assoc()['count'];
+    $cart_stmt->close();
+}
 
 // Handle form submissions for profile functions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -467,6 +481,41 @@ $db->close();
     color: var(--error-color) !important;
 }
 
+/* Cart Icon Styles */
+.pj-navbar-wrapper .cart-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pj-navbar-wrapper .cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background: var(--button-color);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+    animation: pjBadgePulse 0.5s ease;
+}
+
+@keyframes pjBadgePulse {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 /* Mobile Navigation */
 .pj-navbar-wrapper .mobile-nav {
     position: fixed;
@@ -792,6 +841,14 @@ body {
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">Penginapan</a></li>
             <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">Transaksi</a></li>
             <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a></li>
+            <li>
+                <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-shopping-cart"></i>
+                    <?php if ($cart_count > 0): ?>
+                        <span class="cart-badge"><?php echo $cart_count; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
         </ul>
         
         <div class="search-container">
@@ -842,6 +899,12 @@ body {
             </a></li>
             <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php">
                 <i class="fas fa-robot"></i> AI Assistant
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>cart/cart.php">
+                <i class="fas fa-shopping-cart"></i> Keranjang
+                <?php if ($cart_count > 0): ?>
+                    <span style="background: var(--button-color); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem; margin-left: 5px;"><?php echo $cart_count; ?></span>
+                <?php endif; ?>
             </a></li>
         </ul>
         <div class="mobile-user-info">
