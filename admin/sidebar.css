@@ -6,7 +6,7 @@
     width: 256px;
     height: 100vh;
     background: linear-gradient(180deg, #1F2937 0%, #111827 100%);
-    z-index: 1000;
+    z-index: 900;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;

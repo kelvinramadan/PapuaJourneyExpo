@@ -26,30 +26,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-icon">🏨</span>
             <span>Penginapan</span>
         </a>
-        
-        <div class="nav-divider"></div>
-        
-        <a href="#" class="btn">
-            <span class="btn-icon">👥</span>
-            <span>Users</span>
-        </a>
-        
-        <a href="#" class="btn">
-            <span class="btn-icon">🏪</span>
-            <span>UMKM</span>
-        </a>
-        
-        <a href="#" class="btn">
-            <span class="btn-icon">📊</span>
-            <span>Reports</span>
-        </a>
-        
-        <div class="nav-divider"></div>
-        
-        <a href="#" class="btn">
-            <span class="btn-icon">⚙️</span>
-            <span>Settings</span>
-        </a>
     </nav>
     
     <div class="user-section">

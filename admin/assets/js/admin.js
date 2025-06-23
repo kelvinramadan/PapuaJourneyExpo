@@ -14,21 +14,19 @@ function toggleSidebar() {
     localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
 }
 
-// Toggle User Menu
-function toggleUserMenu() {
-    const dropdown = document.getElementById('userDropdown');
-    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const userMenu = document.querySelector('.user-menu');
-    const dropdown = document.getElementById('userDropdown');
+// Auto-collapse sidebar when expand button is clicked
+function autoCollapseSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
     
-    if (dropdown && !userMenu.contains(event.target)) {
-        dropdown.style.display = 'none';
+    if (sidebar && !sidebar.classList.contains('collapsed')) {
+        sidebar.classList.add('collapsed');
+        if (mainContent) {
+            mainContent.classList.add('sidebar-collapsed');
+        }
+        localStorage.setItem('sidebarCollapsed', 'true');
     }
-});
+}
 
 // Initialize sidebar state from localStorage
 document.addEventListener('DOMContentLoaded', function() {

@@ -27,26 +27,11 @@ $page_title = $page_title ?? 'Dashboard';
             <input type="text" placeholder="Search..." id="globalSearch">
         </div>
         
-        <button class="btn btn-outline btn-sm">
-            <span>🔔</span>
-            <span class="badge badge-danger" style="position: absolute; top: -5px; right: -5px; font-size: 0.625rem;">3</span>
-        </button>
-        
         <div class="user-menu">
-            <button class="user-button" onclick="toggleUserMenu()">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($admin_username, 0, 1)); ?>
-                </div>
-                <span><?php echo htmlspecialchars($admin_username); ?></span>
-                <span>▼</span>
-            </button>
-            
-            <div class="dropdown-menu" id="userDropdown" style="display: none;">
-                <a href="#" class="dropdown-item">Profile</a>
-                <a href="#" class="dropdown-item">Settings</a>
-                <div class="dropdown-divider"></div>
-                <a href="?logout=1" class="dropdown-item text-danger">Logout</a>
+            <div class="user-avatar">
+                <?php echo strtoupper(substr($admin_username, 0, 1)); ?>
             </div>
+            <span style="margin-right: 1rem;"><?php echo htmlspecialchars($admin_username); ?></span>
         </div>
     </div>
 </header>

@@ -35,12 +35,15 @@ body {
 .admin-wrapper {
     display: flex;
     min-height: 100vh;
+    position: relative;
 }
 
 .main-content {
     flex: 1;
     margin-left: 256px;
     transition: margin-left 0.3s ease;
+    min-width: 0;
+    overflow-x: auto;
 }
 
 .main-content.sidebar-collapsed {
@@ -129,6 +132,13 @@ body {
 /* Content Area */
 .content-wrapper {
     padding: 2rem;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Fix for form layouts */
+.card-body {
+    overflow-x: auto;
 }
 
 /* Dashboard Stats */
@@ -616,6 +626,19 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+    .preview-section {
+        flex-direction: column;
+    }
+    
+    .preview-card {
+        position: static;
+        flex: 1;
+        width: 100%;
+        max-width: none;
+    }
+}
+
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
@@ -639,6 +662,10 @@ body {
     
     .content-wrapper {
         padding: 1rem;
+    }
+    
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
     }
 }
 

@@ -550,6 +550,10 @@ $page_title = 'Penginapan Management';
             if (form.style.display === 'none') {
                 form.style.display = 'block';
                 btn.innerHTML = '<span>▲</span> Collapse';
+                // Auto-collapse sidebar on mobile or when expanding form
+                if (window.innerWidth < 1200) {
+                    autoCollapseSidebar();
+                }
             } else {
                 form.style.display = 'none';
                 btn.innerHTML = '<span>▼</span> Expand';
