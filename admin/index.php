@@ -207,6 +207,35 @@ $page_title = 'Dashboard';
     <title>Admin Dashboard - Papua Journey</title>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="admin.css">
+    <style>
+        /* Prevent auto-scrolling issues */
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            scroll-behavior: auto !important;
+            position: relative;
+        }
+        
+        /* Fix for UMKM status card */
+        .umkm-status-card {
+            overflow: hidden !important;
+            position: relative;
+        }
+        
+        .umkm-status-card .card-body {
+            overflow: hidden !important;
+            max-height: 450px;
+        }
+        
+        /* Ensure chart container is properly sized */
+        #umkmChart {
+            position: relative !important;
+            height: 150px !important;
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
     <div class="admin-wrapper">
@@ -319,12 +348,14 @@ $page_title = 'Dashboard';
                     </div>
                     
                     <!-- Quick Stats -->
-                    <div class="card">
+                    <div class="card umkm-status-card" style="height: auto; min-height: 400px;">
                         <div class="card-header">
                             <h3 class="card-title">Status UMKM</h3>
                         </div>
-                        <div class="card-body">
-                            <canvas id="umkmChart" height="150"></canvas>
+                        <div class="card-body" style="overflow: hidden; position: relative; padding-bottom: 1.5rem;">
+                            <div style="width: 100%; height: 150px; position: relative; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="umkmChart"></canvas>
+                            </div>
                             
                             <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -483,10 +514,52 @@ $page_title = 'Dashboard';
     <script src="assets/js/admin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Prevent any auto-scrolling behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Store initial scroll position
+            const initialScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Reset scroll position if it changes unexpectedly
+            let scrollCheckInterval = setInterval(function() {
+                const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (Math.abs(currentScrollTop - initialScrollTop) > 100 && !window.userScrolling) {
+                    window.scrollTo(0, initialScrollTop);
+                }
+            }, 100);
+            
+            // Track user scrolling
+            let scrollTimeout;
+            window.addEventListener('wheel', function() {
+                window.userScrolling = true;
+                clearTimeout(scrollTimeout);
+                clearInterval(scrollCheckInterval);
+                scrollTimeout = setTimeout(() => {
+                    window.userScrolling = false;
+                }, 1000);
+            });
+            
+            window.addEventListener('touchmove', function() {
+                window.userScrolling = true;
+                clearTimeout(scrollTimeout);
+                clearInterval(scrollCheckInterval);
+                scrollTimeout = setTimeout(() => {
+                    window.userScrolling = false;
+                }, 1000);
+            });
+        });
+        
         // Initialize Chart
         function initializeCharts() {
             const ctx = document.getElementById('umkmChart');
             if (ctx) {
+                // Get parent container dimensions
+                const container = ctx.parentElement;
+                const containerWidth = container.offsetWidth;
+                
+                // Set canvas dimensions
+                ctx.style.width = '100%';
+                ctx.style.height = '150px';
+                
                 new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -504,6 +577,16 @@ $page_title = 'Dashboard';
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            onComplete: function() {
+                                // Ensure no scrolling after animation
+                                window.scrollTo(0, 0);
+                            }
+                        },
+                        layout: {
+                            padding: 10
+                        },
                         plugins: {
                             legend: {
                                 display: false

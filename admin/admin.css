@@ -32,6 +32,8 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: auto;
 }
 
 /* Layout Structure */
@@ -150,11 +152,23 @@ body {
     padding: 2rem;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: visible;
+    min-height: calc(100vh - 64px);
 }
 
 /* Fix for form layouts */
-.card-body {
+.content-wrapper .card-body {
     overflow-x: auto;
+}
+
+/* Prevent auto-scrolling */
+html, body {
+    scroll-behavior: auto !important;
+}
+
+/* Ensure no element can cause unwanted scrolling */
+* {
+    scroll-behavior: auto !important;
 }
 
 /* Dashboard Stats */
@@ -249,6 +263,7 @@ body {
     border-radius: 0.5rem;
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    position: relative;
 }
 
 .card-header {
@@ -601,10 +616,12 @@ body {
 .grid {
     display: grid;
     gap: 1.5rem;
+    overflow: visible;
 }
 
 .grid-2 {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: start;
 }
 
 .grid-3 {
@@ -613,6 +630,12 @@ body {
 
 .grid-4 {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Fix for chart container */
+#umkmChart {
+    max-width: 100%;
+    max-height: 150px !important;
 }
 
 /* Image Preview */
