@@ -76,17 +76,11 @@ if (!isset($_SESSION['admin_logged_in'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Login - Omaki Platform</title>
+        <title>Admin Login - Papua Journey</title>
+        <link rel="stylesheet" href="admin.css">
         <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
             body {
-                font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
@@ -94,99 +88,57 @@ if (!isset($_SESSION['admin_logged_in'])) {
             }
             
             .login-container {
-                background: white;
-                padding: 2rem;
-                border-radius: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                width: 100%;
-                max-width: 400px;
+                animation: fadeIn 0.5s ease-out;
             }
             
-            .login-header {
-                text-align: center;
-                margin-bottom: 2rem;
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
             
-            .login-header h1 {
-                color: #333;
-                margin-bottom: 0.5rem;
-            }
-            
-            .form-group {
+            .login-logo {
+                font-size: 3rem;
                 margin-bottom: 1rem;
-            }
-            
-            .form-group label {
-                display: block;
-                margin-bottom: 0.5rem;
-                color: #333;
-                font-weight: 500;
-            }
-            
-            .form-group input {
-                width: 100%;
-                padding: 0.75rem;
-                border: 2px solid #ddd;
-                border-radius: 5px;
-                font-size: 1rem;
-            }
-            
-            .form-group input:focus {
-                outline: none;
-                border-color: #667eea;
-            }
-            
-            .btn {
-                width: 100%;
-                padding: 0.75rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                border-radius: 5px;
-                font-size: 1rem;
-                cursor: pointer;
-            }
-            
-            .btn:hover {
-                opacity: 0.9;
-            }
-            
-            .error-message {
-                background: #ffebee;
-                color: #c62828;
-                padding: 0.75rem;
-                border-radius: 5px;
-                margin-bottom: 1rem;
-                border-left: 4px solid #c62828;
             }
         </style>
     </head>
     <body>
-        <div class="login-container">
-            <div class="login-header">
-                <h1>Admin Login</h1>
-                <p>Masuk ke panel admin Omaki</p>
+        <div class="login-container card" style="max-width: 400px; width: 90%;">
+            <div class="card-body" style="padding: 2.5rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div class="login-logo">🏝️</div>
+                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Admin Login</h1>
+                    <p style="color: var(--text-secondary);">Masuk ke panel admin Papua Journey</p>
+                </div>
+                
+                <?php if ($error_message): ?>
+                    <div class="alert alert-error">
+                        <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" id="username" class="form-control" required autofocus>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" name="admin_login" class="btn btn-primary btn-lg" style="width: 100%;">
+                        Login
+                    </button>
+                </form>
             </div>
-            
-            <?php if ($error_message): ?>
-                <div class="error-message">
-                    <?php echo htmlspecialchars($error_message); ?>
-                </div>
-            <?php endif; ?>
-            
-            <form method="POST">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" name="username" id="username" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" required>
-                </div>
-                
-                <button type="submit" name="admin_login" class="btn">Login</button>
-            </form>
         </div>
     </body>
     </html>
@@ -194,25 +146,57 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit();
 }
 
-// Get UMKM data for admin dashboard
+// Get dashboard data
 $db = getDbConnection();
-$stmt = $db->prepare("SELECT * FROM umkm ORDER BY created_at DESC");
-$stmt->execute();
-$result = $stmt->get_result();
-$umkm_list = $result->fetch_all(MYSQLI_ASSOC);
 
-// Get statistics
+// Get UMKM statistics
 $stats_stmt = $db->prepare("SELECT status, COUNT(*) as count FROM umkm GROUP BY status");
 $stats_stmt->execute();
 $stats_result = $stats_stmt->get_result();
-$stats = [];
+$umkm_stats = [];
 while ($row = $stats_result->fetch_assoc()) {
-    $stats[$row['status']] = $row['count'];
+    $umkm_stats[$row['status']] = $row['count'];
 }
 
-$stmt->close();
+// Get total users
+$users_stmt = $db->prepare("SELECT COUNT(*) as total FROM users");
+$users_stmt->execute();
+$users_result = $users_stmt->get_result();
+$total_users = $users_result->fetch_assoc()['total'];
+
+// Get total destinations
+$destinations_stmt = $db->prepare("SELECT COUNT(*) as total FROM wisata");
+$destinations_stmt->execute();
+$destinations_result = $destinations_stmt->get_result();
+$total_destinations = $destinations_result->fetch_assoc()['total'];
+
+// Get total lodgings
+$lodgings_stmt = $db->prepare("SELECT COUNT(*) as total FROM penginapan");
+$lodgings_stmt->execute();
+$lodgings_result = $lodgings_stmt->get_result();
+$total_lodgings = $lodgings_result->fetch_assoc()['total'];
+
+// Get recent UMKM registrations
+$recent_umkm_stmt = $db->prepare("SELECT * FROM umkm ORDER BY created_at DESC LIMIT 5");
+$recent_umkm_stmt->execute();
+$recent_umkm = $recent_umkm_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Get all UMKM for management
+$umkm_stmt = $db->prepare("SELECT * FROM umkm ORDER BY created_at DESC");
+$umkm_stmt->execute();
+$umkm_list = $umkm_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Close all statements
 $stats_stmt->close();
+$users_stmt->close();
+$destinations_stmt->close();
+$lodgings_stmt->close();
+$recent_umkm_stmt->close();
+$umkm_stmt->close();
 $db->close();
+
+// Set page title for header
+$page_title = 'Dashboard';
 ?>
 
 <!DOCTYPE html>
@@ -220,414 +204,333 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Omaki Platform</title>
+    <title>Admin Dashboard - Papua Journey</title>
     <link rel="stylesheet" href="sidebar.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            overflow-x: hidden;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .stat-pending { color: #FF9800; }
-        .stat-active { color: #4CAF50; }
-        .stat-inactive { color: #f44336; }
-
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        /* Card */
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .card h2 {
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        /* Alert */
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        /* Table */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .table tr:hover {
-            background: #f8f9fa;
-        }
-
-        /* Status Badge */
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin: 2px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-approve {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-approve:hover {
-            background: #218838;
-        }
-
-        .btn-reject {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background: #c82333;
-        }
-
-        .btn-deactivate {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-deactivate:hover {
-            background: #e0a800;
-        }
-
-        .btn-delete {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #5a6268;
-        }
-
-        .actions {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .table {
-                font-size: 14px;
-            }
-
-            .table th,
-            .table td {
-                padding: 8px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                margin: 2px 0;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: 15px;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
-    
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h1>Admin Dashboard</h1>
-        </div>
+    <div class="admin-wrapper">
+        <?php include 'components/sidebar.php'; ?>
         
-        <nav class="nav-menu">
-            <a href="index.php" class="btn active">🏠 Admin Homepage</a>
-            <a href="adminwisata.php" class="btn">🏞️ Admin Wisata</a>
-            <a href="adminpenginapan.php" class="btn">🏨 Admin Penginapan</a>
-            <a href="adminpemesanan.php" class="btn">🏨 Admin Pemesanan</a>
-            <a href="pesanpenginapan.php" class="btn">🏨 Admin Pemesanan</a>
-        </nav>
-        
-        <div class="user-section">
-            <div class="user-greeting">Halo, <?php echo htmlspecialchars($_SESSION['admin_username']); ?></div>
-            <a href="?logout=1" class="logout-btn">Logout</a>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <?php if ($success_message): ?>
-            <div class="alert alert-success">
-                <?php echo htmlspecialchars($success_message); ?>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ($error_message): ?>
-            <div class="alert alert-error">
-                <?php echo htmlspecialchars($error_message); ?>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number stat-pending"><?php echo isset($stats['pending']) ? $stats['pending'] : 0; ?></div>
-                <div class="stat-label">Menunggu Persetujuan</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number stat-active"><?php echo isset($stats['active']) ? $stats['active'] : 0; ?></div>
-                <div class="stat-label">UMKM Aktif</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number stat-inactive"><?php echo isset($stats['inactive']) ? $stats['inactive'] : 0; ?></div>
-                <div class="stat-label">UMKM Tidak Aktif</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number"><?php echo count($umkm_list); ?></div>
-                <div class="stat-label">Total UMKM</div>
-            </div>
-        </div>
-        
-        <!-- UMKM List -->
-        <div class="card">
-            <h2>Manajemen UMKM</h2>
+        <div class="main-content">
+            <?php include 'components/header.php'; ?>
             
-            <?php if (empty($umkm_list)): ?>
-                <p>Belum ada UMKM yang terdaftar.</p>
-            <?php else: ?>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Usaha</th>
-                            <th>Pemilik</th>
-                            <th>Email</th>
-                            <th>Jenis Usaha</th>
-                            <th>Status</th>
-                            <th>Terdaftar</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($umkm_list as $umkm): ?>
-                            <tr>
-                                <td>#<?php echo $umkm['id']; ?></td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($umkm['business_name']); ?></strong>
-                                    <?php if ($umkm['description']): ?>
-                                        <br><small><?php echo htmlspecialchars(substr($umkm['description'], 0, 50)) . '...'; ?></small>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?php echo htmlspecialchars($umkm['owner_name']); ?></td>
-                                <td><?php echo htmlspecialchars($umkm['email']); ?></td>
-                                <td><?php echo ucfirst($umkm['business_type']); ?></td>
-                                <td>
-                                    <span class="status-badge status-<?php echo $umkm['status']; ?>">
-                                        <?php echo ucfirst($umkm['status']); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo date('d M Y', strtotime($umkm['created_at'])); ?></td>
-                                <td>
-                                    <div class="actions">
-                                        <?php if ($umkm['status'] == 'pending'): ?>
-                                            <form method="POST" style="display: inline;">
-                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
-                                                <input type="hidden" name="status" value="active">
-                                                <button type="submit" name="update_status" class="btn btn-approve" 
-                                                        onclick="return confirm('Setujui UMKM ini?')">
-                                                    Setujui
-                                                </button>
-                                            </form>
-                                            <form method="POST" style="display: inline;">
-                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
-                                                <input type="hidden" name="status" value="inactive">
-                                                <button type="submit" name="update_status" class="btn btn-reject" 
-                                                        onclick="return confirm('Tolak UMKM ini?')">
-                                                    Tolak
-                                                </button>
-                                            </form>
-                                        <?php elseif ($umkm['status'] == 'active'): ?>
-                                            <form method="POST" style="display: inline;">
-                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
-                                                <input type="hidden" name="status" value="inactive">
-                                                <button type="submit" name="update_status" class="btn btn-deactivate" 
-                                                        onclick="return confirm('Nonaktifkan UMKM ini?')">
-                                                    Nonaktifkan
-                                                </button>
-                                            </form>
-                                        <?php else: ?>
-                                            <form method="POST" style="display: inline;">
-                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
-                                                <input type="hidden" name="status" value="active">
-                                                <button type="submit" name="update_status" class="btn btn-approve" 
-                                                        onclick="return confirm('Aktifkan UMKM ini?')">
-                                                    Aktifkan
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-                                        
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
-                                            <button type="submit" name="delete_umkm" class="btn btn-delete" 
-                                                    onclick="return confirm('Hapus UMKM ini? Tindakan ini tidak dapat dibatalkan!')">
-                                                Hapus
-                                            </button>
-                                        </form>
+            <div class="content-wrapper">
+                <?php if ($success_message): ?>
+                    <div class="alert alert-success fade-in">
+                        <span>✓</span>
+                        <?php echo htmlspecialchars($success_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($error_message): ?>
+                    <div class="alert alert-error fade-in">
+                        <span>✕</span>
+                        <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Dashboard Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value"><?php echo number_format($total_users); ?></div>
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-trend trend-up">
+                                    <span>↑</span> 12% dari bulan lalu
+                                </div>
+                            </div>
+                            <div class="stat-icon primary">👥</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value"><?php echo number_format($total_destinations); ?></div>
+                                <div class="stat-label">Destinasi Wisata</div>
+                                <div class="stat-trend trend-up">
+                                    <span>↑</span> 8 destinasi baru
+                                </div>
+                            </div>
+                            <div class="stat-icon success">🏖️</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value"><?php echo number_format($total_lodgings); ?></div>
+                                <div class="stat-label">Penginapan</div>
+                                <div class="stat-trend trend-up">
+                                    <span>↑</span> 5 penginapan baru
+                                </div>
+                            </div>
+                            <div class="stat-icon warning">🏨</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value"><?php echo number_format(array_sum($umkm_stats)); ?></div>
+                                <div class="stat-label">Total UMKM</div>
+                                <div class="stat-trend trend-up">
+                                    <span>↑</span> <?php echo $umkm_stats['pending'] ?? 0; ?> pending
+                                </div>
+                            </div>
+                            <div class="stat-icon info">🏪</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="grid grid-2" style="margin-bottom: 2rem;">
+                    <!-- Recent UMKM -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">UMKM Terbaru</h3>
+                            <a href="#" class="btn btn-sm btn-outline">Lihat Semua</a>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($recent_umkm)): ?>
+                                <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                                    Belum ada UMKM terdaftar
+                                </p>
+                            <?php else: ?>
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <?php foreach ($recent_umkm as $umkm): ?>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #F9FAFB;">
+                                            <div>
+                                                <div style="font-weight: 600;"><?php echo htmlspecialchars($umkm['business_name']); ?></div>
+                                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                                    <?php echo htmlspecialchars($umkm['owner_name']); ?> • <?php echo date('d M Y', strtotime($umkm['created_at'])); ?>
+                                                </div>
+                                            </div>
+                                            <span class="badge badge-<?php echo $umkm['status'] == 'active' ? 'success' : ($umkm['status'] == 'pending' ? 'warning' : 'danger'); ?>">
+                                                <?php echo ucfirst($umkm['status']); ?>
+                                            </span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Status UMKM</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="umkmChart" height="150"></canvas>
+                            
+                            <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 12px; height: 12px; background: #10B981; border-radius: 2px;"></div>
+                                        <span>Active</span>
                                     </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
+                                    <span style="font-weight: 600;"><?php echo $umkm_stats['active'] ?? 0; ?></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 12px; height: 12px; background: #F59E0B; border-radius: 2px;"></div>
+                                        <span>Pending</span>
+                                    </div>
+                                    <span style="font-weight: 600;"><?php echo $umkm_stats['pending'] ?? 0; ?></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="width: 12px; height: 12px; background: #EF4444; border-radius: 2px;"></div>
+                                        <span>Inactive</span>
+                                    </div>
+                                    <span style="font-weight: 600;"><?php echo $umkm_stats['inactive'] ?? 0; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- UMKM Management Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Manajemen UMKM</h3>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="btn btn-outline btn-sm" onclick="exportData()">
+                                <span>📥</span> Export
+                            </button>
+                            <button class="btn btn-primary btn-sm">
+                                <span>➕</span> Tambah UMKM
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($umkm_list)): ?>
+                            <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+                                Belum ada UMKM yang terdaftar.
+                            </p>
+                        <?php else: ?>
+                            <div style="overflow-x: auto;">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-sortable>ID</th>
+                                            <th data-sortable>Nama Usaha</th>
+                                            <th data-sortable>Pemilik</th>
+                                            <th data-sortable>Email</th>
+                                            <th data-sortable>Jenis Usaha</th>
+                                            <th data-sortable>Status</th>
+                                            <th data-sortable>Terdaftar</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($umkm_list as $umkm): ?>
+                                            <tr>
+                                                <td>#<?php echo $umkm['id']; ?></td>
+                                                <td>
+                                                    <div>
+                                                        <div style="font-weight: 600;"><?php echo htmlspecialchars($umkm['business_name']); ?></div>
+                                                        <?php if ($umkm['description']): ?>
+                                                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                                                <?php echo htmlspecialchars(substr($umkm['description'], 0, 50)) . '...'; ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </td>
+                                                <td><?php echo htmlspecialchars($umkm['owner_name']); ?></td>
+                                                <td><?php echo htmlspecialchars($umkm['email']); ?></td>
+                                                <td>
+                                                    <span class="badge badge-info">
+                                                        <?php echo ucfirst($umkm['business_type']); ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-<?php echo $umkm['status'] == 'active' ? 'success' : ($umkm['status'] == 'pending' ? 'warning' : 'danger'); ?>">
+                                                        <?php echo ucfirst($umkm['status']); ?>
+                                                    </span>
+                                                </td>
+                                                <td><?php echo date('d M Y', strtotime($umkm['created_at'])); ?></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <?php if ($umkm['status'] == 'pending'): ?>
+                                                            <form method="POST" style="display: inline;">
+                                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
+                                                                <input type="hidden" name="status" value="active">
+                                                                <button type="submit" name="update_status" class="btn btn-success btn-sm" 
+                                                                        onclick="return confirmDelete('Setujui UMKM ini?')">
+                                                                    Setujui
+                                                                </button>
+                                                            </form>
+                                                            <form method="POST" style="display: inline;">
+                                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
+                                                                <input type="hidden" name="status" value="inactive">
+                                                                <button type="submit" name="update_status" class="btn btn-danger btn-sm" 
+                                                                        onclick="return confirmDelete('Tolak UMKM ini?')">
+                                                                    Tolak
+                                                                </button>
+                                                            </form>
+                                                        <?php elseif ($umkm['status'] == 'active'): ?>
+                                                            <form method="POST" style="display: inline;">
+                                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
+                                                                <input type="hidden" name="status" value="inactive">
+                                                                <button type="submit" name="update_status" class="btn btn-secondary btn-sm" 
+                                                                        onclick="return confirmDelete('Nonaktifkan UMKM ini?')">
+                                                                    Nonaktifkan
+                                                                </button>
+                                                            </form>
+                                                        <?php else: ?>
+                                                            <form method="POST" style="display: inline;">
+                                                                <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
+                                                                <input type="hidden" name="status" value="active">
+                                                                <button type="submit" name="update_status" class="btn btn-success btn-sm" 
+                                                                        onclick="return confirmDelete('Aktifkan UMKM ini?')">
+                                                                    Aktifkan
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                        
+                                                        <button class="btn btn-outline btn-sm" onclick="viewDetails(<?php echo $umkm['id']; ?>)" data-tooltip="View Details">
+                                                            👁️
+                                                        </button>
+                                                        
+                                                        <form method="POST" style="display: inline;">
+                                                            <input type="hidden" name="umkm_id" value="<?php echo $umkm['id']; ?>">
+                                                            <button type="submit" name="delete_umkm" class="btn btn-danger btn-sm" 
+                                                                    onclick="return confirmDelete('Hapus UMKM ini? Tindakan ini tidak dapat dibatalkan!')"
+                                                                    data-tooltip="Delete">
+                                                                🗑️
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <?php include 'components/footer.php'; ?>
         </div>
     </div>
-
+    
+    <script src="assets/js/admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Toggle sidebar for mobile
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
+        // Initialize Chart
+        function initializeCharts() {
+            const ctx = document.getElementById('umkmChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Active', 'Pending', 'Inactive'],
+                        datasets: [{
+                            data: [
+                                <?php echo $umkm_stats['active'] ?? 0; ?>,
+                                <?php echo $umkm_stats['pending'] ?? 0; ?>,
+                                <?php echo $umkm_stats['inactive'] ?? 0; ?>
+                            ],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
         }
-
-        // Add active state to navigation buttons
-        const currentPage = window.location.pathname.split('/').pop();
-        document.querySelectorAll('.nav-menu .btn').forEach(btn => {
-            if (btn.getAttribute('href') === currentPage) {
-                btn.classList.add('active');
-            }
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.mobile-toggle');
-            
-            if (window.innerWidth <= 768) {
-                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
-                    sidebar.classList.remove('open');
-                }
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
+        
+        // View UMKM Details
+        function viewDetails(id) {
+            showToast('Opening UMKM details...', 'info');
+            // Implement view details functionality
+        }
+        
+        // Export Data
+        function exportData() {
+            showToast('Exporting data...', 'info');
+            // Implement export functionality
+        }
+        
+        // Auto-hide alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
                 alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.5s';
-                setTimeout(function() {
-                    alert.style.display = 'none';
-                }, 500);
+                setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
     </script>
