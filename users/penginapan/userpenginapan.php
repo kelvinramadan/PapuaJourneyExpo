@@ -391,8 +391,6 @@ $database->closeConnection();
                                     </div>
                                     
                                     <div class="booking-summary">
-                                        <p><strong>Nama:</strong> <?php echo htmlspecialchars($user_name); ?></p>
-                                        <p><strong>Email:</strong> <?php echo htmlspecialchars($user_email); ?></p>
                                         <p><strong>Harga per Malam:</strong> <?php echo formatPrice($penginapan_detail['harga']); ?></p>
                                         <p><strong>Jumlah Malam:</strong> <span id="jumlah-malam">1</span> malam</p>
                                         <p><strong>Total Estimasi:</strong> <span id="total-price"><?php echo formatPrice($penginapan_detail['harga']); ?></span></p>

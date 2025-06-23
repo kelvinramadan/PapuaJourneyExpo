@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 19, 2025 at 08:49 AM
+-- Generation Time: Jun 23, 2025 at 07:44 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,62 +47,126 @@ CREATE TABLE `artikel` (
 INSERT INTO `artikel` (`id`, `umkm_id`, `judul`, `deskripsi`, `harga`, `kategori`, `gambar`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Snokeling Blue', 'kegiatan rekreasi di perairan dangkal yang memungkinkan Anda menikmati keindahan bawah laut tanpa harus menyelam terlalu dalam atau menggunakan peralatan selam skuba. Anda berenang di permukaan atau dekat permukaan sambil mengamati kehidupan laut, seperti ikan, terumbu karang, dan berbagai biota laut lainnya.', 75000.00, 'wisata', 'artikel_1_1748761560.jpg', 'active', '2025-06-01 07:06:00', '2025-06-01 07:06:00'),
 (2, 1, 'Hiu Blue Sky', 'Orang lain berlibur hanya ingin menikmati keindahan pantai dengan pasir putih sambil duduk berjemur dan menikmati sejuknya angin dan suara ombak. Tapi kamu wajib mencoba kegiatan berenang dengan hiu, yang bisa dilakukan di Wayag.\r\n\r\nBerenang dengan segerombolan hiu adalah hal yang langkah bagi banyak orang yang belum pernah liburan ke Wayag Raja Ampat. Karena saat ke Wayag kamu akan kaget dengan banyak hiu yang berenang di sepanjang pinggiran pantai.', 100000.00, 'wisata', 'artikel_1_1748764972.jpg', 'active', '2025-06-01 08:02:52', '2025-06-01 08:02:52'),
-(3, 4, 'Tour Guide', 'Jasa pemandu Tour Guide Harian aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 200000.00, 'jasa', 'artikel_4_1749613163.jpg', 'active', '2025-06-11 03:39:23', '2025-06-11 03:39:23');
+(3, 4, 'Tour Guide', 'Kami menyediakan layanan tour guide profesional yang siap menemani Anda menjelajahi keindahan dan keunikan destinasi wisata dengan cara yang lebih personal dan berkesan. Dengan pengalaman, keramahan, dan pengetahuan lokal yang mendalam, kami tidak hanya menjadi pemandu, tapi juga sahabat perjalanan Anda. Setiap rute kami rancang fleksibel sesuai keinginan Anda, menghadirkan pengalaman wisata yang otentik—mulai dari menikmati alam yang memukau, mengenal budaya dan tradisi lokal, hingga mencicipi kuliner khas yang menggugah selera. Keamanan dan kenyamanan Anda adalah prioritas kami, sehingga Anda bisa menikmati liburan tanpa khawatir. Jadikan setiap perjalanan lebih dari sekadar kunjungan, tetapi petualangan yang meninggalkan kesan mendalam bersama kami.', 200000.00, 'jasa', 'artikel_4_1749613163.jpg', 'active', '2025-06-11 03:39:23', '2025-06-19 05:54:51');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chat_conversations`
+-- Table structure for table `pemesanan`
 --
 
-CREATE TABLE `chat_conversations` (
+CREATE TABLE `pemesanan` (
   `id` int(11) NOT NULL,
-  `conversation_id` varchar(36) NOT NULL COMMENT 'Unique ID for each conversation session',
   `user_id` int(11) NOT NULL,
-  `message_type` enum('user','bot') NOT NULL,
-  `message` text NOT NULL,
+  `user_name` varchar(255) NOT NULL,
+  `user_email` varchar(255) NOT NULL,
+  `wisata_id` int(11) NOT NULL,
+  `wisata_judul` varchar(255) NOT NULL,
+  `jumlah_tiket` int(11) NOT NULL,
+  `harga_satuan` decimal(10,2) NOT NULL,
+  `total_harga` decimal(10,2) NOT NULL,
+  `tanggal_kunjungan` date NOT NULL,
+  `catatan` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `chat_conversations`
+-- Dumping data for table `pemesanan`
 --
 
-INSERT INTO `chat_conversations` (`id`, `conversation_id`, `user_id`, `message_type`, `message`, `created_at`) VALUES
-(7, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'user', 'Halo', '2025-06-18 13:07:08'),
-(8, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'bot', '👋 **Halo! Selamat datang di Papua Journey!** Saya Papua Journey, siap memandu perjalanan seru Anda di Jayapura.\n\nAda yang bisa saya bantu atau ingin Anda ketahui tentang destinasi wisata, transportasi, budaya, atau kuliner khas Jayapura hari ini? 😊', '2025-06-18 13:07:23'),
-(9, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'user', 'Apa saja rekomendasi wisata di jayapura ya?', '2025-06-18 13:08:09'),
-(10, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'bot', 'Tentu saja! Saya senang sekali bisa berbagi rekomendasi wisata menarik di Jayapura. Papua punya banyak sekali pesona yang siap Anda jelajahi. ✨\n\nBerikut beberapa rekomendasi tempat yang wajib Anda kunjungi di Jayapura:\n\n## 🏝️ **Rekomendasi Wisata Jayapura**\n\n### 1. **Taman Wisata Teluk Youtefa** 📍\n- **Deskripsi**: Kawasan konservasi mangrove yang sangat indah dan lestari. Anda bisa berjalan-jalan di atas jembatan kayu sepanjang 1,2 km sambil menikmati pemandangan Teluk Youtefa yang memukau.\n- **Daya Tarik Utama**:\n    - Hutan mangrove yang hijau dan rimbun.\n    - Jembatan kayu ikonik yang cocok untuk berfoto.\n    - Pemandangan teluk yang menenangkan.\n    - Berbagai jenis burung yang bisa diamati (bird watching).\n- **Aktivitas**: Berjalan santai di jembatan, fotografi alam, edukasi konservasi, dan menikmati **sunset** yang luar biasa indah.\n- **Waktu Terbaik**: Sore hari, terutama saat matahari terbenam untuk pemandangan yang spektakuler.\n\n### 2. **Food Tour Pasar Hamadi** 🍽️🛍️\n- **Deskripsi**: Pengalaman kuliner unik di pasar tradisional terbesar di Jayapura. Ini adalah cara terbaik untuk mencicipi langsung kekayaan rasa Papua dan berinteraksi dengan kehidupan lokal!\n- **Yang Bisa Dicoba**:\n    - Aneka **keripik pisang** khas.\n    - Manisan buah pala yang unik.\n    - Ikan asap segar, kuliner khas pesisir.\n    - Berbagai buah-buahan tropis lokal.\n- **Highlight Tur**: Belajar tentang bahan-bahan lokal, berinteraksi langsung dengan para pedagang, dan mencari oleh-oleh khas Papua.\n- **Perkiraan Biaya**: Rp 75.000 - Rp 100.000 per orang.\n- **Durasi**: Sekitar 3-4 jam.\n- **Waktu Terbaik**: Pagi hari (sekitar pukul 07:00 - 10:00) saat pasar sedang ramai dan produk masih sangat segar.\n\n### 3. **Danau Sentani** 🏞️🛶\n- **Deskripsi**: Salah satu danau terbesar dan paling terkenal di Papua, menawarkan keindahan alam yang memukau serta budaya lokal yang kental. Sangat cocok untuk perjalanan sehari penuh dari Jayapura.\n- **Akses**: Bisa ditempuh dengan Angkot, Ojek, atau Taksi dari Jayapura.\n    - Angkot: Sekitar Rp 15.000 (60 menit)\n    - Ojek: Sekitar Rp 80.000 - Rp 100.000 (45 menit)\n    - Taksi: Sekitar Rp 120.000 - Rp 150.000 (45 menit, paling nyaman)\n\n### 4. **Pantai Base G** 🏖️☀️\n- **Deskripsi**: Pantai yang sangat populer di Jayapura, terkenal dengan pasir putihnya dan ombak yang tenang, cocok untuk berenang dan bersantai.\n- **Akses**: Mudah dijangkau dari pusat kota Jayapura.\n    - Angkot: Sekitar Rp 10.000 (30 menit)\n    - Ojek: Sekitar Rp 30.000 - Rp 40.000 (20 menit)\n\n### 5. **Bukit Teletubbies** 💚📸\n- **Deskripsi**: Perbukitan hijau yang menawarkan pemandangan padang rumput dan perbukitan yang menyerupai latar di serial Teletubbies. Destinasi yang sangat fotogenik!\n- **Akses**: Perjalanan menuju Bukit Teletubbies memerlukan sedikit usaha karena akses jalan yang mungkin sulit.\n- **Rekomendasi Transportasi**:\n    - **Sewa Mobil + Sopir**: Sangat direkomendasikan! Biaya sekitar Rp 400.000 - Rp 500.000 per hari (durasi sekitar 60 menit dari Jayapura).\n    - **Tour Package**: Anda juga bisa mengikuti paket tur setengah hari yang biasanya sudah termasuk transportasi dan pemandu, dengan biaya sekitar Rp 300.000 - Rp 400.000 per orang.\n\n> 💡 **Tips Perjalanan**: Selalu siapkan kamera Anda, karena setiap sudut Jayapura memiliki keindahan yang layak diabadikan!\n\nApakah ada destinasi spesifik yang ingin Anda ketahui lebih detail atau ada pertanyaan lain seputar wisata di Jayapura? Saya siap membantu! 😊', '2025-06-18 13:08:46'),
-(11, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'user', 'kalau makanannya apa saja?', '2025-06-18 13:09:25'),
-(12, 'b99f874f-3eb0-4609-a951-874696a24217', 8, 'bot', 'Wah, tentu saja! Kuliner di Jayapura itu sangat kaya dan unik, siap menggoyang lidah Anda dengan cita rasa khas Papua yang otentik. 😋 Mari kita jelajahi satu per satu!\n\n## 🍽️ **Kuliner Khas Jayapura yang Wajib Dicoba!**\n\n### 1. **Makanan Pokok Khas Papua**\n\n#### **Papeda** 🍚\n- **Deskripsi**: Ini dia ikon kuliner Papua! Papeda adalah makanan pokok yang terbuat dari sagu, bertekstur seperti lem bening yang kenyal dan lengket. Rasanya hambar, sehingga sangat cocok dinikmati dengan berbagai lauk pauk berkuah dan kaya rasa.\n- **Cara menikmati**: Biasanya dimakan dengan cara diseruput langsung dari piring atau digulung menggunakan sumpit.\n- **Penyajian**: Umumnya disajikan bersama **Ikan Kuah Kuning** yang segar atau sayuran seperti Sayur Ganemo.\n- **Cita Rasa**: Kenyal dan lengket, memberikan sensasi unik di mulut.\n- **Dimana Mencoba**:\n    - **Rumah Makan Papua Asli**\n    - **Warung Mama Papua**\n    - Beberapa hotel seperti **Swiss-Belhotel Jayapura** juga menyajikan.\n- **Kisaran Harga**: Rp 25.000 - Rp 50.000 per porsi.\n\n#### **Ikan Kuah Kuning** 🐟🍜\n- **Deskripsi**: Pendamping sempurna untuk Papeda! Ini adalah hidangan ikan segar yang dimasak dengan kuah berwarna kuning cerah dari kunyit dan rempah-rempah khas Papua.\n- **Cita Rasa**: Gurih, segar, dan harum rempah-rempah. Kuahnya yang hangat sangat nikmat.\n- **Jenis Ikan**: Umumnya menggunakan ikan laut segar seperti ikan kakap, baronang, atau kerapu.\n- **Dimana Mencoba**:\n    - **Warung Ikan Bakar Hamadi**\n    - **RM Sari Laut**\n    - Warung-warung pinggir pantai di **Pantai Base G**.\n- **Kisaran Harga**: Rp 35.000 - Rp 75.000 (tergantung jenis dan ukuran ikan).\n\n#### **Udang Selingkuh** 🦐🔥\n- **Deskripsi**: Nama yang unik, rasanya pun unik! Ini adalah udang air tawar berukuran jumbo yang memiliki capit besar menyerupai kepiting. Dagingnya manis, kenyal, dan lezat. Konon, disebut \"selingkuh\" karena bentuknya seperti udang namun memiliki capit kepiting. 😉\n- **Metode Masak**: Bisa dibakar dengan bumbu rempah khas, dimasak kuah santan, atau digoreng tepung.\n- **Musim Terbaik**: Paling nikmat saat musim kemarau (April-Oktober) karena udangnya lebih besar dan segar.\n- **Dimana Mencoba**:\n    - Warung seafood di sekitar **Danau Sentani** (bisa langsung dari nelayan!).\n    - **Pasar Hamadi**.\n- **Kisaran Harga**: Rp 50.000 - Rp 100.000 per porsi (tergantung ukuran).\n\n### 2. **Sayuran dan Lauk Unik Khas Papua**\n\n#### **Sayur Ganemo** 🥬🥥\n- **Deskripsi**: Sayuran hijau khas Papua, sejenis bayam, yang dimasak dengan santan kental dan ikan teri.\n- **Cita Rasa**: Gurih, segar, dan sedikit pedas, sangat menggugah selera.\n- **Manfaat**: Tinggi vitamin A dan zat besi, sangat sehat!\n- **Dimana Mencoba**: Warung-warung tradisional di sekitar **Danau Sentani**.\n- **Kisaran Harga**: Rp 15.000 - Rp 25.000.\n\n#### **Ulat Sagu Bakar** 🐛🔥\n- **Deskripsi**: Bagi Anda yang berjiwa petualang kuliner, ini patut dicoba! Ulat sagu adalah larva yang hidup di batang pohon sagu, kaya akan protein.\n- **Penyajian**: Umumnya dibakar atau digoreng dengan sedikit garam.\n- **Cita Rasa**: Gurih dengan bagian dalam yang creamy.\n- **Catatan Budaya**: Merupakan makanan tradisional yang dipercaya memiliki khasiat kesehatan dan menjadi sumber protein penting bagi masyarakat lokal.\n- **Dimana Mencoba**:\n    - **Kampung Asei** (dekat Danau Sentani)\n    - **Pasar Tradisional Sentani**\n    - Kadang tersedia di festival kuliner Papua.\n- **Kisaran Harga**: Rp 30.000 - Rp 50.000 per porsi.\n\n### 3. **Camilan & Oleh-oleh Khas Jayapura**\n\n#### **Keripik Pisang** 🍌\n- **Deskripsi**: Cemilan populer yang terbuat dari pisang lokal (seperti pisang raja, kepok, atau tanduk) yang diiris tipis lalu digoreng hingga kering dan renyah.\n- **Varian Rasa**: Tersedia dalam rasa original, manis, atau pedas.\n- **Dimana Membeli**:\n    - **Pasar Hamadi**\n    - Toko oleh-oleh di Jayapura\n    - Bandara Sentani.\n- **Kisaran Harga**: Rp 10.000 - Rp 25.000 per bungkus.\n\n#### **Manisan Pala** 🍈🍬\n- **Deskripsi**: Buah pala yang diawetkan dengan gula, menghasilkan manisan dengan rasa manis dan aroma rempah yang harum.\n- **Manfaat**: Dipercaya baik untuk pencernaan dan kesehatan.\n- **Dimana Membeli**:\n    - **Pasar Hamadi**\n    - Toko spesialis rempah\n    - Pusat oleh-oleh Jayapura.\n- **Kisaran Harga**: Rp 15.000 - Rp 30.000 per bungkus.\n\n> 💡 **Tips Kuliner**: Jangan ragu untuk mencoba kuliner lokal, ini adalah bagian tak terpisahkan dari petualangan Anda di Jayapura! Selalu tanyakan kepada penduduk lokal untuk rekomendasi warung terbaik.\n\nApakah ada kuliner tertentu yang menarik perhatian Anda atau ada hal lain yang ingin Anda ketahui lebih lanjut tentang Jayapura? Saya siap membantu! 😊', '2025-06-18 13:09:44'),
-(13, 'fcb7d54c-1991-4936-91e7-7c8fadcc25d6', 8, 'user', 'Halo', '2025-06-18 14:41:04'),
-(14, 'fcb7d54c-1991-4936-91e7-7c8fadcc25d6', 8, 'bot', '👋 **Halo! Selamat datang di Papua Journey!** Senang sekali bisa menyambut Anda di sini. 😊\n\nSaya **Papua Journey**, siap membantu Anda menjelajahi keindahan dan pesona **Jayapura**! 🏝️\n\nAda yang bisa saya bantu terkait destinasi wisata, transportasi, kuliner, atau budaya di Jayapura? Jangan sungkan bertanya ya! Saya siap memberikan informasi terbaik untuk perjalanan Anda. ✨', '2025-06-18 14:41:12'),
-(15, '2cfa0e75-a052-4efb-8dc7-9042a5296545', 8, 'user', 'Halo', '2025-06-19 06:36:08'),
-(16, '2cfa0e75-a052-4efb-8dc7-9042a5296545', 8, 'bot', '👋 **Halo! Selamat datang di Papua Journey!** Senang sekali bisa menyapa Anda di sini. 😊\n\nSaya adalah tour guide virtual Anda yang siap membantu menjelajahi keindahan Jayapura. Ada apa yang bisa saya bantu hari ini terkait rencana perjalanan Anda di Jayapura? Apakah Anda mencari informasi tentang destinasi wisata, transportasi, budaya, atau kuliner yang menggoda?\n\nJangan ragu untuk bertanya, saya siap berbagi info menarik! 🏝️✨', '2025-06-19 06:36:34');
+INSERT INTO `pemesanan` (`id`, `user_id`, `user_name`, `user_email`, `wisata_id`, `wisata_judul`, `jumlah_tiket`, `harga_satuan`, `total_harga`, `tanggal_kunjungan`, `catatan`, `created_at`) VALUES
+(1, 1, 'Brian Domanii', 'brian@gmail.com', 5, 'TropicSurf “Secret Papua” Tour', 2, 409938.00, 819876.00, '2025-06-19', 'ditunggu', '2025-06-19 11:46:41');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chat_conversation_sessions`
+-- Table structure for table `pemesanan_tiket`
 --
 
-CREATE TABLE `chat_conversation_sessions` (
-  `conversation_id` varchar(36) NOT NULL,
+CREATE TABLE `pemesanan_tiket` (
+  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `started_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `last_message_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `message_count` int(11) DEFAULT 0,
-  `is_active` tinyint(1) DEFAULT 1
+  `artikel_id` int(11) NOT NULL,
+  `jumlah_tiket` int(11) NOT NULL DEFAULT 1,
+  `total_harga` decimal(10,2) NOT NULL,
+  `nama_pemesan` varchar(255) NOT NULL,
+  `email_pemesan` varchar(255) NOT NULL,
+  `phone_pemesan` varchar(20) DEFAULT NULL,
+  `tanggal_kunjungan` date NOT NULL,
+  `catatan` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `chat_conversation_sessions`
+-- Dumping data for table `pemesanan_tiket`
 --
 
-INSERT INTO `chat_conversation_sessions` (`conversation_id`, `user_id`, `started_at`, `last_message_at`, `message_count`, `is_active`) VALUES
-('2cfa0e75-a052-4efb-8dc7-9042a5296545', 8, '2025-06-19 06:36:08', '2025-06-19 06:36:34', 2, 1),
-('b99f874f-3eb0-4609-a951-874696a24217', 8, '2025-06-18 13:07:08', '2025-06-18 13:09:44', 6, 1),
-('fcb7d54c-1991-4936-91e7-7c8fadcc25d6', 8, '2025-06-18 14:41:04', '2025-06-18 14:41:12', 2, 1);
+INSERT INTO `pemesanan_tiket` (`id`, `user_id`, `artikel_id`, `jumlah_tiket`, `total_harga`, `nama_pemesan`, `email_pemesan`, `phone_pemesan`, `tanggal_kunjungan`, `catatan`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 1, 100000.00, 'Brian Domanii', 'brian@gmail.com', '082133871850', '2025-06-21', 'aaaa', '2025-06-19 10:21:48', '2025-06-19 10:21:48'),
+(2, 1, 1, 1, 75000.00, 'Brian Domanii', 'brian@gmail.com', '082133871850', '2025-06-20', 'zzz', '2025-06-19 10:22:33', '2025-06-19 10:22:33'),
+(3, 1, 3, 3, 600000.00, 'Brian Domanii', 'brian@gmail.com', '082133871850', '2025-06-20', 'qqqq', '2025-06-19 10:23:57', '2025-06-19 10:23:57'),
+(4, 3, 2, 10, 1000000.00, 'Naura Tsani Maya', 'naura@gmail.com', '082324096996', '2025-06-20', 'aaaa', '2025-06-19 10:25:50', '2025-06-19 10:25:50');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penginapan`
+--
+
+CREATE TABLE `penginapan` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `harga` decimal(10,2) NOT NULL,
+  `lokasi` varchar(255) NOT NULL,
+  `tipe` enum('hotel','villa','resort') NOT NULL,
+  `fasilitas` text NOT NULL,
+  `photo` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `penginapan`
+--
+
+INSERT INTO `penginapan` (`id`, `judul`, `deskripsi`, `harga`, `lokasi`, `tipe`, `fasilitas`, `photo`, `created_at`, `updated_at`) VALUES
+(1, 'Hotel Aston Jayapura', 'Hotel mewah di pusat kota Jayapura dengan pemandangan teluk yang menakjubkan. Terletak strategis dekat dengan pusat bisnis dan objek wisata.', 850000.00, 'Jayapura, Papua', 'hotel', 'WiFi Gratis, AC, Restaurant, Gym, Swimming Pool, Room Service', 'hotel_aston.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
+(2, 'Villa Hamadi Beach', 'Villa eksklusif di tepi pantai Hamadi dengan suasana tradisional Papua yang autentik. Cocok untuk liburan keluarga yang berkesan.', 1200000.00, 'Hamadi, Jayapura', 'villa', 'Private Beach, WiFi, Kitchen, BBQ Area, Traditional Decor', 'villa_hamadi.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
+(3, 'Resort Sentani Lake', 'Resort premium di tepi Danau Sentani dengan arsitektur modern yang memadukan unsur budaya Papua. Pengalaman menginap yang tak terlupakan.', 1500000.00, 'Sentani, Jayapura', 'resort', 'Lake View, Spa, Restaurant, Boat Rental, Cultural Show, WiFi', 'resort_sentani.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
+(4, 'Papua Paradise Eco Resort', 'Terletak di pulau tak berpenghuni di Raja Ampat, resort ini menyajikan bungalow di atas laut yang dibangun dari kayu lokal. Suasana tenang dipadu alam: hutan tropis, laguna, dan terumbu karang langsung di halaman. Ada spa eksklusif dengan pemandangan laut, satu-satunya di wilayah ini .', 3500000.00, 'Birie Island, Arefi, Selat Sagawin, Kabupaten Raja Ampat, Papua Barat, Pulau Birie', 'resort', 'bungalow terapung , Restoran “Seaview” , Spa over‑water , Shuttle bandara Sorong , Bar  ', '1750058523_429742622.jpg', '2025-06-16 07:22:03', '2025-06-16 07:22:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pesanpenginapan`
+--
+
+CREATE TABLE `pesanpenginapan` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `user_name` varchar(255) NOT NULL,
+  `user_email` varchar(255) NOT NULL,
+  `penginapan_id` int(11) NOT NULL,
+  `penginapan_judul` varchar(255) NOT NULL,
+  `jumlah_kamar` int(11) NOT NULL,
+  `jumlah_malam` int(11) NOT NULL,
+  `harga_per_malam` decimal(10,2) NOT NULL,
+  `total_harga` decimal(10,2) NOT NULL,
+  `tanggal_checkin` date NOT NULL,
+  `tanggal_checkout` date NOT NULL,
+  `catatan` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pesanpenginapan`
+--
+
+INSERT INTO `pesanpenginapan` (`id`, `user_id`, `user_name`, `user_email`, `penginapan_id`, `penginapan_judul`, `jumlah_kamar`, `jumlah_malam`, `harga_per_malam`, `total_harga`, `tanggal_checkin`, `tanggal_checkout`, `catatan`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Brian Domanii', 'brian@gmail.com', 4, 'Papua Paradise Eco Resort', 2, 1, 3500000.00, 7000000.00, '0000-00-00', '2025-06-21', 'ditunggu', '2025-06-19 19:50:07', '2025-06-19 19:50:07');
 
 -- --------------------------------------------------------
 
@@ -157,9 +221,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`, `profile_image`, `created_at`, `updated_at`) VALUES
-(1, 'brian@gmail.com', '$2y$10$3a0kZlwNH07iK/qrZZgKH.QVOrXgodwxrSSzeXHf/t.lQMH2wa3.y', 'Brian Domani', '082133871850', 'Surakarta Jawa Tengah', 'user_1_1748709563.jpg', '2025-05-31 15:34:52', '2025-05-31 16:39:34'),
-(3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05'),
-(8, 'slemandanpapua@gmail.com', '$2y$10$gjRuv9s6ayJchwic7e2Aa.OuPncvZwFx8zgCDKjjc3F2cuZ2igqbG', 'Trendo', '081357427930', 'furia puskopad block a', 'user_8_1750234146.png', '2025-06-17 16:00:42', '2025-06-18 08:11:39');
+(1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domanii', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1750312287.jpg', '2025-05-31 15:34:52', '2025-06-19 05:51:27'),
+(3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05');
 
 -- --------------------------------------------------------
 
@@ -185,10 +248,8 @@ CREATE TABLE `wisata` (
 --
 
 INSERT INTO `wisata` (`id`, `judul`, `deskripsi`, `harga`, `kategori`, `alamat`, `jam_buka`, `photo`, `created_at`, `updated_at`) VALUES
-(1, 'Lembah Baliem', 'Lembah yang terkenal dengan Festival Budaya Suku Dani dan pemandangan alam pegunungan yang menakjubkan', 30000.00, 'budaya', 'Distrik Wamena, Kabupaten Jayawijaya, Papua Pegunungan', '08:00 - 17:00', 'lembah_baliem.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
-(2, 'Raja Ampat', 'Surga bawah laut dengan keanekaragaman hayati laut tertinggi di dunia', 150000.00, 'alam', 'Kepulauan Raja Ampat, Papua Barat Daya', '24 Jam', 'raja_ampat.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
-(3, 'Taman Nasional Lorentz', 'Satu-satunya taman nasional di Asia Tenggara yang mencakup area salju tropis, hutan hujan, dan pegunungan tinggi', 50000.00, 'alam', 'Kabupaten Mimika, Jayawijaya, Papua', '06:00 - 18:00', 'lorentz.jpg', '2025-06-13 10:36:49', '2025-06-13 10:36:49'),
-(4, 'Karmon Waterfall', 'Air Terjun Karmon adalah salah satu destinasi wisata alam yang menakjubkan di Kabupaten Biak Numfor, Provinsi Papua. Terletak di tengah-tengah hutan tropis yang lebat, air terjun ini memiliki ketinggian sekitar 40 meter. Keindahan Air Terjun Karmon terletak pada aliran airnya yang jernih dan suasana sekitarnya yang alami dan menawan.', 10000.00, 'alam', 'Kampung Karmon, Distrik Warsa, Biak bagian utara', '08:00 - 17:00', '684c2e7cb31d0.jpg', '2025-06-13 13:58:20', '2025-06-13 13:58:20');
+(4, 'Karmon Waterfall', 'Air Terjun Karmon adalah salah satu destinasi wisata alam yang menakjubkan di Kabupaten Biak Numfor, Provinsi Papua. Terletak di tengah-tengah hutan tropis yang lebat, air terjun ini memiliki ketinggian sekitar 40 meter. Keindahan Air Terjun Karmon terletak pada aliran airnya yang jernih dan suasana sekitarnya yang alami dan menawan.', 10000.00, 'alam', 'Kampung Karmon, Distrik Warsa, Biak bagian utara', '08:00 - 17:00', '684c2e7cb31d0.jpg', '2025-06-13 13:58:20', '2025-06-13 13:58:20'),
+(5, 'TropicSurf “Secret Papua” Tour', 'Paket eksklusif surf & cruise dengan kapal phinisi mewah (silolona), menelusuri spot selancar terpencil di Papua. Semua tingkat keahlian bisa ikut; didampingi instruktur top. Setelah sesi surfing, menginap di resort bintang lima atau di kapal yang nyaman di laut .', 409938.00, 'alam', 'Perairan nasional di Raja Ampat dan West Papua.', 'Reservasi', '684fc767c53d3.jpg', '2025-06-16 07:27:35', '2025-06-16 07:27:35');
 
 --
 -- Indexes for dumped tables
@@ -204,23 +265,35 @@ ALTER TABLE `artikel`
   ADD KEY `idx_umkm_id` (`umkm_id`);
 
 --
--- Indexes for table `chat_conversations`
+-- Indexes for table `pemesanan`
 --
-ALTER TABLE `chat_conversations`
+ALTER TABLE `pemesanan`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_conversation_id` (`conversation_id`),
-  ADD KEY `idx_user_id` (`user_id`),
-  ADD KEY `idx_created_at` (`created_at`),
-  ADD KEY `idx_user_conversation_created` (`user_id`,`conversation_id`,`created_at`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `wisata_id` (`wisata_id`);
 
 --
--- Indexes for table `chat_conversation_sessions`
+-- Indexes for table `pemesanan_tiket`
 --
-ALTER TABLE `chat_conversation_sessions`
-  ADD PRIMARY KEY (`conversation_id`),
-  ADD KEY `idx_user_id` (`user_id`),
-  ADD KEY `idx_last_message` (`last_message_at`),
-  ADD KEY `idx_user_active` (`user_id`,`is_active`,`last_message_at`);
+ALTER TABLE `pemesanan_tiket`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `artikel_id` (`artikel_id`),
+  ADD KEY `tanggal_kunjungan` (`tanggal_kunjungan`),
+  ADD KEY `idx_pemesanan_created_at` (`created_at`),
+  ADD KEY `idx_pemesanan_status_created` (`created_at`);
+
+--
+-- Indexes for table `penginapan`
+--
+ALTER TABLE `penginapan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pesanpenginapan`
+--
+ALTER TABLE `pesanpenginapan`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `umkm`
@@ -253,10 +326,28 @@ ALTER TABLE `artikel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `chat_conversations`
+-- AUTO_INCREMENT for table `pemesanan`
 --
-ALTER TABLE `chat_conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+ALTER TABLE `pemesanan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `pemesanan_tiket`
+--
+ALTER TABLE `pemesanan_tiket`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `penginapan`
+--
+ALTER TABLE `penginapan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `pesanpenginapan`
+--
+ALTER TABLE `pesanpenginapan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `umkm`
@@ -268,13 +359,13 @@ ALTER TABLE `umkm`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `wisata`
 --
 ALTER TABLE `wisata`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
@@ -287,16 +378,18 @@ ALTER TABLE `artikel`
   ADD CONSTRAINT `artikel_ibfk_1` FOREIGN KEY (`umkm_id`) REFERENCES `umkm` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `chat_conversations`
+-- Constraints for table `pemesanan`
 --
-ALTER TABLE `chat_conversations`
-  ADD CONSTRAINT `fk_chat_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `pemesanan`
+  ADD CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `pemesanan_ibfk_2` FOREIGN KEY (`wisata_id`) REFERENCES `wisata` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `chat_conversation_sessions`
+-- Constraints for table `pemesanan_tiket`
 --
-ALTER TABLE `chat_conversation_sessions`
-  ADD CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `pemesanan_tiket`
+  ADD CONSTRAINT `fk_pemesanan_artikel` FOREIGN KEY (`artikel_id`) REFERENCES `artikel` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pemesanan_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

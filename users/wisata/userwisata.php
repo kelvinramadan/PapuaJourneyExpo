@@ -329,8 +329,6 @@ mysqli_close($db);
                                     </div>
                                     
                                     <div class="booking-summary">
-                                        <p><strong>Nama:</strong> <?php echo htmlspecialchars($user_name); ?></p>
-                                        <p><strong>Email:</strong> <?php echo htmlspecialchars($user_email); ?></p>
                                         <p><strong>Harga per Tiket:</strong> <?php echo formatPrice($wisata_detail['harga']); ?></p>
                                         <p><strong>Total Estimasi:</strong> <span id="total-price"><?php echo formatPrice($wisata_detail['harga']); ?></span></p>
                                     </div>
