@@ -236,27 +236,31 @@
 
 /* Auto-collapse on medium screens */
 @media (max-width: 1400px) {
-    .sidebar:not(.collapsed) {
+    .sidebar {
+        width: 64px !important;
+    }
+    
+    .sidebar.collapsed {
         width: 64px;
     }
     
-    .sidebar:not(.collapsed) .sidebar-logo h1,
-    .sidebar:not(.collapsed) .nav-menu .btn span:not(.btn-icon),
-    .sidebar:not(.collapsed) .user-details,
-    .sidebar:not(.collapsed) .logout-btn span:not(.btn-icon) {
-        display: none;
+    .sidebar .sidebar-logo h1,
+    .sidebar .nav-menu .btn span:not(.btn-icon),
+    .sidebar .user-details,
+    .sidebar .logout-btn span:not(.btn-icon) {
+        display: none !important;
     }
     
-    .sidebar:not(.collapsed) .nav-menu .btn {
+    .sidebar .nav-menu .btn {
         padding: 0.75rem;
         justify-content: center;
     }
     
-    .sidebar:not(.collapsed) .user-info {
+    .sidebar .user-info {
         justify-content: center;
     }
     
-    .sidebar:not(.collapsed) .logout-btn {
+    .sidebar .logout-btn {
         padding: 0.625rem;
     }
 }
