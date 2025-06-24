@@ -14,6 +14,21 @@
     --info-color: #2196F3;
 }
 
+/* Reset box-sizing for all elements */
+* {
+    box-sizing: border-box;
+}
+
+/* Hide scrollbars but keep functionality */
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 /* ===== MODERN SIDEBAR STYLES ===== */
 .sidebar {
     position: fixed;
@@ -27,7 +42,8 @@
     display: flex;
     flex-direction: column;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
 }
 
@@ -82,7 +98,8 @@
 .nav-menu {
     flex: 1;
     padding: 2rem 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .nav-menu .btn {
@@ -101,6 +118,9 @@
     position: relative;
     gap: 1rem;
     cursor: pointer;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .sidebar.collapsed .nav-menu .btn {
@@ -196,6 +216,8 @@
     padding: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .sidebar.collapsed .user-section {
@@ -207,6 +229,7 @@
     align-items: center;
     gap: 0.875rem;
     margin-bottom: 1rem;
+    overflow: hidden;
 }
 
 .sidebar.collapsed .user-info {
@@ -254,7 +277,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.625rem;
-    width: 100%;
+    width: calc(100% - 0.2rem);
     padding: 0.75rem 1rem;
     background: var(--error-color);
     color: white;
@@ -265,6 +288,8 @@
     font-weight: 600;
     transition: var(--transition);
     cursor: pointer;
+    margin: 0 0.1rem;
+    box-sizing: border-box;
 }
 
 .sidebar.collapsed .logout-btn {
@@ -272,6 +297,7 @@
     border-radius: 50%;
     width: 42px;
     height: 42px;
+    margin: 0 auto;
 }
 
 .sidebar.collapsed .logout-btn span.btn-text {
