@@ -9,10 +9,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-logo">
-            <div class="logo-text">
-                <span class="logo-papua">Papua</span>
-                <span class="logo-journey">Journey</span>
-            </div>
+            <img src="../assets/logo.png" alt="Papua Journey Logo" class="logo-image">
+            <p class="logo-text">Journey</p>
         </div>
     </div>
     
