@@ -14,9 +14,10 @@ $in_components = strpos($current_dir, '/users/components') !== false;
 $in_cart = strpos($current_dir, '/users/cart') !== false;
 $in_checkout = strpos($current_dir, '/users/checkout') !== false;
 $in_transaksi = strpos($current_dir, '/users/transaksi') !== false;
+$in_account = strpos($current_dir, '/users/account') !== false;
 
 // Set up path prefixes based on location
-if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi) {
+if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi || $in_account) {
     // We're in a subfolder within users
     $base_path = '../../';
     $users_path = '../';
@@ -862,10 +863,7 @@ body {
                 </div>
                 <div class="user-dropdown">
                     <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
-                    <a href="<?php echo $users_path; ?>dashboard/user_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <button onclick="openModal('profileModal')"><i class="fas fa-user"></i> Edit Profile</button>
-                    <button onclick="openModal('photoModal')"><i class="fas fa-camera"></i> Change Photo</button>
-                    <button onclick="openModal('passwordModal')"><i class="fas fa-lock"></i> Change Password</button>
+                    <a href="<?php echo $users_path; ?>account/my_account.php"><i class="fas fa-user-circle"></i> My Account</a>
                     <hr>
                     <a href="<?php echo $logout_path; ?>" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
@@ -909,9 +907,9 @@ body {
         </ul>
         <div class="mobile-user-info">
             <span>Welcome, <?php echo htmlspecialchars($user_name); ?></span>
-            <button class="mobile-profile-btn" onclick="openModal('profileModal')">
-                <i class="fas fa-user"></i> Edit Profile
-            </button>
+            <a href="<?php echo $users_path; ?>account/my_account.php" class="mobile-profile-btn">
+                <i class="fas fa-user-circle"></i> My Account
+            </a>
             <a href="<?php echo $logout_path; ?>" class="mobile-logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
