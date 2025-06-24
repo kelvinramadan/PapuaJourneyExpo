@@ -67,7 +67,6 @@
 .logo-image {
     height: 45px;
     width: auto;
-    filter: brightness(0) saturate(100%) invert(79%) sepia(28%) saturate(1562%) hue-rotate(356deg) brightness(90%) contrast(91%);
 }
 
 .logo-text {
