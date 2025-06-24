@@ -13,7 +13,7 @@ $error_message = '';
 $success_message = '';
 
 // Handle payment confirmation/rejection
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['transaksi_id']) && isset($_POST['action'])) {
     $transaksi_id = (int)$_POST['transaksi_id'];
     $action = $_POST['action']; // 'confirm' or 'reject'
     $notes = $_POST['notes'] ?? '';
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment'])) {
         // Update payment status
         if ($action == 'confirm') {
             $new_status = 'paid';
-            $stmt = $db->prepare("UPDATE transaksi SET payment_status = ?, payment_confirmed_at = NOW(), payment_confirmed_by = ? WHERE id = ?");
+            $stmt = $db->prepare("UPDATE transaksi SET payment_status = ?, payment_confirmed_at = NOW(), payment_confirmed_by = ?, payment_date = NOW() WHERE id = ?");
             $stmt->bind_param("sii", $new_status, $admin_id, $transaksi_id);
         } else {
             $new_status = 'rejected';
@@ -37,8 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment'])) {
         }
         
         if (!$stmt->execute()) {
-            throw new Exception("Failed to update payment status");
+            throw new Exception("Failed to update payment status: " . $stmt->error);
         }
+        $stmt->close();
         
         // Log admin action
         $log_action = $action == 'confirm' ? 'confirmed' : 'rejected';
@@ -46,8 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_payment'])) {
         $log_stmt->bind_param("iiss", $admin_id, $transaksi_id, $log_action, $notes);
         
         if (!$log_stmt->execute()) {
-            throw new Exception("Failed to log admin action");
+            throw new Exception("Failed to log admin action: " . $log_stmt->error);
         }
+        $log_stmt->close();
         
         $db->commit();
         $success_message = "Payment has been " . ($action == 'confirm' ? 'confirmed' : 'rejected') . " successfully!";
@@ -375,8 +377,9 @@ $page_title = 'Payment Confirmation';
                                             <p style="color: var(--text-secondary);">No payment proof uploaded</p>
                                         <?php endif; ?>
                                         
-                                        <form method="POST" class="action-form">
+                                        <form method="POST" class="action-form" id="payment-form-<?php echo $payment['id']; ?>">
                                             <input type="hidden" name="transaksi_id" value="<?php echo $payment['id']; ?>">
+                                            <input type="hidden" name="action" id="action-<?php echo $payment['id']; ?>" value="">
                                             
                                             <div class="form-group notes-input">
                                                 <label for="notes_<?php echo $payment['id']; ?>" class="form-label">Admin Notes (Optional)</label>
@@ -387,23 +390,17 @@ $page_title = 'Payment Confirmation';
                                                        placeholder="Add any notes about this payment...">
                                             </div>
                                             
-                                            <button type="submit" 
-                                                    name="update_payment" 
-                                                    value="confirm"
-                                                    onclick="this.form.action.value='confirm'"
+                                            <button type="button" 
+                                                    onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'confirm')"
                                                     class="btn btn-success">
                                                 <span>✓</span> Confirm Payment
                                             </button>
                                             
-                                            <button type="submit" 
-                                                    name="update_payment" 
-                                                    value="reject"
-                                                    onclick="this.form.action.value='reject'; return confirm('Are you sure you want to reject this payment?');"
+                                            <button type="button" 
+                                                    onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'reject')"
                                                     class="btn btn-danger">
                                                 <span>✕</span> Reject
                                             </button>
-                                            
-                                            <input type="hidden" name="action" value="">
                                         </form>
                                     </div>
                                 </div>
@@ -447,23 +444,32 @@ $page_title = 'Payment Confirmation';
             }
         });
         
-        // Fix form submission
-        document.querySelectorAll('button[name="update_payment"]').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const form = this.closest('form');
-                const action = this.value;
-                form.querySelector('input[name="action"]').value = action;
-                
-                if (action === 'reject') {
-                    if (!confirm('Are you sure you want to reject this payment?')) {
-                        return;
-                    }
+        // Function to submit payment action
+        function submitPaymentAction(paymentId, action) {
+            console.log('submitPaymentAction called with:', paymentId, action);
+            
+            if (action === 'reject') {
+                if (!confirm('Are you sure you want to reject this payment?')) {
+                    return;
                 }
-                
-                form.submit();
-            });
-        });
+            }
+            
+            // Set the action value
+            const actionInput = document.getElementById('action-' + paymentId);
+            const form = document.getElementById('payment-form-' + paymentId);
+            
+            if (!actionInput || !form) {
+                console.error('Form elements not found for payment ID:', paymentId);
+                alert('Error: Form elements not found. Please refresh the page and try again.');
+                return;
+            }
+            
+            actionInput.value = action;
+            console.log('Submitting form with action:', action);
+            
+            // Submit the form
+            form.submit();
+        }
         
         // Auto-hide alerts
         setTimeout(() => {
