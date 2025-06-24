@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2025 at 08:51 PM
+-- Generation Time: Jun 24, 2025 at 03:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -35,6 +35,18 @@ CREATE TABLE `admin_payment_logs` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin_payment_logs`
+--
+
+INSERT INTO `admin_payment_logs` (`id`, `admin_id`, `transaksi_id`, `action`, `notes`, `created_at`) VALUES
+(1, 1, 7, 'confirmed', '', '2025-06-24 13:02:21'),
+(2, 1, 7, 'confirmed', '', '2025-06-24 13:02:28'),
+(3, 1, 6, 'confirmed', '', '2025-06-24 13:02:36'),
+(4, 1, 6, 'confirmed', '', '2025-06-24 13:04:04'),
+(5, 1, 8, 'confirmed', '', '2025-06-24 13:04:15'),
+(6, 1, 9, 'confirmed', 'bagus', '2025-06-24 13:06:01');
 
 -- --------------------------------------------------------
 
@@ -85,13 +97,6 @@ CREATE TABLE `cart_items` (
   `added_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cart_items`
---
-
-INSERT INTO `cart_items` (`id`, `user_id`, `item_type`, `item_id`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`, `added_at`, `updated_at`) VALUES
-(22, 8, 'wisata', 5, 2, 409938.00, 819876.00, '2025-06-25', NULL, NULL, '', '2025-06-23 18:50:18', '2025-06-23 18:50:34');
 
 -- --------------------------------------------------------
 
@@ -239,8 +244,10 @@ CREATE TABLE `transaksi` (
 --
 
 INSERT INTO `transaksi` (`id`, `user_id`, `transaction_code`, `total_amount`, `payment_status`, `payment_method`, `payment_proof`, `user_payment_date`, `payment_confirmed_at`, `payment_confirmed_by`, `payment_date`, `created_at`, `updated_at`) VALUES
-(6, 8, 'TRX202506231845148', 10000.00, 'awaiting_confirmation', 'e_wallet', 'payment_TRX202506231845148_1750697187.jpg', '2025-06-25 14:45:00', NULL, NULL, NULL, '2025-06-23 16:45:14', '2025-06-23 16:46:27'),
-(7, 8, 'TRX202506232048068', 28000000.00, 'awaiting_confirmation', 'e_wallet', 'payment_TRX202506232048068_1750704504.jpg', '2025-06-26 01:51:00', NULL, NULL, NULL, '2025-06-23 18:48:06', '2025-06-23 18:48:24');
+(6, 8, 'TRX202506231845148', 10000.00, 'paid', 'e_wallet', 'payment_TRX202506231845148_1750697187.jpg', '2025-06-25 14:45:00', '2025-06-24 20:04:04', 1, '2025-06-24 20:04:04', '2025-06-23 16:45:14', '2025-06-24 13:04:04'),
+(7, 8, 'TRX202506232048068', 28000000.00, 'paid', 'e_wallet', 'payment_TRX202506232048068_1750704504.jpg', '2025-06-26 01:51:00', '2025-06-24 20:02:28', 1, '2025-06-24 20:02:28', '2025-06-23 18:48:06', '2025-06-24 13:02:28'),
+(8, 8, 'TRX202506241503298', 819876.00, 'paid', 'bank_transfer', 'payment_TRX202506241503298_1750770238.png', '2025-06-26 00:05:00', '2025-06-24 20:04:15', 1, '2025-06-24 20:04:15', '2025-06-24 13:03:29', '2025-06-24 13:04:15'),
+(9, 8, 'TRX202506241504508', 7000000.00, 'paid', 'bank_transfer', 'payment_TRX202506241504508_1750770320.png', '2025-06-25 00:06:00', '2025-06-24 20:06:01', 1, '2025-06-24 20:06:01', '2025-06-24 13:04:50', '2025-06-24 13:06:01');
 
 -- --------------------------------------------------------
 
@@ -269,7 +276,9 @@ CREATE TABLE `transaksi_items` (
 
 INSERT INTO `transaksi_items` (`id`, `transaksi_id`, `item_type`, `item_id`, `item_name`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`) VALUES
 (2, 6, '', 4, '0', 1, 10000.00, 10000.00, '0000-00-00', NULL, NULL, ''),
-(3, 7, '', 4, '0', 8, 3500000.00, 28000000.00, NULL, '2025-06-25', '2025-07-03', '');
+(3, 7, '', 4, '0', 8, 3500000.00, 28000000.00, NULL, '2025-06-25', '2025-07-03', ''),
+(4, 8, '', 5, '0', 2, 409938.00, 819876.00, '0000-00-00', NULL, NULL, ''),
+(5, 9, '', 4, '0', 2, 3500000.00, 7000000.00, NULL, '2025-06-25', '2025-06-27', '');
 
 -- --------------------------------------------------------
 
@@ -353,7 +362,8 @@ CREATE TABLE `wisata` (
 
 INSERT INTO `wisata` (`id`, `judul`, `deskripsi`, `harga`, `kategori`, `alamat`, `jam_buka`, `photo`, `created_at`, `updated_at`) VALUES
 (4, 'Karmon Waterfall', 'Air Terjun Karmon adalah salah satu destinasi wisata alam yang menakjubkan di Kabupaten Biak Numfor, Provinsi Papua. Terletak di tengah-tengah hutan tropis yang lebat, air terjun ini memiliki ketinggian sekitar 40 meter. Keindahan Air Terjun Karmon terletak pada aliran airnya yang jernih dan suasana sekitarnya yang alami dan menawan.', 10000.00, 'alam', 'Kampung Karmon, Distrik Warsa, Biak bagian utara', '08:00 - 17:00', '684c2e7cb31d0.jpg', '2025-06-13 13:58:20', '2025-06-13 13:58:20'),
-(5, 'TropicSurf “Secret Papua” Tour', 'Paket eksklusif surf & cruise dengan kapal phinisi mewah (silolona), menelusuri spot selancar terpencil di Papua. Semua tingkat keahlian bisa ikut; didampingi instruktur top. Setelah sesi surfing, menginap di resort bintang lima atau di kapal yang nyaman di laut .', 409938.00, 'alam', 'Perairan nasional di Raja Ampat dan West Papua.', 'Reservasi', '684fc767c53d3.jpg', '2025-06-16 07:27:35', '2025-06-16 07:27:35');
+(5, 'TropicSurf “Secret Papua” Tour', 'Paket eksklusif surf & cruise dengan kapal phinisi mewah (silolona), menelusuri spot selancar terpencil di Papua. Semua tingkat keahlian bisa ikut; didampingi instruktur top. Setelah sesi surfing, menginap di resort bintang lima atau di kapal yang nyaman di laut .', 409938.00, 'alam', 'Perairan nasional di Raja Ampat dan West Papua.', 'Reservasi', '684fc767c53d3.jpg', '2025-06-16 07:27:35', '2025-06-16 07:27:35'),
+(6, 'Pantai Base-G', 'Pantai Base G atau juga dikenal sebagai Tanjung Ria terletak disebelah utara Kota Jayapura, Papua. Pantai Base G berlokasi sekitar 10 km dari Kota Jayapura di Distrik Jayapura Utara. Pantai Base G dapat dikunjungi dengan menggunakan berbagai jenis kendaraan dengan waktu tempuh kurang lebih 20 menit dari kota, dengan akses jalan beraspal. Apabila pengunjung mengambil patokan Bandara Sentani, waktu tempuh darat sekitar 1,5 jam.\\r\\n\\r\\nNama Base G berasal dari sejarahnya yang dahulu merupakan basis militer dengan nama Base G Camp pada masa Perang Dunia II. Kawasan Pantai Base G mempunyai luas sekitar 90 ha, panjang garis pantai 6-15 meter, dengan lebar pantai belakang 15-40 meter, lebar perairan 150-400 meter.\\r\\n\\r\\nPantai Base G Jayapura merupakan salah satu tujuan wisata unggulan di kota Jayapura, Papua. Meskipun masih berada dalam wilayah kota, pantai ini menyuguhkan keindahan alam yang jarang dimiliki oleh pantai-pantai lain di Jayapura. Lokasinya yang terletak di sebelah barat kota Jayapura membuat pantai ini mudah diakses.', 50000.00, 'alam', 'Tj. Ria, Kec. Jayapura Utara, Kota Jayapura, Papua', '06.00 - 21.00 ', 'wisata_685aa4c3aae6c.jpg', '2025-06-24 13:14:43', '2025-06-24 13:14:43');
 
 --
 -- Indexes for dumped tables
@@ -462,7 +472,7 @@ ALTER TABLE `wisata`
 -- AUTO_INCREMENT for table `admin_payment_logs`
 --
 ALTER TABLE `admin_payment_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `artikel`
@@ -474,7 +484,7 @@ ALTER TABLE `artikel`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
@@ -504,13 +514,13 @@ ALTER TABLE `pesanpenginapan`
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `transaksi_items`
 --
 ALTER TABLE `transaksi_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `umkm`
@@ -528,7 +538,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `wisata`
 --
 ALTER TABLE `wisata`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
