@@ -6,25 +6,27 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-logo">
-            <span style="font-size: 2rem;">🏝️</span>
-            <h1>Papua Journey</h1>
+            <img src="../assets/logo.png" alt="Papua Journey Logo" class="logo-image">
+            <div class="logo-text">
+                <span class="logo-journey">Journey</span>
+            </div>
         </div>
     </div>
     
     <nav class="nav-menu">
         <a href="index.php" class="btn <?php echo $current_page == 'index.php' ? 'active' : ''; ?>" data-tooltip="Dashboard">
             <span class="btn-icon">🏠</span>
-            <span>Dashboard</span>
+            <span class="btn-text">Dashboard</span>
         </a>
         
         <a href="adminwisata.php" class="btn <?php echo $current_page == 'adminwisata.php' ? 'active' : ''; ?>" data-tooltip="Wisata">
             <span class="btn-icon">🏖️</span>
-            <span>Wisata</span>
+            <span class="btn-text">Wisata</span>
         </a>
         
         <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>" data-tooltip="Penginapan">
             <span class="btn-icon">🏨</span>
-            <span>Penginapan</span>
+            <span class="btn-text">Penginapan</span>
         </a>
     </nav>
     
@@ -40,7 +42,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
         <a href="?logout=1" class="logout-btn" data-tooltip="Logout">
             <span class="btn-icon">🚪</span>
-            <span>Logout</span>
+            <span class="btn-text">Logout</span>
         </a>
     </div>
 </aside>
