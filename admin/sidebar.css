@@ -51,6 +51,11 @@
     width: 64px;
 }
 
+.sidebar.collapsed .sidebar-header {
+    padding: 0.5rem;
+    min-height: 0;
+}
+
 .sidebar-header {
     padding: 2rem 1.5rem;
     text-align: center;
@@ -83,7 +88,11 @@
 }
 
 .sidebar.collapsed .logo-image {
-    height: 35px;
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-logo {
+    display: none;
 }
 
 .sidebar-header h1 {
@@ -96,9 +105,13 @@
 
 .nav-menu {
     flex: 1;
-    padding: 2rem 0;
+    padding: 1rem 0;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.sidebar.collapsed .nav-menu {
+    padding: 0.5rem 0;
 }
 
 .nav-menu .btn {
@@ -123,11 +136,11 @@
 }
 
 .sidebar.collapsed .nav-menu .btn {
-    padding: 0.875rem;
+    padding: 0.75rem;
     justify-content: center;
     width: 48px;
     height: 48px;
-    margin: 0.375rem auto;
+    margin: 0.25rem auto;
 }
 
 .sidebar.collapsed .nav-menu .btn span.btn-text {
@@ -136,7 +149,7 @@
 
 .sidebar.collapsed .nav-menu .btn .btn-icon {
     display: flex;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 /* Hover effect */
@@ -200,6 +213,22 @@
     }
 }
 
+.sidebar.collapsed .nav-menu .btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: transparent;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.sidebar.collapsed .nav-menu .btn:hover::before {
+    background: rgba(255, 255, 255, 0.05);
+}
+
 .nav-divider {
     height: 1px;
     background: var(--background-color);
@@ -220,7 +249,13 @@
 }
 
 .sidebar.collapsed .user-section {
-    padding: 0.75rem;
+    padding: 0.75rem 0.5rem;
+}
+
+.sidebar.collapsed .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
 }
 
 .user-info {
@@ -333,15 +368,28 @@
     }
     
     .sidebar .logo-image {
-        height: 35px;
+        display: none;
+    }
+    
+    .sidebar .sidebar-logo {
+        display: none;
+    }
+    
+    .sidebar .sidebar-header {
+        padding: 0.5rem;
+        min-height: 0;
     }
     
     .sidebar .nav-menu .btn {
-        padding: 0.875rem;
+        padding: 0.75rem;
         justify-content: center;
         width: 48px;
         height: 48px;
-        margin: 0.375rem auto;
+        margin: 0.25rem auto;
+    }
+    
+    .sidebar .nav-menu .btn .btn-icon {
+        font-size: 1.25rem;
     }
     
     .sidebar .user-info {
