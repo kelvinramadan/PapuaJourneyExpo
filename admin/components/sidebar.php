@@ -29,6 +29,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-icon"><i class="fas fa-bed"></i></span>
             <span class="btn-text">Penginapan</span>
         </a>
+        
+        <a href="payment_confirmation.php" class="btn <?php echo $current_page == 'payment_confirmation.php' ? 'active' : ''; ?>" data-tooltip="Payment Confirmation">
+            <span class="btn-icon"><i class="fas fa-money-check-alt"></i></span>
+            <span class="btn-text">Payment Confirmation</span>
+        </a>
     </nav>
     
     <div class="user-section">
