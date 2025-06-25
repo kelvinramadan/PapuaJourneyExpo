@@ -1,19 +1,31 @@
 <?php
 session_start();
 
-// Check if user is logged in and has completed checkout
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['checkout_success'])) {
-    header('Location: ../cart/cart.php');
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../../login.php');
     exit();
 }
 
-// Get transaction details from session
-$transaction_code = $_SESSION['transaction_code'];
-$total_amount = $_SESSION['total_amount'];
-$payment_method = $_SESSION['payment_method'];
-
-// Clear checkout success flag to prevent revisiting
-unset($_SESSION['checkout_success']);
+// Check if coming from checkout or from my_orders page
+if (isset($_POST['transaction_code'])) {
+    // Coming from my_orders page
+    $transaction_code = $_POST['transaction_code'];
+    $total_amount = $_POST['total_amount'];
+    $payment_method = $_POST['payment_method'] ?? 'bank_transfer';
+} elseif (isset($_SESSION['checkout_success'])) {
+    // Coming from checkout
+    $transaction_code = $_SESSION['transaction_code'];
+    $total_amount = $_SESSION['total_amount'];
+    $payment_method = $_SESSION['payment_method'];
+    
+    // Clear checkout success flag to prevent revisiting
+    unset($_SESSION['checkout_success']);
+} else {
+    // Invalid access
+    header('Location: ../cart/cart.php');
+    exit();
+}
 
 // Helper function
 function formatPrice($price) {

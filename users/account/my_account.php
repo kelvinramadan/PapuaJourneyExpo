@@ -326,10 +326,9 @@ $db->close();
                 </div>
                 
                 <div class="sidebar-section">
-                    <a href="#" class="sidebar-header disabled" onclick="return false;">
+                    <a href="my_orders.php" class="sidebar-header">
                         <i class="fas fa-shopping-bag"></i>
                         <span>My Orders</span>
-                        <span class="coming-soon">Coming Soon</span>
                     </a>
                 </div>
             </div>
