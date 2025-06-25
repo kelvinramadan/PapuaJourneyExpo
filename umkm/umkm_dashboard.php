@@ -1,10 +1,8 @@
-
 <?php
 // umkm/umkm_dashboard.php
 session_start();
 
 require_once '../config/database.php';
-include 'navbar.php';
 
 // Check if user is logged in and is UMKM
 if (!isset($_SESSION['umkm_id']) || $_SESSION['user_type'] != 'umkm') {
@@ -12,10 +10,11 @@ if (!isset($_SESSION['umkm_id']) || $_SESSION['user_type'] != 'umkm') {
     exit();
 }
 
+// Include sidebar
+include 'sidebar.php'; 
+
 $db = getDbConnection();
 $umkm_id = $_SESSION['umkm_id'];
-$success_message = '';
-$error_message = '';
 
 // Handle delete artikel
 if (isset($_GET['delete']) && isset($_GET['id'])) {
@@ -47,14 +46,6 @@ if (isset($_GET['delete']) && isset($_GET['id'])) {
     }
 }
 
-// Get UMKM data for header
-$stmt = $db->prepare("SELECT business_name, profile_image, email, phone FROM umkm WHERE id = ?");
-$stmt->bind_param("i", $umkm_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$umkm_data = $result->fetch_assoc();
-$stmt->close();
-
 // Get articles with pagination
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = 6;
@@ -78,9 +69,6 @@ $articles = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 $db->close();
-
-// Get current section
-$section = isset($_GET['section']) ? $_GET['section'] : 'kelola';
 ?>
 
 <!DOCTYPE html>
@@ -89,109 +77,20 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'kelola';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard UMKM - UMKM Papua</title>
-    <link rel="stylesheet" href="umkm.css">
+    <link rel="stylesheet" href="umkmm.css">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>🌺 UMKM Papua</h2>
-                <div class="business-info">
-                    <div class="business-name"><?php echo htmlspecialchars($umkm_data['business_name']); ?></div>
-                    <div class="business-details">
-                        <?php if ($umkm_data['email']): ?>
-                            📧 <?php echo htmlspecialchars($umkm_data['email']); ?><br>
-                        <?php endif; ?>
-                        <?php if ($umkm_data['phone']): ?>
-                            📞 <?php echo htmlspecialchars($umkm_data['phone']); ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-            
-            <ul class="sidebar-nav">
-                <li>
-                    <a href="?section=kelola" class="<?php echo $section == 'kelola' ? 'active' : ''; ?>">
-                        <span class="icon">📋</span>
-                        Kelola Artikel
-                    </a>
-                </li>
-                <li>
-                    <a href="add_artikel.php">
-                        <span class="icon">➕</span>
-                        Tambah Artikel
-                    </a>
-                </li>
-            </ul>
-            
-            <div class="logout-link">
-                <a href="../logout.php" class="logout-btn" onclick="return confirm('Yakin ingin logout?')">
-                    <span class="icon">🚀</span>
-                    Logout
-                </a>
-            </div>
-        </div>
-        
+    <div class="dashboard-layout">
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
-            <div class="content-header">
-                <h1>Dashboard UMKM</h1>
-                <p>Kelola artikel dan promosikan produk/jasa Anda</p>
-            </div>
-            
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📝</div>
-                    <div class="stat-number"><?php echo $total_articles; ?></div>
-                    <div class="stat-label">Total Artikel</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👀</div>
-                    <div class="stat-number"><?php echo rand(50, 500); ?></div>
-                    <div class="stat-label">Total Views</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-number"><?php echo date('d'); ?></div>
-                    <div class="stat-label">Hari Ini</div>
-                </div>
-            </div>
-            
-            <!-- Alerts -->
-            <?php if ($success_message): ?>
-                <div class="alert alert-success">
-                    ✅ <?php echo htmlspecialchars($success_message); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if ($error_message): ?>
-                <div class="alert alert-error">
-                    ❌ <?php echo htmlspecialchars($error_message); ?>
-                </div>
-            <?php endif; ?>
-            
             <!-- Articles Section -->
             <div class="articles-section">
-                <div class="section-header">
-                    <div>
-                        <h2 class="section-title">📋 Kelola Artikel</h2>
-                        <p>Kelola semua artikel yang telah Anda buat</p>
-                    </div>
-                    <a href="add_artikel.php" class="add-article-btn">
-                        ➕ Tambah Artikel Baru
-                    </a>
-                </div>
-                
                 <?php if (empty($articles)): ?>
                     <div class="empty-state">
-                        <div class="icon">📝</div>
+                        <div class="empty-icon">📝</div>
                         <h3>Belum Ada Artikel</h3>
                         <p>Mulai promosikan produk/jasa Anda dengan membuat artikel pertama!</p>
-                        <br>
-                        <a href="add_artikel.php" class="add-article-btn">
+                        <a href="add_artikel.php" class="btn-primary">
                             ➕ Buat Artikel Pertama
                         </a>
                     </div>
@@ -206,10 +105,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'kelola';
                                     <?php else: ?>
                                         <div class="no-image">🖼️</div>
                                     <?php endif; ?>
-                                </div>
-                                
-                                <div class="article-content">
-                                    <div class="article-kategori kategori-<?php echo htmlspecialchars($article['kategori']); ?>">
+                                    
+                                    <div class="article-kategori">
                                         <?php
                                         $kategori_icons = [
                                             'jasa' => '🔧',
@@ -221,27 +118,30 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'kelola';
                                         echo $kategori_icons[$article['kategori']] . ' ' . ucfirst($article['kategori']);
                                         ?>
                                     </div>
-                                    
+                                </div>
+                                
+                                <div class="article-content">
                                     <h3 class="article-title"><?php echo htmlspecialchars($article['judul']); ?></h3>
                                     
                                     <p class="article-description">
-                                        <?php echo htmlspecialchars(substr($article['deskripsi'], 0, 150)) . '...'; ?>
+                                        <?php echo htmlspecialchars(substr($article['deskripsi'], 0, 120)) . '...'; ?>
                                     </p>
                                     
-                                    <div class="article-price">
-                                        Rp <?php echo number_format($article['harga'], 0, ',', '.'); ?>
-                                    </div>
-                                    
-                                    <div class="article-date">
-                                        📅 <?php echo date('d M Y', strtotime($article['created_at'])); ?>
+                                    <div class="article-meta">
+                                        <div class="article-price">
+                                            Rp <?php echo number_format($article['harga'], 0, ',', '.'); ?>
+                                        </div>
+                                        <div class="article-date">
+                                            <?php echo date('d M Y', strtotime($article['created_at'])); ?>
+                                        </div>
                                     </div>
                                     
                                     <div class="article-actions">
-                                        <a href="edit_artikel.php?id=<?php echo $article['id']; ?>" class="btn btn-edit">
+                                        <a href="edit_artikel.php?id=<?php echo $article['id']; ?>" class="btn-edit">
                                             ✏️ Edit
                                         </a>
                                         <a href="?delete=1&id=<?php echo $article['id']; ?>" 
-                                           class="btn btn-delete"
+                                           class="btn-delete"
                                            onclick="return confirm('Yakin ingin menghapus artikel ini?')">
                                             🗑️ Hapus
                                         </a>

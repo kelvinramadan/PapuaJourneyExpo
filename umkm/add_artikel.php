@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get UMKM data for header
-$stmt = $db->prepare("SELECT business_name, profile_image FROM umkm WHERE id = ?");
+$stmt = $db->prepare("SELECT business_name, profile_image, email FROM umkm WHERE id = ?");
 $stmt->bind_param("i", $umkm_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -90,6 +90,7 @@ $db->close();
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="add_artikel.css">
@@ -264,6 +265,7 @@ $db->close();
     </style>
 </head>
 <body>
+    <?php include 'sidebar.php'; ?>
     <div class="header">
         <div class="header-content">
             <h1>🌺 UMKM Papua - Tambah Artikel</h1>
