@@ -246,7 +246,7 @@ $db->close();
                             <h3>No orders found</h3>
                             <p>You don't have any <?php echo str_replace('_', ' ', $active_tab); ?> orders.</p>
                             <a href="../wisata/wisata.php" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart"></i> Start Shopping
+                                <i class="fas fa-shopping-cart"></i><span>Start Shopping</span>
                             </a>
                         </div>
                     <?php else: ?>
@@ -340,19 +340,19 @@ $db->close();
                                                 <input type="hidden" name="total_amount" value="<?php echo $order['total_amount']; ?>">
                                                 <input type="hidden" name="payment_method" value="<?php echo htmlspecialchars($order['payment_method'] ?? 'bank_transfer'); ?>">
                                                 <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-credit-card"></i> Pay Now
+                                                    <i class="fas fa-credit-card"></i><span>Pay Now</span>
                                                 </button>
                                             </form>
                                         <?php elseif ($order['payment_status'] == 'rejected'): ?>
                                             <form action="../checkout/reupload_payment.php" method="POST" style="display: inline;">
                                                 <input type="hidden" name="transaction_code" value="<?php echo htmlspecialchars($order['transaction_code']); ?>">
                                                 <button type="submit" class="btn btn-warning">
-                                                    <i class="fas fa-redo"></i> Re-upload Payment
+                                                    <i class="fas fa-redo"></i><span>Re-upload Payment</span>
                                                 </button>
                                             </form>
                                         <?php endif; ?>
                                         <button class="btn btn-outline" onclick="viewOrderDetails('<?php echo htmlspecialchars($order['transaction_code']); ?>')">
-                                            <i class="fas fa-eye"></i> View Details
+                                            <i class="fas fa-eye"></i><span>View Details</span>
                                         </button>
                                     </div>
                                 </div>
