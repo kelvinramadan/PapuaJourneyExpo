@@ -298,7 +298,7 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - Papua Journey</title>
+    <title>Akun Saya - Papua Journey</title>
     <link rel="stylesheet" href="my_account.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -312,15 +312,15 @@ $db->close();
                 <div class="sidebar-section">
                     <div class="sidebar-header">
                         <i class="fas fa-user-circle"></i>
-                        <span>My Account</span>
+                        <span>Akun Saya</span>
                         <i class="fas fa-chevron-down toggle-icon"></i>
                     </div>
                     <div class="sidebar-submenu show">
                         <a href="?section=profile" class="submenu-item <?php echo $active_section == 'profile' ? 'active' : ''; ?>">
-                            <i class="fas fa-user"></i> Profile
+                            <i class="fas fa-user"></i> Profil
                         </a>
                         <a href="?section=password" class="submenu-item <?php echo $active_section == 'password' ? 'active' : ''; ?>">
-                            <i class="fas fa-lock"></i> Change Password
+                            <i class="fas fa-lock"></i> Ubah Kata Sandi
                         </a>
                     </div>
                 </div>
@@ -328,7 +328,7 @@ $db->close();
                 <div class="sidebar-section">
                     <a href="my_orders.php" class="sidebar-header">
                         <i class="fas fa-shopping-bag"></i>
-                        <span>My Orders</span>
+                        <span>Pesanan Saya</span>
                     </a>
                 </div>
             </div>
@@ -351,7 +351,7 @@ $db->close();
                 <?php if ($active_section == 'profile'): ?>
                 <div class="content-card">
                     <h2 class="section-title">
-                        <i class="fas fa-user"></i> Profile Information
+                        <i class="fas fa-user"></i> Informasi Profil
                     </h2>
                     
                     <!-- Profile Image Section -->
@@ -371,15 +371,15 @@ $db->close();
                                 <div class="upload-wrapper">
                                     <input type="file" name="profile_photo" id="profile_photo" accept="image/*" class="file-input">
                                     <label for="profile_photo" class="file-label">
-                                        <i class="fas fa-camera"></i> Choose Photo
+                                        <i class="fas fa-camera"></i> Pilih Foto
                                     </label>
-                                    <span class="file-name">No file chosen</span>
+                                    <span class="file-name">Tidak ada file yang dipilih</span>
                                 </div>
                                 <button type="submit" name="upload_photo" class="btn btn-secondary">
-                                    <i class="fas fa-upload"></i> Upload
+                                    <i class="fas fa-upload"></i> Unggah
                                 </button>
                             </form>
-                            <small class="form-text">Format: JPG, PNG, GIF. Max 5MB.</small>
+                            <small class="form-text">Format: JPG, PNG, GIF. Maks 5MB.</small>
                         </div>
                     </div>
                     
@@ -387,34 +387,34 @@ $db->close();
                     <form method="POST" class="profile-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="full_name">Full Name</label>
+                                <label for="full_name">Nama Lengkap</label>
                                 <input type="text" name="full_name" id="full_name" 
                                        value="<?php echo htmlspecialchars($user_data['full_name'] ?? ''); ?>" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="email">Email Address</label>
+                                <label for="email">Alamat Email</label>
                                 <input type="email" name="email" id="email" 
                                        value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>" required>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="phone">Phone Number</label>
+                            <label for="phone">Nomor Telepon</label>
                             <input type="tel" name="phone" id="phone" 
                                    value="<?php echo htmlspecialchars($user_data['phone'] ?? ''); ?>"
-                                   placeholder="e.g., 081234567890">
+                                   placeholder="Contoh: 081234567890">
                         </div>
                         
                         <div class="form-group">
-                            <label for="address">Address</label>
+                            <label for="address">Alamat</label>
                             <textarea name="address" id="address" rows="3" 
-                                      placeholder="Enter your complete address"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
+                                      placeholder="Masukkan alamat lengkap Anda"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
                         </div>
                         
                         <div class="form-actions">
                             <button type="submit" name="update_profile" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Changes
+                                <i class="fas fa-save"></i> Simpan Perubahan
                             </button>
                         </div>
                     </form>
@@ -425,29 +425,29 @@ $db->close();
                 <?php if ($active_section == 'password'): ?>
                 <div class="content-card">
                     <h2 class="section-title">
-                        <i class="fas fa-lock"></i> Change Password
+                        <i class="fas fa-lock"></i> Ubah Kata Sandi
                     </h2>
                     
                     <form method="POST" class="password-form">
                         <div class="form-group">
-                            <label for="current_password">Current Password</label>
+                            <label for="current_password">Kata Sandi Saat Ini</label>
                             <input type="password" name="current_password" id="current_password" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="new_password">New Password</label>
+                            <label for="new_password">Kata Sandi Baru</label>
                             <input type="password" name="new_password" id="new_password" required>
-                            <small class="form-text">Minimum 6 characters</small>
+                            <small class="form-text">Minimal 6 karakter</small>
                         </div>
                         
                         <div class="form-group">
-                            <label for="confirm_password">Confirm New Password</label>
+                            <label for="confirm_password">Konfirmasi Kata Sandi Baru</label>
                             <input type="password" name="confirm_password" id="confirm_password" required>
                         </div>
                         
                         <div class="form-actions">
                             <button type="submit" name="change_password" class="btn btn-primary">
-                                <i class="fas fa-key"></i> Change Password
+                                <i class="fas fa-key"></i> Ubah Kata Sandi
                             </button>
                         </div>
                     </form>

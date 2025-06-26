@@ -158,7 +158,7 @@ $db->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders - Papua Journey</title>
+    <title>Pesanan Saya - Papua Journey</title>
     <link rel="stylesheet" href="my_orders.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -172,15 +172,15 @@ $db->close();
                 <div class="sidebar-section">
                     <div class="sidebar-header">
                         <i class="fas fa-user-circle"></i>
-                        <span>My Account</span>
+                        <span>Akun Saya</span>
                         <i class="fas fa-chevron-down toggle-icon"></i>
                     </div>
                     <div class="sidebar-submenu show">
                         <a href="my_account.php?section=profile" class="submenu-item">
-                            <i class="fas fa-user"></i> Profile
+                            <i class="fas fa-user"></i> Profil
                         </a>
                         <a href="my_account.php?section=password" class="submenu-item">
-                            <i class="fas fa-lock"></i> Change Password
+                            <i class="fas fa-lock"></i> Ubah Kata Sandi
                         </a>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ $db->close();
                 <div class="sidebar-section">
                     <a href="my_orders.php" class="sidebar-header active">
                         <i class="fas fa-shopping-bag"></i>
-                        <span>My Orders</span>
+                        <span>Pesanan Saya</span>
                     </a>
                 </div>
             </div>
@@ -196,37 +196,37 @@ $db->close();
             <!-- Main Content Area -->
             <div class="content-area">
                 <h2 class="section-title">
-                    <i class="fas fa-shopping-bag"></i> My Orders
+                    <i class="fas fa-shopping-bag"></i> Pesanan Saya
                 </h2>
 
                 <!-- Order Tabs -->
                 <div class="order-tabs">
                     <a href="?tab=pending" class="tab-item <?php echo $active_tab == 'pending' ? 'active' : ''; ?>">
-                        <span>Pending</span>
+                        <span>Tertunda</span>
                         <?php if ($status_counts['pending'] > 0): ?>
                             <span class="tab-badge"><?php echo $status_counts['pending']; ?></span>
                         <?php endif; ?>
                     </a>
                     <a href="?tab=awaiting_confirmation" class="tab-item <?php echo $active_tab == 'awaiting_confirmation' ? 'active' : ''; ?>">
-                        <span>Awaiting Confirmation</span>
+                        <span>Menunggu Konfirmasi</span>
                         <?php if ($status_counts['awaiting_confirmation'] > 0): ?>
                             <span class="tab-badge"><?php echo $status_counts['awaiting_confirmation']; ?></span>
                         <?php endif; ?>
                     </a>
                     <a href="?tab=paid" class="tab-item <?php echo $active_tab == 'paid' ? 'active' : ''; ?>">
-                        <span>Paid</span>
+                        <span>Dibayar</span>
                         <?php if ($status_counts['paid'] > 0): ?>
                             <span class="tab-badge"><?php echo $status_counts['paid']; ?></span>
                         <?php endif; ?>
                     </a>
                     <a href="?tab=rejected" class="tab-item <?php echo $active_tab == 'rejected' ? 'active' : ''; ?>">
-                        <span>Rejected</span>
+                        <span>Ditolak</span>
                         <?php if ($status_counts['rejected'] > 0): ?>
                             <span class="tab-badge"><?php echo $status_counts['rejected']; ?></span>
                         <?php endif; ?>
                     </a>
                     <a href="?tab=cancelled" class="tab-item <?php echo $active_tab == 'cancelled' ? 'active' : ''; ?>">
-                        <span>Cancelled</span>
+                        <span>Dibatalkan</span>
                         <?php if ($status_counts['cancelled'] > 0): ?>
                             <span class="tab-badge"><?php echo $status_counts['cancelled']; ?></span>
                         <?php endif; ?>
@@ -237,7 +237,7 @@ $db->close();
                 <div class="search-container">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search by transaction code or item name...">
+                        <input type="text" id="searchInput" placeholder="Cari berdasarkan kode transaksi atau nama item...">
                     </div>
                 </div>
 
@@ -246,10 +246,10 @@ $db->close();
                     <?php if (empty($orders)): ?>
                         <div class="empty-state">
                             <i class="fas fa-shopping-basket"></i>
-                            <h3>No orders found</h3>
-                            <p>You don't have any <?php echo str_replace('_', ' ', $active_tab); ?> orders.</p>
-                            <a href="../wisata/wisata.php" class="btn btn-primary">
-                                <i class="fas fa-shopping-cart"></i><span>Start Shopping</span>
+                            <h3>Tidak ada pesanan</h3>
+                            <p>Anda tidak memiliki pesanan dengan status <?php echo str_replace('_', ' ', $active_tab); ?>.</p>
+                            <a href="../wisata/userwisata.php" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart"></i><span>Mulai Belanja</span>
                             </a>
                         </div>
                     <?php else: ?>
@@ -304,9 +304,9 @@ $db->close();
                                                     <?php echo ucfirst(htmlspecialchars($item['item_category'] ?? $item['item_type'])); ?>
                                                 </p>
                                                 <?php if ($item['booking_date'] && $item['booking_date'] != '0000-00-00'): ?>
-                                                    <p class="item-date">
+                                                <p class="item-date">
                                                         <i class="fas fa-calendar-check"></i>
-                                                        Booking: <?php echo date('d M Y', strtotime($item['booking_date'])); ?>
+                                                        Pemesanan: <?php echo date('d M Y', strtotime($item['booking_date'])); ?>
                                                     </p>
                                                 <?php endif; ?>
                                                 <?php if ($item['checkin_date'] && $item['checkout_date']): ?>
@@ -318,7 +318,7 @@ $db->close();
                                                 <?php endif; ?>
                                             </div>
                                             <div class="item-pricing">
-                                                <p class="quantity">Qty: <?php echo $item['quantity']; ?></p>
+                                                <p class="quantity">Jml: <?php echo $item['quantity']; ?></p>
                                                 <p class="price"><?php echo formatPrice($item['subtotal']); ?></p>
                                             </div>
                                         </div>
@@ -330,7 +330,7 @@ $db->close();
                                     <div class="order-summary">
                                         <span class="total-items">
                                             <i class="fas fa-cube"></i>
-                                            <?php echo count($order['items']); ?> Item(s)
+                                            <?php echo count($order['items']); ?> Item
                                         </span>
                                         <span class="total-amount">
                                             Total: <strong><?php echo formatPrice($order['total_amount']); ?></strong>
@@ -343,19 +343,19 @@ $db->close();
                                                 <input type="hidden" name="total_amount" value="<?php echo $order['total_amount']; ?>">
                                                 <input type="hidden" name="payment_method" value="<?php echo htmlspecialchars($order['payment_method'] ?? 'bank_transfer'); ?>">
                                                 <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-credit-card"></i><span>Pay Now</span>
+                                                    <i class="fas fa-credit-card"></i><span>Bayar Sekarang</span>
                                                 </button>
                                             </form>
                                         <?php elseif ($order['payment_status'] == 'rejected'): ?>
                                             <form action="../checkout/reupload_payment.php" method="POST" style="display: inline;">
                                                 <input type="hidden" name="transaction_code" value="<?php echo htmlspecialchars($order['transaction_code']); ?>">
                                                 <button type="submit" class="btn btn-warning">
-                                                    <i class="fas fa-redo"></i><span>Re-upload Payment</span>
+                                                    <i class="fas fa-redo"></i><span>Unggah Ulang Pembayaran</span>
                                                 </button>
                                             </form>
                                         <?php endif; ?>
                                         <button class="btn btn-outline" onclick="viewOrderDetails('<?php echo htmlspecialchars($order['transaction_code']); ?>')">
-                                            <i class="fas fa-eye"></i><span>View Details</span>
+                                            <i class="fas fa-eye"></i><span>Lihat Detail</span>
                                         </button>
                                     </div>
                                 </div>

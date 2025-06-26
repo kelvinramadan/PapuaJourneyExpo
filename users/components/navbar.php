@@ -842,7 +842,6 @@ body {
             <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">Dashboard</a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">Wisata</a></li>
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">Penginapan</a></li>
-            <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'transaksi.php' ? 'active' : ''; ?>">Transaksi</a></li>
             <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a></li>
             <li>
                 <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
@@ -865,7 +864,8 @@ body {
                 </div>
                 <div class="user-dropdown">
                     <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
-                    <a href="<?php echo $users_path; ?>account/my_account.php"><i class="fas fa-user-circle"></i> My Account</a>
+                    <a href="<?php echo $users_path; ?>account/my_account.php"><i class="fas fa-user-circle"></i> Akun Saya</a>
+                    <a href="<?php echo $users_path; ?>account/my_orders.php"><i class="fas fa-box"></i> Pesanan Saya</a>
                     <hr>
                     <a href="<?php echo $logout_path; ?>" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
@@ -894,9 +894,6 @@ body {
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php">
                 <i class="fas fa-bed"></i> Penginapan
             </a></li>
-            <li><a href="<?php echo $users_path; ?>transaksi/transaksi.php">
-                <i class="fas fa-receipt"></i> Transaksi
-            </a></li>
             <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php">
                 <i class="fas fa-robot"></i> AI Assistant
             </a></li>
@@ -910,7 +907,10 @@ body {
         <div class="mobile-user-info">
             <span>Welcome, <?php echo htmlspecialchars($user_name); ?></span>
             <a href="<?php echo $users_path; ?>account/my_account.php" class="mobile-profile-btn">
-                <i class="fas fa-user-circle"></i> My Account
+                <i class="fas fa-user-circle"></i> Akun Saya
+            </a>
+            <a href="<?php echo $users_path; ?>account/my_orders.php" class="mobile-profile-btn">
+                <i class="fas fa-box"></i> Pesanan Saya
             </a>
             <a href="<?php echo $logout_path; ?>" class="mobile-logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
