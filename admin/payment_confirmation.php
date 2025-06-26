@@ -62,9 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['transaksi_id']) && iss
     $db->close();
 }
 
-// Get pending payments
+// Get all payments by status
 $db = getDbConnection();
-$query = "
+
+// Base query for fetching payments
+$base_query = "
     SELECT 
         t.*,
         u.full_name as user_name,
@@ -74,14 +76,33 @@ $query = "
     FROM transaksi t
     LEFT JOIN users u ON t.user_id = u.id
     LEFT JOIN transaksi_items ti ON t.id = ti.transaksi_id
-    WHERE t.payment_status = 'awaiting_confirmation'
+    WHERE t.payment_status = ?
     GROUP BY t.id
     ORDER BY t.created_at DESC
 ";
 
-$stmt = $db->prepare($query);
+// Get pending payments
+$stmt = $db->prepare($base_query);
+$status = 'awaiting_confirmation';
+$stmt->bind_param("s", $status);
 $stmt->execute();
 $pending_payments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Get confirmed payments
+$stmt = $db->prepare($base_query);
+$status = 'paid';
+$stmt->bind_param("s", $status);
+$stmt->execute();
+$confirmed_payments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Get rejected payments
+$stmt = $db->prepare($base_query);
+$status = 'rejected';
+$stmt->bind_param("s", $status);
+$stmt->execute();
+$rejected_payments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 // Get payment statistics
@@ -107,6 +128,123 @@ $db->close();
 
 // Set page title for header
 $page_title = 'Payment Confirmation';
+
+// Function to render payment cards
+function renderPaymentCard($payment, $showActions = true) {
+    ?>
+    <div class="card" style="margin-bottom: 1.5rem; border: 1px solid #E5E7EB;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h4 style="margin: 0; font-size: 1.25rem;">
+                        Transaction #<?php echo htmlspecialchars($payment['transaction_code']); ?>
+                    </h4>
+                    <p style="margin: 0.25rem 0; color: var(--text-secondary);">
+                        <?php echo date('d M Y H:i', strtotime($payment['created_at'])); ?>
+                    </p>
+                </div>
+                <span class="badge badge-<?php 
+                    echo $payment['payment_status'] == 'awaiting_confirmation' ? 'warning' : 
+                         ($payment['payment_status'] == 'paid' ? 'success' : 'danger'); 
+                ?>">
+                    <?php 
+                    echo $payment['payment_status'] == 'awaiting_confirmation' ? 'Awaiting Confirmation' : 
+                         ($payment['payment_status'] == 'paid' ? 'Confirmed' : 'Rejected'); 
+                    ?>
+                </span>
+            </div>
+            
+            <div class="payment-details">
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Customer</span>
+                    <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_name']); ?></span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Email</span>
+                    <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_email']); ?></span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Phone</span>
+                    <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_phone'] ?? 'N/A'); ?></span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Total Amount</span>
+                    <span class="payment-detail-value" style="color: #059669; font-size: 1.125rem;">
+                        Rp <?php echo number_format($payment['total_amount']); ?>
+                    </span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Payment Method</span>
+                    <span class="payment-detail-value">
+                        <?php echo $payment['payment_method'] == 'bank_transfer' ? 'Bank Transfer' : 'E-Wallet'; ?>
+                    </span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">User Payment Date</span>
+                    <span class="payment-detail-value">
+                        <?php echo $payment['user_payment_date'] ? date('d M Y H:i', strtotime($payment['user_payment_date'])) : 'N/A'; ?>
+                    </span>
+                </div>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Items</span>
+                    <span class="payment-detail-value"><?php echo $payment['item_count']; ?> item(s)</span>
+                </div>
+                <?php if ($payment['payment_status'] == 'paid' && $payment['payment_confirmed_at']): ?>
+                <div class="payment-detail-item">
+                    <span class="payment-detail-label">Confirmed At</span>
+                    <span class="payment-detail-value">
+                        <?php echo date('d M Y H:i', strtotime($payment['payment_confirmed_at'])); ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <?php if ($payment['payment_proof']): ?>
+                <div class="payment-proof-container">
+                    <h5 style="margin-bottom: 0.5rem;">Payment Proof:</h5>
+                    <img src="../uploads/payment_proofs/<?php echo htmlspecialchars($payment['payment_proof']); ?>" 
+                         alt="Payment Proof" 
+                         class="payment-proof-img"
+                         onclick="openModal('<?php echo htmlspecialchars($payment['payment_proof']); ?>')">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Click image to enlarge
+                    </p>
+                </div>
+            <?php else: ?>
+                <p style="color: var(--text-secondary);">No payment proof uploaded</p>
+            <?php endif; ?>
+            
+            <?php if ($showActions && $payment['payment_status'] == 'awaiting_confirmation'): ?>
+                <form method="POST" class="action-form" id="payment-form-<?php echo $payment['id']; ?>">
+                    <input type="hidden" name="transaksi_id" value="<?php echo $payment['id']; ?>">
+                    <input type="hidden" name="action" id="action-<?php echo $payment['id']; ?>" value="">
+                    
+                    <div class="form-group notes-input">
+                        <label for="notes_<?php echo $payment['id']; ?>" class="form-label">Admin Notes (Optional)</label>
+                        <input type="text" 
+                               name="notes" 
+                               id="notes_<?php echo $payment['id']; ?>" 
+                               class="form-control" 
+                               placeholder="Add any notes about this payment...">
+                    </div>
+                    
+                    <button type="button" 
+                            onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'confirm')"
+                            class="btn btn-success">
+                        <span>✓</span> Confirm Payment
+                    </button>
+                    
+                    <button type="button" 
+                            onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'reject')"
+                            class="btn btn-danger">
+                        <span>✕</span> Reject
+                    </button>
+                </form>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+}
 ?>
 
 <!DOCTYPE html>
@@ -258,7 +396,7 @@ $page_title = 'Payment Confirmation';
                 
                 <!-- Payment Statistics -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card active" data-filter="awaiting_confirmation" onclick="filterPayments('awaiting_confirmation')">
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['awaiting_confirmation']['count'] ?? 0); ?></div>
@@ -271,7 +409,7 @@ $page_title = 'Payment Confirmation';
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card" data-filter="paid" onclick="filterPayments('paid')">
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['paid']['count'] ?? 0); ?></div>
@@ -284,7 +422,7 @@ $page_title = 'Payment Confirmation';
                         </div>
                     </div>
                     
-                    <div class="stat-card">
+                    <div class="stat-card" data-filter="rejected" onclick="filterPayments('rejected')">
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['rejected']['count'] ?? 0); ?></div>
@@ -298,114 +436,67 @@ $page_title = 'Payment Confirmation';
                     </div>
                 </div>
                 
-                <!-- Pending Payments -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Pending Payment Confirmations</h3>
-                        <span class="badge badge-warning"><?php echo count($pending_payments); ?> Pending</span>
+                <!-- Payment Sections -->
+                <!-- Pending Payments Section -->
+                <div class="payment-section" id="awaiting_confirmation_section" style="display: block;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pending Payment Confirmations</h3>
+                            <span class="badge badge-warning"><?php echo count($pending_payments); ?> Pending</span>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($pending_payments)): ?>
+                                <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+                                    No pending payment confirmations at the moment.
+                                </p>
+                            <?php else: ?>
+                                <?php foreach ($pending_payments as $payment): ?>
+                                    <?php renderPaymentCard($payment, true); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <?php if (empty($pending_payments)): ?>
-                            <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
-                                No pending payment confirmations at the moment.
-                            </p>
-                        <?php else: ?>
-                            <?php foreach ($pending_payments as $payment): ?>
-                                <div class="card" style="margin-bottom: 1.5rem; border: 1px solid #E5E7EB;">
-                                    <div class="card-body">
-                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                                            <div>
-                                                <h4 style="margin: 0; font-size: 1.25rem;">
-                                                    Transaction #<?php echo htmlspecialchars($payment['transaction_code']); ?>
-                                                </h4>
-                                                <p style="margin: 0.25rem 0; color: var(--text-secondary);">
-                                                    <?php echo date('d M Y H:i', strtotime($payment['created_at'])); ?>
-                                                </p>
-                                            </div>
-                                            <span class="badge badge-warning">Awaiting Confirmation</span>
-                                        </div>
-                                        
-                                        <div class="payment-details">
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Customer</span>
-                                                <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_name']); ?></span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Email</span>
-                                                <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_email']); ?></span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Phone</span>
-                                                <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_phone'] ?? 'N/A'); ?></span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Total Amount</span>
-                                                <span class="payment-detail-value" style="color: #059669; font-size: 1.125rem;">
-                                                    Rp <?php echo number_format($payment['total_amount']); ?>
-                                                </span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Payment Method</span>
-                                                <span class="payment-detail-value">
-                                                    <?php echo $payment['payment_method'] == 'bank_transfer' ? 'Bank Transfer' : 'E-Wallet'; ?>
-                                                </span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">User Payment Date</span>
-                                                <span class="payment-detail-value">
-                                                    <?php echo $payment['user_payment_date'] ? date('d M Y H:i', strtotime($payment['user_payment_date'])) : 'N/A'; ?>
-                                                </span>
-                                            </div>
-                                            <div class="payment-detail-item">
-                                                <span class="payment-detail-label">Items</span>
-                                                <span class="payment-detail-value"><?php echo $payment['item_count']; ?> item(s)</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <?php if ($payment['payment_proof']): ?>
-                                            <div class="payment-proof-container">
-                                                <h5 style="margin-bottom: 0.5rem;">Payment Proof:</h5>
-                                                <img src="../uploads/payment_proofs/<?php echo htmlspecialchars($payment['payment_proof']); ?>" 
-                                                     alt="Payment Proof" 
-                                                     class="payment-proof-img"
-                                                     onclick="openModal('<?php echo htmlspecialchars($payment['payment_proof']); ?>')">
-                                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                                    Click image to enlarge
-                                                </p>
-                                            </div>
-                                        <?php else: ?>
-                                            <p style="color: var(--text-secondary);">No payment proof uploaded</p>
-                                        <?php endif; ?>
-                                        
-                                        <form method="POST" class="action-form" id="payment-form-<?php echo $payment['id']; ?>">
-                                            <input type="hidden" name="transaksi_id" value="<?php echo $payment['id']; ?>">
-                                            <input type="hidden" name="action" id="action-<?php echo $payment['id']; ?>" value="">
-                                            
-                                            <div class="form-group notes-input">
-                                                <label for="notes_<?php echo $payment['id']; ?>" class="form-label">Admin Notes (Optional)</label>
-                                                <input type="text" 
-                                                       name="notes" 
-                                                       id="notes_<?php echo $payment['id']; ?>" 
-                                                       class="form-control" 
-                                                       placeholder="Add any notes about this payment...">
-                                            </div>
-                                            
-                                            <button type="button" 
-                                                    onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'confirm')"
-                                                    class="btn btn-success">
-                                                <span>✓</span> Confirm Payment
-                                            </button>
-                                            
-                                            <button type="button" 
-                                                    onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'reject')"
-                                                    class="btn btn-danger">
-                                                <span>✕</span> Reject
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                </div>
+                
+                <!-- Confirmed Payments Section -->
+                <div class="payment-section" id="paid_section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Confirmed Payments</h3>
+                            <span class="badge badge-success"><?php echo count($confirmed_payments); ?> Confirmed</span>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($confirmed_payments)): ?>
+                                <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+                                    No confirmed payments at the moment.
+                                </p>
+                            <?php else: ?>
+                                <?php foreach ($confirmed_payments as $payment): ?>
+                                    <?php renderPaymentCard($payment, false); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rejected Payments Section -->
+                <div class="payment-section" id="rejected_section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Rejected Payments</h3>
+                            <span class="badge badge-danger"><?php echo count($rejected_payments); ?> Rejected</span>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($rejected_payments)): ?>
+                                <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
+                                    No rejected payments at the moment.
+                                </p>
+                            <?php else: ?>
+                                <?php foreach ($rejected_payments as $payment): ?>
+                                    <?php renderPaymentCard($payment, false); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -424,6 +515,32 @@ $page_title = 'Payment Confirmation';
     
     <script src="assets/js/admin.js"></script>
     <script>
+        // Current active filter
+        let currentFilter = 'awaiting_confirmation';
+        
+        // Function to filter payments
+        function filterPayments(status) {
+            // Update active card styling
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${status}"]`).classList.add('active');
+            
+            // Hide all payment sections
+            document.querySelectorAll('.payment-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected payment section
+            const selectedSection = document.getElementById(`${status}_section`);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Update current filter
+            currentFilter = status;
+        }
+        
         // Function to open modal with image
         function openModal(imageName) {
             const modal = document.getElementById('imageModal');
@@ -478,6 +595,11 @@ $page_title = 'Payment Confirmation';
                 setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
+        
+        // Initialize with default filter
+        document.addEventListener('DOMContentLoaded', function() {
+            filterPayments('awaiting_confirmation');
+        });
     </script>
 </body>
 </html>

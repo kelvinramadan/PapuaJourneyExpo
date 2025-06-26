@@ -185,11 +185,18 @@ html, body {
     border-radius: 0.5rem;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s;
+    cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .stat-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
+}
+
+.stat-card.active {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
 }
 
 .stat-header {
@@ -227,6 +234,11 @@ html, body {
 .stat-icon.info {
     background: #DBEAFE;
     color: var(--info-color);
+}
+
+.stat-icon.danger {
+    background: #FEE2E2;
+    color: var(--danger-color);
 }
 
 .stat-value {
