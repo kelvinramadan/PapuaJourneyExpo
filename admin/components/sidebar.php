@@ -25,6 +25,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-text">Wisata</span>
         </a>
         
+        <a href="wisata_analytics.php" class="btn <?php echo $current_page == 'wisata_analytics.php' ? 'active' : ''; ?>" data-tooltip="Analytics">
+            <span class="btn-icon"><i class="fas fa-chart-bar"></i></span>
+            <span class="btn-text">Analytics</span>
+        </a>
+        
         <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>" data-tooltip="Penginapan">
             <span class="btn-icon"><i class="fas fa-bed"></i></span>
             <span class="btn-text">Penginapan</span>

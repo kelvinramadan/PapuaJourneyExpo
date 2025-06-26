@@ -117,21 +117,34 @@ $count_result = mysqli_query($db, $count_query);
 $total_records = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total_records / $limit);
 
-// Get wisata data
+// Get wisata data with view statistics
 $search = isset($_GET['search']) ? mysqli_real_escape_string($db, $_GET['search']) : '';
 $category_filter = isset($_GET['category']) ? mysqli_real_escape_string($db, $_GET['category']) : '';
 
 $where_conditions = [];
 if (!empty($search)) {
-    $where_conditions[] = "(judul LIKE '%$search%' OR deskripsi LIKE '%$search%' OR alamat LIKE '%$search%')";
+    $where_conditions[] = "(w.judul LIKE '%$search%' OR w.deskripsi LIKE '%$search%' OR w.alamat LIKE '%$search%')";
 }
 if (!empty($category_filter)) {
-    $where_conditions[] = "kategori = '$category_filter'";
+    $where_conditions[] = "w.kategori = '$category_filter'";
 }
 
 $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-$wisata_query = "SELECT * FROM wisata $where_clause ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+// Join with view statistics
+$wisata_query = "
+    SELECT 
+        w.*,
+        COALESCE(COUNT(DISTINCT wv.id), 0) as total_views,
+        COALESCE(COUNT(DISTINCT wv.session_id), 0) as unique_visitors,
+        COALESCE(COUNT(DISTINCT CASE WHEN DATE(wv.view_date) = CURDATE() THEN wv.id END), 0) as views_today
+    FROM wisata w
+    LEFT JOIN wisata_views wv ON w.id = wv.wisata_id
+    $where_clause
+    GROUP BY w.id
+    ORDER BY w.created_at DESC 
+    LIMIT $limit OFFSET $offset
+";
 $wisata_list = mysqli_query($db, $wisata_query);
 
 // Get categories for filter
@@ -387,9 +400,14 @@ $page_title = 'Wisata Management';
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Daftar Wisata (<?php echo $total_records; ?> Total)</h3>
-                        <button class="btn btn-outline btn-sm" onclick="window.print()">
-                            <span>🖨️</span> Print
-                        </button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="wisata_analytics.php" class="btn btn-primary btn-sm">
+                                <span>📊</span> Analytics
+                            </a>
+                            <button class="btn btn-outline btn-sm" onclick="window.print()">
+                                <span>🖨️</span> Print
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <!-- Filters -->
@@ -435,6 +453,21 @@ $page_title = 'Wisata Management';
                                                 <div class="wisata-detail">
                                                     <span>📍</span>
                                                     <span><?php echo htmlspecialchars(substr($wisata['alamat'], 0, 30)) . '...'; ?></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="wisata-details" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #eee;">
+                                                <div class="wisata-detail">
+                                                    <span>👁️</span>
+                                                    <strong><?php echo number_format($wisata['total_views']); ?></strong> views
+                                                </div>
+                                                <div class="wisata-detail">
+                                                    <span>👥</span>
+                                                    <strong><?php echo number_format($wisata['unique_visitors']); ?></strong> visitors
+                                                </div>
+                                                <div class="wisata-detail">
+                                                    <span>📅</span>
+                                                    <strong><?php echo number_format($wisata['views_today']); ?></strong> hari ini
                                                 </div>
                                             </div>
                                             

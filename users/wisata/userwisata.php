@@ -468,7 +468,34 @@ mysqli_close($db);
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+            
+            // Track views for detail page
+            <?php if ($view_mode === 'detail' && $wisata_detail): ?>
+            trackWisataView(<?php echo $wisata_id; ?>);
+            <?php endif; ?>
         });
+        
+        // Function to track tourist destination views
+        function trackWisataView(wisataId) {
+            fetch('track_view.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wisata_id: wisataId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('View tracked successfully');
+                }
+            })
+            .catch(error => {
+                console.error('Error tracking view:', error);
+            });
+        }
     </script>
 </body>
 </html>

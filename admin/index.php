@@ -176,6 +176,33 @@ $lodgings_stmt->execute();
 $lodgings_result = $lodgings_stmt->get_result();
 $total_lodgings = $lodgings_result->fetch_assoc()['total'];
 
+// Get tourism analytics statistics
+$analytics_stmt = $db->prepare("
+    SELECT 
+        COUNT(DISTINCT wv.id) as total_views_today,
+        COUNT(DISTINCT wv.session_id) as unique_visitors_today
+    FROM wisata_views wv
+    WHERE DATE(wv.view_date) = CURDATE()
+");
+$analytics_stmt->execute();
+$analytics_today = $analytics_stmt->get_result()->fetch_assoc();
+
+// Get top viewed destinations
+$top_destinations_stmt = $db->prepare("
+    SELECT 
+        w.id,
+        w.judul,
+        COUNT(wv.id) as view_count
+    FROM wisata w
+    LEFT JOIN wisata_views wv ON w.id = wv.wisata_id
+    WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    GROUP BY w.id
+    ORDER BY view_count DESC
+    LIMIT 5
+");
+$top_destinations_stmt->execute();
+$top_destinations = $top_destinations_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
 // Get recent UMKM registrations
 $recent_umkm_stmt = $db->prepare("SELECT * FROM umkm ORDER BY created_at DESC LIMIT 5");
 $recent_umkm_stmt->execute();
@@ -191,6 +218,8 @@ $stats_stmt->close();
 $users_stmt->close();
 $destinations_stmt->close();
 $lodgings_stmt->close();
+$analytics_stmt->close();
+$top_destinations_stmt->close();
 $recent_umkm_stmt->close();
 $umkm_stmt->close();
 $db->close();
@@ -310,6 +339,67 @@ $page_title = 'Dashboard';
                                 </div>
                             </div>
                             <div class="stat-icon info">🏪</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tourism Analytics Summary -->
+                <div class="grid grid-2" style="margin-bottom: 2rem;">
+                    <!-- Today's Analytics -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 Analytics Hari Ini</h3>
+                            <a href="wisata_analytics.php" class="btn btn-sm btn-primary">Lihat Detail</a>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <div style="text-align: center; padding: 1rem; background: #F0F9FF; border-radius: 0.5rem;">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #0369A1;">
+                                        <?php echo number_format($analytics_today['total_views_today'] ?? 0); ?>
+                                    </div>
+                                    <div style="color: #64748B; font-size: 0.875rem;">Total Views Hari Ini</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: #F0FDF4; border-radius: 0.5rem;">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #16A34A;">
+                                        <?php echo number_format($analytics_today['unique_visitors_today'] ?? 0); ?>
+                                    </div>
+                                    <div style="color: #64748B; font-size: 0.875rem;">Unique Visitors</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Destinations -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🌟 Top Destinasi (7 Hari)</h3>
+                            <a href="adminwisata.php" class="btn btn-sm btn-outline">Kelola Wisata</a>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($top_destinations)): ?>
+                                <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                                    Belum ada data views dalam 7 hari terakhir
+                                </p>
+                            <?php else: ?>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <?php foreach ($top_destinations as $index => $dest): ?>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #F9FAFB;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 24px; height: 24px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
+                                                    <?php echo $index + 1; ?>
+                                                </div>
+                                                <div>
+                                                    <div style="font-weight: 600; font-size: 0.875rem;"><?php echo htmlspecialchars($dest['judul']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span style="font-size: 0.875rem; color: #6B7280;">👁️</span>
+                                                <span style="font-weight: 600; font-size: 0.875rem;"><?php echo number_format($dest['view_count']); ?></span>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
