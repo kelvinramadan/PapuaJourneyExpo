@@ -348,37 +348,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <button type="submit" class="submit-btn">Search Stays</button>
                 `,
-                'flights': `
-                    <div class="form-group">
-                        <label>From</label>
-                        <input type="text" placeholder="Departure city" required>
-                    </div>
-                    <div class="form-group">
-                        <label>To</label>
-                        <input type="text" placeholder="Papua destinations" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Departure</label>
-                            <input type="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Return</label>
-                            <input type="date">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Passengers</label>
-                        <select required>
-                            <option value="">Select passengers</option>
-                            <option value="1">1 Passenger</option>
-                            <option value="2">2 Passengers</option>
-                            <option value="3">3 Passengers</option>
-                            <option value="4">4+ Passengers</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="submit-btn">Search Flights</button>
-                `,
+                // 'flights': `
+                //     <div class="form-group">
+                //         <label>From</label>
+                //         <input type="text" placeholder="Departure city" required>
+                //     </div>
+                //     <div class="form-group">
+                //         <label>To</label>
+                //         <input type="text" placeholder="Papua destinations" required>
+                //     </div>
+                //     <div class="form-row">
+                //         <div class="form-group">
+                //             <label>Departure</label>
+                //             <input type="date" required>
+                //         </div>
+                //         <div class="form-group">
+                //             <label>Return</label>
+                //             <input type="date">
+                //         </div>
+                //     </div>
+                //     <div class="form-group">
+                //         <label>Passengers</label>
+                //         <select required>
+                //             <option value="">Select passengers</option>
+                //             <option value="1">1 Passenger</option>
+                //             <option value="2">2 Passengers</option>
+                //             <option value="3">3 Passengers</option>
+                //             <option value="4">4+ Passengers</option>
+                //         </select>
+                //     </div>
+                //     <button type="submit" class="submit-btn">Search Flights</button>
+                // `,
                 'car': `
                     <div class="form-group">
                         <label>Pick-up location</label>

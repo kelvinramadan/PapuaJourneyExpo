@@ -342,10 +342,10 @@ session_start();
                     <i class="fi fi-sr-bed"></i>
                     <span>Stays</span>
                 </button>
-                <button class="tab-btn" data-tab="flights">
+                <!-- <button class="tab-btn" data-tab="flights">
                     <i class="fi fi-sr-plane"></i>
                     <span>Flights</span>
-                </button>
+                </button> -->
                 <button class="tab-btn" data-tab="car">
                     <i class="fi fi-sr-car"></i>
                     <span>Car Rentals</span>
