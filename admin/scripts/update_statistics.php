@@ -127,17 +127,108 @@ try {
     $summary_stmt->execute();
     $summary = $summary_stmt->get_result()->fetch_assoc();
     
-    logMessage("=== Daily Summary for {$date} ===");
+    logMessage("=== Daily Summary for Tourism Destinations - {$date} ===");
     logMessage("Destinations with views: " . $summary['destinations_with_views']);
     logMessage("Total views: " . $summary['total_views']);
     logMessage("Unique visitors: " . $summary['total_unique_visitors']);
     logMessage("Total bookings: " . $summary['total_bookings']);
     logMessage("Total revenue: Rp " . number_format($summary['total_revenue'], 0, ',', '.'));
     
+    // Aggregate accommodation statistics
+    logMessage("\nProcessing accommodation statistics...");
+    
+    $acc_query = "
+        INSERT INTO penginapan_statistics (penginapan_id, stat_date, view_count, unique_visitors, booking_count, revenue)
+        SELECT 
+            p.id as penginapan_id,
+            ? as stat_date,
+            COALESCE(v.view_count, 0) as view_count,
+            COALESCE(v.unique_visitors, 0) as unique_visitors,
+            COALESCE(b.booking_count, 0) as booking_count,
+            COALESCE(b.revenue, 0) as revenue
+        FROM penginapan p
+        LEFT JOIN (
+            SELECT 
+                penginapan_id,
+                COUNT(*) as view_count,
+                COUNT(DISTINCT session_id) as unique_visitors
+            FROM penginapan_views
+            WHERE DATE(view_date) = ?
+            GROUP BY penginapan_id
+        ) v ON p.id = v.penginapan_id
+        LEFT JOIN (
+            SELECT 
+                ti.item_id as penginapan_id,
+                COUNT(DISTINCT ti.transaksi_id) as booking_count,
+                SUM(ti.subtotal) as revenue
+            FROM transaksi_items ti
+            JOIN transaksi t ON ti.transaksi_id = t.id
+            WHERE ti.item_type = 'penginapan' 
+                AND t.payment_status = 'paid'
+                AND DATE(t.created_at) = ?
+            GROUP BY ti.item_id
+        ) b ON p.id = b.penginapan_id
+        ON DUPLICATE KEY UPDATE
+            view_count = VALUES(view_count),
+            unique_visitors = VALUES(unique_visitors),
+            booking_count = VALUES(booking_count),
+            revenue = VALUES(revenue),
+            updated_at = CURRENT_TIMESTAMP
+    ";
+    
+    $acc_stmt = $conn->prepare($acc_query);
+    $acc_stmt->bind_param("sss", $date, $date, $date);
+    
+    if ($acc_stmt->execute()) {
+        $acc_affected = $acc_stmt->affected_rows;
+        logMessage("Successfully updated statistics for {$acc_affected} accommodations");
+    } else {
+        logMessage("Failed to update accommodation statistics: " . $acc_stmt->error, 'ERROR');
+    }
+    
+    // Get accommodation summary
+    $acc_summary_query = "
+        SELECT 
+            COUNT(DISTINCT penginapan_id) as accommodations_with_views,
+            SUM(view_count) as total_views,
+            SUM(unique_visitors) as total_unique_visitors,
+            SUM(booking_count) as total_bookings,
+            SUM(revenue) as total_revenue
+        FROM penginapan_statistics
+        WHERE stat_date = ?
+    ";
+    
+    $acc_summary_stmt = $conn->prepare($acc_summary_query);
+    $acc_summary_stmt->bind_param("s", $date);
+    $acc_summary_stmt->execute();
+    $acc_summary = $acc_summary_stmt->get_result()->fetch_assoc();
+    
+    logMessage("\n=== Daily Summary for Accommodations - {$date} ===");
+    logMessage("Accommodations with views: " . $acc_summary['accommodations_with_views']);
+    logMessage("Total views: " . $acc_summary['total_views']);
+    logMessage("Unique visitors: " . $acc_summary['total_unique_visitors']);
+    logMessage("Total bookings: " . $acc_summary['total_bookings']);
+    logMessage("Total revenue: Rp " . number_format($acc_summary['total_revenue'], 0, ',', '.'));
+    
+    // Clean up old accommodation view records
+    $acc_cleanup_query = "DELETE FROM penginapan_views WHERE DATE(view_date) < ?";
+    $acc_cleanup_stmt = $conn->prepare($acc_cleanup_query);
+    $acc_cleanup_stmt->bind_param("s", $cleanup_date);
+    
+    if ($acc_cleanup_stmt->execute()) {
+        $acc_deleted = $acc_cleanup_stmt->affected_rows;
+        if ($acc_deleted > 0) {
+            logMessage("Cleaned up {$acc_deleted} old accommodation view records");
+        }
+    }
+    
     // Close statements
     $stmt->close();
     $cleanup_stmt->close();
     $summary_stmt->close();
+    $acc_stmt->close();
+    $acc_summary_stmt->close();
+    $acc_cleanup_stmt->close();
     
 } catch (Exception $e) {
     // Rollback transaction on error
@@ -150,12 +241,20 @@ try {
 
 // Send email notification (optional)
 if (defined('ADMIN_EMAIL') && ADMIN_EMAIL) {
-    $subject = "Daily Tourism Statistics - " . $date;
+    $subject = "Daily Tourism & Accommodation Statistics - " . $date;
     $message = "Statistics aggregation completed for {$date}\n\n";
+    
+    $message .= "TOURISM DESTINATIONS:\n";
     $message .= "Total views: " . $summary['total_views'] . "\n";
     $message .= "Unique visitors: " . $summary['total_unique_visitors'] . "\n";
     $message .= "Total bookings: " . $summary['total_bookings'] . "\n";
-    $message .= "Total revenue: Rp " . number_format($summary['total_revenue'], 0, ',', '.') . "\n";
+    $message .= "Total revenue: Rp " . number_format($summary['total_revenue'], 0, ',', '.') . "\n\n";
+    
+    $message .= "ACCOMMODATIONS:\n";
+    $message .= "Total views: " . $acc_summary['total_views'] . "\n";
+    $message .= "Unique visitors: " . $acc_summary['total_unique_visitors'] . "\n";
+    $message .= "Total bookings: " . $acc_summary['total_bookings'] . "\n";
+    $message .= "Total revenue: Rp " . number_format($acc_summary['total_revenue'], 0, ',', '.') . "\n";
     
     mail(ADMIN_EMAIL, $subject, $message);
 }

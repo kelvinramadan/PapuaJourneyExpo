@@ -27,7 +27,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         
         <a href="wisata_analytics.php" class="btn <?php echo $current_page == 'wisata_analytics.php' ? 'active' : ''; ?>" data-tooltip="Analytics">
             <span class="btn-icon"><i class="fas fa-chart-bar"></i></span>
-            <span class="btn-text">Analytics</span>
+            <span class="btn-text">Analitik</span>
         </a>
         
         <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>" data-tooltip="Penginapan">
@@ -35,9 +35,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-text">Penginapan</span>
         </a>
         
-        <a href="payment_confirmation.php" class="btn <?php echo $current_page == 'payment_confirmation.php' ? 'active' : ''; ?>" data-tooltip="Payment Confirmation">
+        <a href="payment_confirmation.php" class="btn <?php echo $current_page == 'payment_confirmation.php' ? 'active' : ''; ?>" data-tooltip="Konfirmasi Pembayaran">
             <span class="btn-icon"><i class="fas fa-money-check-alt"></i></span>
-            <span class="btn-text">Payment Confirmation</span>
+            <span class="btn-text">Konfirmasi Pembayaran</span>
         </a>
     </nav>
     
@@ -51,9 +51,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span class="user-role">Administrator</span>
             </div>
         </div>
-        <a href="?logout=1" class="logout-btn" data-tooltip="Logout">
+        <a href="?logout=1" class="logout-btn" data-tooltip="Keluar">
             <span class="btn-icon"><i class="fas fa-sign-out-alt"></i></span>
-            <span class="btn-text">Logout</span>
+            <span class="btn-text">Keluar</span>
         </a>
     </div>
 </aside>

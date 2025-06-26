@@ -152,7 +152,15 @@ if (!empty($price_filter)) {
 
 $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-$query = "SELECT * FROM penginapan $where_clause ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+// Modified query to include view counts
+$query = "SELECT p.*, 
+          COALESCE(COUNT(DISTINCT pv.id), 0) as view_count 
+          FROM penginapan p 
+          LEFT JOIN penginapan_views pv ON p.id = pv.penginapan_id 
+          $where_clause 
+          GROUP BY p.id 
+          ORDER BY p.created_at DESC 
+          LIMIT $limit OFFSET $offset";
 $result = mysqli_query($db, $query);
 
 // Get types for filter
@@ -160,7 +168,7 @@ $types_query = "SELECT DISTINCT tipe FROM penginapan ORDER BY tipe";
 $types_result = mysqli_query($db, $types_query);
 
 // Set page title for header
-$page_title = 'Penginapan Management';
+$page_title = 'Pengelolaan Penginapan';
 ?>
 
 <!DOCTYPE html>
@@ -313,7 +321,7 @@ $page_title = 'Penginapan Management';
                     <div class="card-header">
                         <h3 class="card-title">Tambah Penginapan Baru</h3>
                         <button class="btn btn-outline btn-sm" onclick="toggleForm()" id="toggleBtn">
-                            <span>▼</span> Expand
+                            <span>▼</span> Buka
                         </button>
                     </div>
                     <div class="card-body" id="addForm" style="display: none;">
@@ -410,11 +418,14 @@ $page_title = 'Penginapan Management';
                     <div class="card-header">
                         <h3 class="card-title">Daftar Penginapan (<?php echo $total_records; ?> Total)</h3>
                         <div style="display: flex; gap: 0.75rem;">
+                            <a href="wisata_analytics.php#accommodation" class="btn btn-primary btn-sm">
+                                <span>📊</span> Analitik
+                            </a>
                             <button class="btn btn-outline btn-sm" onclick="window.print()">
-                                <span>🖨️</span> Print
+                                <span>🖨️</span> Cetak
                             </button>
                             <button class="btn btn-outline btn-sm" onclick="exportData()">
-                                <span>📥</span> Export
+                                <span>📥</span> Ekspor
                             </button>
                         </div>
                     </div>
@@ -475,6 +486,10 @@ $page_title = 'Penginapan Management';
                                                 <div class="rating">
                                                     <span>⭐</span>
                                                     <span><?php echo isset($row['rating']) ? number_format($row['rating'], 1) : '0.0'; ?></span>
+                                                </div>
+                                                <div class="feature-item" style="background: #EFF6FF; color: #1E40AF;">
+                                                    <span>👁️</span>
+                                                    <span><?php echo number_format($row['view_count']); ?> Views</span>
                                                 </div>
                                             </div>
                                             
@@ -549,14 +564,14 @@ $page_title = 'Penginapan Management';
             const btn = document.getElementById('toggleBtn');
             if (form.style.display === 'none') {
                 form.style.display = 'block';
-                btn.innerHTML = '<span>▲</span> Collapse';
+                btn.innerHTML = '<span>▲</span> Tutup';
                 // Auto-collapse sidebar on mobile or when expanding form
                 if (window.innerWidth < 1200) {
                     autoCollapseSidebar();
                 }
             } else {
                 form.style.display = 'none';
-                btn.innerHTML = '<span>▼</span> Expand';
+                btn.innerHTML = '<span>▼</span> Buka';
             }
         }
         
@@ -566,7 +581,7 @@ $page_title = 'Penginapan Management';
             const file = fileInput.files[0];
             
             if (file && file.size > 5 * 1024 * 1024) {
-                showToast('Ukuran file terlalu besar. Maksimal 5MB.', 'error');
+                showToast('Ukuran file terlalu besar. Maksimal 5MB.', 'error'); // Already in Indonesian
                 return false;
             }
             
@@ -575,24 +590,24 @@ $page_title = 'Penginapan Management';
         
         // Delete penginapan
         function deletePenginapan(id) {
-            if (confirmDelete('Apakah Anda yakin ingin menghapus penginapan ini?')) {
+            if (confirmDelete('Apakah Anda yakin ingin menghapus penginapan ini?')) { // Already in Indonesian
                 window.location.href = '?delete=' + id;
             }
         }
         
         // View details (placeholder)
         function viewDetails(id) {
-            showToast('Membuka detail penginapan...', 'info');
+            showToast('Membuka detail penginapan...', 'info'); // Already in Indonesian
         }
         
         // Edit penginapan (placeholder)
         function editPenginapan(id) {
-            showToast('Fitur edit akan segera tersedia', 'info');
+            showToast('Fitur edit akan segera tersedia', 'info'); // Already in Indonesian
         }
         
         // Export data (placeholder)
         function exportData() {
-            showToast('Mengekspor data...', 'info');
+            showToast('Mengekspor data...', 'info'); // Already in Indonesian
         }
         
         // Apply filters

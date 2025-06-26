@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_login'])) {
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_username'] = $username;
     } else {
-        $error_message = 'Username atau password admin salah!';
+        $error_message = 'Username atau password admin salah!'; // Already in Indonesian
     }
 }
 
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status']) && is
         $stmt->bind_param("si", $new_status, $umkm_id);
         
         if ($stmt->execute()) {
-            $success_message = 'Status UMKM berhasil diperbarui!';
+            $success_message = 'Status UMKM berhasil diperbarui!'; // Already in Indonesian
         } else {
-            $error_message = 'Gagal memperbarui status UMKM!';
+            $error_message = 'Gagal memperbarui status UMKM!'; // Already in Indonesian
         }
         $stmt->close();
         $db->close();
@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_umkm']) && isse
     $stmt->bind_param("i", $umkm_id);
     
     if ($stmt->execute()) {
-        $success_message = 'UMKM berhasil dihapus!';
+        $success_message = 'UMKM berhasil dihapus!'; // Already in Indonesian
     } else {
-        $error_message = 'Gagal menghapus UMKM!';
+        $error_message = 'Gagal menghapus UMKM!'; // Already in Indonesian
     }
     $stmt->close();
     $db->close();
@@ -113,7 +113,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
             <div class="card-body" style="padding: 2.5rem;">
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <div class="login-logo">🏝️</div>
-                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Admin Login</h1>
+                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Login Admin</h1>
                     <p style="color: var(--text-secondary);">Masuk ke panel admin Papua Journey</p>
                 </div>
                 
@@ -135,7 +135,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
                     </div>
                     
                     <button type="submit" name="admin_login" class="btn btn-primary btn-lg" style="width: 100%;">
-                        Login
+                        Masuk
                     </button>
                 </form>
             </div>
@@ -187,6 +187,17 @@ $analytics_stmt = $db->prepare("
 $analytics_stmt->execute();
 $analytics_today = $analytics_stmt->get_result()->fetch_assoc();
 
+// Get accommodation analytics statistics
+$acc_analytics_stmt = $db->prepare("
+    SELECT 
+        COUNT(DISTINCT pv.id) as total_views_today,
+        COUNT(DISTINCT pv.session_id) as unique_visitors_today
+    FROM penginapan_views pv
+    WHERE DATE(pv.view_date) = CURDATE()
+");
+$acc_analytics_stmt->execute();
+$acc_analytics_today = $acc_analytics_stmt->get_result()->fetch_assoc();
+
 // Get top viewed destinations
 $top_destinations_stmt = $db->prepare("
     SELECT 
@@ -202,6 +213,22 @@ $top_destinations_stmt = $db->prepare("
 ");
 $top_destinations_stmt->execute();
 $top_destinations = $top_destinations_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Get top viewed accommodations
+$top_accommodations_stmt = $db->prepare("
+    SELECT 
+        p.id,
+        p.judul,
+        COUNT(pv.id) as view_count
+    FROM penginapan p
+    LEFT JOIN penginapan_views pv ON p.id = pv.penginapan_id
+    WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    GROUP BY p.id
+    ORDER BY view_count DESC
+    LIMIT 5
+");
+$top_accommodations_stmt->execute();
+$top_accommodations = $top_accommodations_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // Get recent UMKM registrations
 $recent_umkm_stmt = $db->prepare("SELECT * FROM umkm ORDER BY created_at DESC LIMIT 5");
@@ -219,7 +246,9 @@ $users_stmt->close();
 $destinations_stmt->close();
 $lodgings_stmt->close();
 $analytics_stmt->close();
+$acc_analytics_stmt->close();
 $top_destinations_stmt->close();
+$top_accommodations_stmt->close();
 $recent_umkm_stmt->close();
 $umkm_stmt->close();
 $db->close();
@@ -294,7 +323,7 @@ $page_title = 'Dashboard';
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($total_users); ?></div>
-                                <div class="stat-label">Total Users</div>
+                                <div class="stat-label">Total Pengguna</div>
                                 <div class="stat-trend trend-up">
                                     <span>↑</span> 12% dari bulan lalu
                                 </div>
@@ -349,21 +378,37 @@ $page_title = 'Dashboard';
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">📊 Analytics Hari Ini</h3>
-                            <a href="wisata_analytics.php" class="btn btn-sm btn-primary">Lihat Detail</a>
+                            <a href="wisata_analytics.php#tourism" class="btn btn-sm btn-primary">Lihat Detail</a>
                         </div>
                         <div class="card-body">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                <div style="text-align: center; padding: 1rem; background: #F0F9FF; border-radius: 0.5rem;">
-                                    <div style="font-size: 2rem; font-weight: bold; color: #0369A1;">
+                            <h4 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">🏖️ Tourism</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="text-align: center; padding: 0.75rem; background: #F0F9FF; border-radius: 0.5rem;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #0369A1;">
                                         <?php echo number_format($analytics_today['total_views_today'] ?? 0); ?>
                                     </div>
-                                    <div style="color: #64748B; font-size: 0.875rem;">Total Views Hari Ini</div>
+                                    <div style="color: #64748B; font-size: 0.75rem;">Tampilan</div>
                                 </div>
-                                <div style="text-align: center; padding: 1rem; background: #F0FDF4; border-radius: 0.5rem;">
-                                    <div style="font-size: 2rem; font-weight: bold; color: #16A34A;">
+                                <div style="text-align: center; padding: 0.75rem; background: #F0FDF4; border-radius: 0.5rem;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #16A34A;">
                                         <?php echo number_format($analytics_today['unique_visitors_today'] ?? 0); ?>
                                     </div>
-                                    <div style="color: #64748B; font-size: 0.875rem;">Unique Visitors</div>
+                                    <div style="color: #64748B; font-size: 0.75rem;">Pengunjung</div>
+                                </div>
+                            </div>
+                            <h4 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">🏨 Accommodation</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="text-align: center; padding: 0.75rem; background: #FFF5E6; border-radius: 0.5rem;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #FF6B35;">
+                                        <?php echo number_format($acc_analytics_today['total_views_today'] ?? 0); ?>
+                                    </div>
+                                    <div style="color: #64748B; font-size: 0.75rem;">Tampilan</div>
+                                </div>
+                                <div style="text-align: center; padding: 0.75rem; background: #F3E5F5; border-radius: 0.5rem;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #7B1FA2;">
+                                        <?php echo number_format($acc_analytics_today['unique_visitors_today'] ?? 0); ?>
+                                    </div>
+                                    <div style="color: #64748B; font-size: 0.75rem;">Pengunjung</div>
                                 </div>
                             </div>
                         </div>
@@ -400,6 +445,81 @@ $page_title = 'Dashboard';
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accommodation Analytics Summary -->
+                <div class="grid grid-2" style="margin-bottom: 2rem;">
+                    <!-- Top Accommodations -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🏨 Top Penginapan (7 Hari)</h3>
+                            <a href="adminpenginapan.php" class="btn btn-sm btn-outline">Kelola Penginapan</a>
+                        </div>
+                        <div class="card-body">
+                            <?php if (empty($top_accommodations)): ?>
+                                <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                                    Belum ada data views dalam 7 hari terakhir
+                                </p>
+                            <?php else: ?>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <?php foreach ($top_accommodations as $index => $acc): ?>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #F9FAFB;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 24px; height: 24px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
+                                                    <?php echo $index + 1; ?>
+                                                </div>
+                                                <div>
+                                                    <div style="font-weight: 600; font-size: 0.875rem;"><?php echo htmlspecialchars($acc['judul']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span style="font-size: 0.875rem; color: #6B7280;">👁️</span>
+                                                <span style="font-weight: 600; font-size: 0.875rem;"><?php echo number_format($acc['view_count']); ?></span>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📈 Ringkasan Analitik</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="padding: 1rem; background: #EFF6FF; border-radius: 0.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-weight: 600; color: #1E40AF;">Total Tampilan Pariwisata Hari Ini</div>
+                                            <div style="font-size: 1.25rem; font-weight: bold; color: #1E40AF;">
+                                                <?php echo number_format(($analytics_today['total_views_today'] ?? 0)); ?>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 2rem;">🏖️</div>
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: #FFF7ED; border-radius: 0.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-weight: 600; color: #C2410C;">Total Tampilan Penginapan Hari Ini</div>
+                                            <div style="font-size: 1.25rem; font-weight: bold; color: #C2410C;">
+                                                <?php echo number_format(($acc_analytics_today['total_views_today'] ?? 0)); ?>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 2rem;">🏨</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; margin-top: 0.5rem;">
+                                    <a href="wisata_analytics.php" class="btn btn-primary btn-sm" style="width: 100%;">
+                                        📊 Lihat Dashboard Analitik Lengkap
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

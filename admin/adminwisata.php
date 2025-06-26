@@ -152,7 +152,7 @@ $categories_query = "SELECT DISTINCT kategori FROM wisata ORDER BY kategori";
 $categories_result = mysqli_query($db, $categories_query);
 
 // Set page title for header
-$page_title = 'Wisata Management';
+$page_title = 'Pengelolaan Wisata';
 ?>
 
 <!DOCTYPE html>
@@ -295,7 +295,7 @@ $page_title = 'Wisata Management';
                     <div class="card-header">
                         <h3 class="card-title">Tambah Wisata Baru</h3>
                         <button class="btn btn-outline btn-sm" onclick="toggleForm()" id="toggleBtn">
-                            <span>▼</span> Expand
+                            <span>▼</span> Buka
                         </button>
                     </div>
                     <div class="card-body" id="addForm" style="display: none;">
@@ -356,7 +356,7 @@ $page_title = 'Wisata Management';
                                         <label for="photo" class="form-label">Foto Wisata</label>
                                         <input type="file" class="form-control form-control-file" id="photo" name="photo" 
                                                accept="image/*" required onchange="previewImage(this, 'imagePreview'); updatePreview();">
-                                        <small class="form-text text-muted">Format: JPG, JPEG, PNG, GIF, WebP. Max: 5MB</small>
+                                        <small class="form-text text-muted">Format: JPG, JPEG, PNG, GIF, WebP. Maks: 5MB</small>
                                     </div>
                                     
                                     <button type="submit" name="add_wisata" class="btn btn-primary btn-lg">
@@ -366,12 +366,12 @@ $page_title = 'Wisata Management';
                                 
                                 <!-- Live Preview -->
                                 <div class="preview-card">
-                                    <h4 style="margin-bottom: 1rem;">Live Preview</h4>
+                                    <h4 style="margin-bottom: 1rem;">Pratinjau Langsung</h4>
                                     <div class="wisata-card">
                                         <div id="imagePreview" class="image-preview" style="height: 200px;">
                                             <div class="image-preview-placeholder">
                                                 <span>📷</span>
-                                                <p>Preview Gambar</p>
+                                                <p>Pratinjau Gambar</p>
                                             </div>
                                         </div>
                                         <div class="wisata-content">
@@ -402,10 +402,10 @@ $page_title = 'Wisata Management';
                         <h3 class="card-title">Daftar Wisata (<?php echo $total_records; ?> Total)</h3>
                         <div style="display: flex; gap: 0.5rem;">
                             <a href="wisata_analytics.php" class="btn btn-primary btn-sm">
-                                <span>📊</span> Analytics
+                                <span>📊</span> Analitik
                             </a>
                             <button class="btn btn-outline btn-sm" onclick="window.print()">
-                                <span>🖨️</span> Print
+                                <span>🖨️</span> Cetak
                             </button>
                         </div>
                     </div>
@@ -459,11 +459,11 @@ $page_title = 'Wisata Management';
                                             <div class="wisata-details" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #eee;">
                                                 <div class="wisata-detail">
                                                     <span>👁️</span>
-                                                    <strong><?php echo number_format($wisata['total_views']); ?></strong> views
+                                                    <strong><?php echo number_format($wisata['total_views']); ?></strong> tampilan
                                                 </div>
                                                 <div class="wisata-detail">
                                                     <span>👥</span>
-                                                    <strong><?php echo number_format($wisata['unique_visitors']); ?></strong> visitors
+                                                    <strong><?php echo number_format($wisata['unique_visitors']); ?></strong> pengunjung
                                                 </div>
                                                 <div class="wisata-detail">
                                                     <span>📅</span>
@@ -494,7 +494,7 @@ $page_title = 'Wisata Management';
                                 <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
                                     <?php if ($page > 1): ?>
                                         <a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>" 
-                                           class="btn btn-outline btn-sm">Previous</a>
+                                           class="btn btn-outline btn-sm">Sebelumnya</a>
                                     <?php endif; ?>
                                     
                                     <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
@@ -504,7 +504,7 @@ $page_title = 'Wisata Management';
                                     
                                     <?php if ($page < $total_pages): ?>
                                         <a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>" 
-                                           class="btn btn-outline btn-sm">Next</a>
+                                           class="btn btn-outline btn-sm">Selanjutnya</a>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>
@@ -530,14 +530,14 @@ $page_title = 'Wisata Management';
             const btn = document.getElementById('toggleBtn');
             if (form.style.display === 'none') {
                 form.style.display = 'block';
-                btn.innerHTML = '<span>▲</span> Collapse';
+                btn.innerHTML = '<span>▲</span> Tutup';
                 // Auto-collapse sidebar on mobile or when expanding form
                 if (window.innerWidth < 1200) {
                     autoCollapseSidebar();
                 }
             } else {
                 form.style.display = 'none';
-                btn.innerHTML = '<span>▼</span> Expand';
+                btn.innerHTML = '<span>▼</span> Buka';
             }
         }
         
@@ -565,7 +565,7 @@ $page_title = 'Wisata Management';
             const file = fileInput.files[0];
             
             if (file && file.size > 5 * 1024 * 1024) {
-                showToast('Ukuran file terlalu besar. Maksimal 5MB.', 'error');
+                showToast('Ukuran file terlalu besar. Maksimal 5MB.', 'error'); // Already in Indonesian
                 return false;
             }
             
@@ -574,14 +574,14 @@ $page_title = 'Wisata Management';
         
         // Delete wisata
         function deleteWisata(id) {
-            if (confirmDelete('Apakah Anda yakin ingin menghapus wisata ini?')) {
+            if (confirmDelete('Apakah Anda yakin ingin menghapus wisata ini?')) { // Already in Indonesian
                 window.location.href = '?delete=' + id;
             }
         }
         
         // Edit wisata (placeholder)
         function editWisata(id) {
-            showToast('Fitur edit akan segera tersedia', 'info');
+            showToast('Fitur edit akan segera tersedia', 'info'); // Already in Indonesian
         }
         
         // Apply filters

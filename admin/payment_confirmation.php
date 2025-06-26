@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['transaksi_id']) && iss
         $log_stmt->close();
         
         $db->commit();
-        $success_message = "Payment has been " . ($action == 'confirm' ? 'confirmed' : 'rejected') . " successfully!";
+        $success_message = "Pembayaran berhasil " . ($action == 'confirm' ? 'dikonfirmasi' : 'ditolak') . "!";
         
     } catch (Exception $e) {
         $db->rollback();
@@ -127,7 +127,7 @@ $stats_stmt->close();
 $db->close();
 
 // Set page title for header
-$page_title = 'Payment Confirmation';
+$page_title = 'Konfirmasi Pembayaran';
 
 // Function to render payment cards
 function renderPaymentCard($payment, $showActions = true) {
@@ -137,7 +137,7 @@ function renderPaymentCard($payment, $showActions = true) {
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                 <div>
                     <h4 style="margin: 0; font-size: 1.25rem;">
-                        Transaction #<?php echo htmlspecialchars($payment['transaction_code']); ?>
+                        Transaksi #<?php echo htmlspecialchars($payment['transaction_code']); ?>
                     </h4>
                     <p style="margin: 0.25rem 0; color: var(--text-secondary);">
                         <?php echo date('d M Y H:i', strtotime($payment['created_at'])); ?>
@@ -148,15 +148,15 @@ function renderPaymentCard($payment, $showActions = true) {
                          ($payment['payment_status'] == 'paid' ? 'success' : 'danger'); 
                 ?>">
                     <?php 
-                    echo $payment['payment_status'] == 'awaiting_confirmation' ? 'Awaiting Confirmation' : 
-                         ($payment['payment_status'] == 'paid' ? 'Confirmed' : 'Rejected'); 
+                    echo $payment['payment_status'] == 'awaiting_confirmation' ? 'Menunggu Konfirmasi' : 
+                         ($payment['payment_status'] == 'paid' ? 'Terkonfirmasi' : 'Ditolak'); 
                     ?>
                 </span>
             </div>
             
             <div class="payment-details">
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Customer</span>
+                    <span class="payment-detail-label">Pelanggan</span>
                     <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_name']); ?></span>
                 </div>
                 <div class="payment-detail-item">
@@ -164,34 +164,34 @@ function renderPaymentCard($payment, $showActions = true) {
                     <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_email']); ?></span>
                 </div>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Phone</span>
+                    <span class="payment-detail-label">Telepon</span>
                     <span class="payment-detail-value"><?php echo htmlspecialchars($payment['user_phone'] ?? 'N/A'); ?></span>
                 </div>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Total Amount</span>
+                    <span class="payment-detail-label">Total Pembayaran</span>
                     <span class="payment-detail-value" style="color: #059669; font-size: 1.125rem;">
                         Rp <?php echo number_format($payment['total_amount']); ?>
                     </span>
                 </div>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Payment Method</span>
+                    <span class="payment-detail-label">Metode Pembayaran</span>
                     <span class="payment-detail-value">
-                        <?php echo $payment['payment_method'] == 'bank_transfer' ? 'Bank Transfer' : 'E-Wallet'; ?>
+                        <?php echo $payment['payment_method'] == 'bank_transfer' ? 'Transfer Bank' : 'E-Wallet'; ?>
                     </span>
                 </div>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">User Payment Date</span>
+                    <span class="payment-detail-label">Tanggal Pembayaran User</span>
                     <span class="payment-detail-value">
                         <?php echo $payment['user_payment_date'] ? date('d M Y H:i', strtotime($payment['user_payment_date'])) : 'N/A'; ?>
                     </span>
                 </div>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Items</span>
-                    <span class="payment-detail-value"><?php echo $payment['item_count']; ?> item(s)</span>
+                    <span class="payment-detail-label">Item</span>
+                    <span class="payment-detail-value"><?php echo $payment['item_count']; ?> item</span>
                 </div>
                 <?php if ($payment['payment_status'] == 'paid' && $payment['payment_confirmed_at']): ?>
                 <div class="payment-detail-item">
-                    <span class="payment-detail-label">Confirmed At</span>
+                    <span class="payment-detail-label">Dikonfirmasi Pada</span>
                     <span class="payment-detail-value">
                         <?php echo date('d M Y H:i', strtotime($payment['payment_confirmed_at'])); ?>
                     </span>
@@ -201,17 +201,17 @@ function renderPaymentCard($payment, $showActions = true) {
             
             <?php if ($payment['payment_proof']): ?>
                 <div class="payment-proof-container">
-                    <h5 style="margin-bottom: 0.5rem;">Payment Proof:</h5>
+                    <h5 style="margin-bottom: 0.5rem;">Bukti Pembayaran:</h5>
                     <img src="../uploads/payment_proofs/<?php echo htmlspecialchars($payment['payment_proof']); ?>" 
-                         alt="Payment Proof" 
+                         alt="Bukti Pembayaran" 
                          class="payment-proof-img"
                          onclick="openModal('<?php echo htmlspecialchars($payment['payment_proof']); ?>')">
                     <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                        Click image to enlarge
+                        Klik gambar untuk memperbesar
                     </p>
                 </div>
             <?php else: ?>
-                <p style="color: var(--text-secondary);">No payment proof uploaded</p>
+                <p style="color: var(--text-secondary);">Tidak ada bukti pembayaran yang diunggah</p>
             <?php endif; ?>
             
             <?php if ($showActions && $payment['payment_status'] == 'awaiting_confirmation'): ?>
@@ -220,24 +220,24 @@ function renderPaymentCard($payment, $showActions = true) {
                     <input type="hidden" name="action" id="action-<?php echo $payment['id']; ?>" value="">
                     
                     <div class="form-group notes-input">
-                        <label for="notes_<?php echo $payment['id']; ?>" class="form-label">Admin Notes (Optional)</label>
+                        <label for="notes_<?php echo $payment['id']; ?>" class="form-label">Catatan Admin (Opsional)</label>
                         <input type="text" 
                                name="notes" 
                                id="notes_<?php echo $payment['id']; ?>" 
                                class="form-control" 
-                               placeholder="Add any notes about this payment...">
+                               placeholder="Tambahkan catatan tentang pembayaran ini...">
                     </div>
                     
                     <button type="button" 
                             onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'confirm')"
                             class="btn btn-success">
-                        <span>✓</span> Confirm Payment
+                        <span>✓</span> Konfirmasi Pembayaran
                     </button>
                     
                     <button type="button" 
                             onclick="submitPaymentAction('<?php echo $payment['id']; ?>', 'reject')"
                             class="btn btn-danger">
-                        <span>✕</span> Reject
+                        <span>✕</span> Tolak
                     </button>
                 </form>
             <?php endif; ?>
@@ -252,7 +252,7 @@ function renderPaymentCard($payment, $showActions = true) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Confirmation - Papua Journey Admin</title>
+    <title>Konfirmasi Pembayaran - Papua Journey Admin</title>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="admin.css">
     <style>
@@ -400,7 +400,7 @@ function renderPaymentCard($payment, $showActions = true) {
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['awaiting_confirmation']['count'] ?? 0); ?></div>
-                                <div class="stat-label">Awaiting Confirmation</div>
+                                <div class="stat-label">Menunggu Konfirmasi</div>
                                 <div class="stat-trend">
                                     <span style="font-weight: 600;">Rp <?php echo number_format($payment_stats['awaiting_confirmation']['total_amount'] ?? 0); ?></span>
                                 </div>
@@ -413,7 +413,7 @@ function renderPaymentCard($payment, $showActions = true) {
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['paid']['count'] ?? 0); ?></div>
-                                <div class="stat-label">Confirmed Payments</div>
+                                <div class="stat-label">Pembayaran Terkonfirmasi</div>
                                 <div class="stat-trend trend-up">
                                     <span style="font-weight: 600;">Rp <?php echo number_format($payment_stats['paid']['total_amount'] ?? 0); ?></span>
                                 </div>
@@ -426,7 +426,7 @@ function renderPaymentCard($payment, $showActions = true) {
                         <div class="stat-header">
                             <div>
                                 <div class="stat-value"><?php echo number_format($payment_stats['rejected']['count'] ?? 0); ?></div>
-                                <div class="stat-label">Rejected Payments</div>
+                                <div class="stat-label">Pembayaran Ditolak</div>
                                 <div class="stat-trend">
                                     <span style="font-weight: 600;">Rp <?php echo number_format($payment_stats['rejected']['total_amount'] ?? 0); ?></span>
                                 </div>
@@ -441,13 +441,13 @@ function renderPaymentCard($payment, $showActions = true) {
                 <div class="payment-section" id="awaiting_confirmation_section" style="display: block;">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Pending Payment Confirmations</h3>
-                            <span class="badge badge-warning"><?php echo count($pending_payments); ?> Pending</span>
+                            <h3 class="card-title">Pembayaran Menunggu Konfirmasi</h3>
+                            <span class="badge badge-warning"><?php echo count($pending_payments); ?> Menunggu</span>
                         </div>
                         <div class="card-body">
                             <?php if (empty($pending_payments)): ?>
                                 <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
-                                    No pending payment confirmations at the moment.
+                                    Tidak ada pembayaran yang menunggu konfirmasi saat ini.
                                 </p>
                             <?php else: ?>
                                 <?php foreach ($pending_payments as $payment): ?>
@@ -462,13 +462,13 @@ function renderPaymentCard($payment, $showActions = true) {
                 <div class="payment-section" id="paid_section" style="display: none;">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Confirmed Payments</h3>
-                            <span class="badge badge-success"><?php echo count($confirmed_payments); ?> Confirmed</span>
+                            <h3 class="card-title">Pembayaran Terkonfirmasi</h3>
+                            <span class="badge badge-success"><?php echo count($confirmed_payments); ?> Terkonfirmasi</span>
                         </div>
                         <div class="card-body">
                             <?php if (empty($confirmed_payments)): ?>
                                 <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
-                                    No confirmed payments at the moment.
+                                    Tidak ada pembayaran yang terkonfirmasi saat ini.
                                 </p>
                             <?php else: ?>
                                 <?php foreach ($confirmed_payments as $payment): ?>
@@ -483,13 +483,13 @@ function renderPaymentCard($payment, $showActions = true) {
                 <div class="payment-section" id="rejected_section" style="display: none;">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Rejected Payments</h3>
-                            <span class="badge badge-danger"><?php echo count($rejected_payments); ?> Rejected</span>
+                            <h3 class="card-title">Pembayaran Ditolak</h3>
+                            <span class="badge badge-danger"><?php echo count($rejected_payments); ?> Ditolak</span>
                         </div>
                         <div class="card-body">
                             <?php if (empty($rejected_payments)): ?>
                                 <p style="text-align: center; padding: 3rem 0; color: var(--text-secondary);">
-                                    No rejected payments at the moment.
+                                    Tidak ada pembayaran yang ditolak saat ini.
                                 </p>
                             <?php else: ?>
                                 <?php foreach ($rejected_payments as $payment): ?>
@@ -509,7 +509,7 @@ function renderPaymentCard($payment, $showActions = true) {
     <div id="imageModal" class="modal" onclick="closeModal()">
         <span class="close-modal">&times;</span>
         <div class="modal-content">
-            <img id="modalImage" src="" alt="Payment Proof">
+            <img id="modalImage" src="" alt="Bukti Pembayaran">
         </div>
     </div>
     
@@ -566,7 +566,7 @@ function renderPaymentCard($payment, $showActions = true) {
             console.log('submitPaymentAction called with:', paymentId, action);
             
             if (action === 'reject') {
-                if (!confirm('Are you sure you want to reject this payment?')) {
+                if (!confirm('Apakah Anda yakin ingin menolak pembayaran ini?')) {
                     return;
                 }
             }
@@ -577,7 +577,7 @@ function renderPaymentCard($payment, $showActions = true) {
             
             if (!actionInput || !form) {
                 console.error('Form elements not found for payment ID:', paymentId);
-                alert('Error: Form elements not found. Please refresh the page and try again.');
+                alert('Error: Elemen form tidak ditemukan. Silakan refresh halaman dan coba lagi.');
                 return;
             }
             

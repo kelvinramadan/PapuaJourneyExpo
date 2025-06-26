@@ -1,12 +1,12 @@
 <footer class="admin-footer">
     <div class="footer-content">
-        <p>&copy; <?php echo date('Y'); ?> Papua Journey Expo. All rights reserved.</p>
+        <p>&copy; <?php echo date('Y'); ?> Papua Journey Expo. Hak cipta dilindungi.</p>
         <p class="footer-links">
-            <a href="#">Privacy Policy</a>
+            <a href="#">Kebijakan Privasi</a>
             <span>•</span>
-            <a href="#">Terms of Service</a>
+            <a href="#">Syarat Layanan</a>
             <span>•</span>
-            <a href="#">Support</a>
+            <a href="#">Dukungan</a>
         </p>
     </div>
 </footer>

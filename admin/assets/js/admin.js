@@ -182,7 +182,7 @@ function sortTable(table, columnIndex) {
 }
 
 // Confirm Delete
-function confirmDelete(message = 'Are you sure you want to delete this item?') {
+function confirmDelete(message = 'Apakah Anda yakin ingin menghapus item ini?') {
     return confirm(message);
 }
 
@@ -237,7 +237,7 @@ function validateForm(formId) {
             if (!errorMsg) {
                 errorMsg = document.createElement('span');
                 errorMsg.className = 'error-message';
-                errorMsg.textContent = 'This field is required';
+                errorMsg.textContent = 'Kolom ini wajib diisi';
                 input.parentElement.appendChild(errorMsg);
             }
         } else {

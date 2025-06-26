@@ -24,7 +24,7 @@ $page_title = $page_title ?? 'Dashboard';
     
     <div class="header-right">
         <div class="search-box">
-            <input type="text" placeholder="Search..." id="globalSearch">
+            <input type="text" placeholder="Cari..." id="globalSearch">
         </div>
         
         <div class="user-menu">

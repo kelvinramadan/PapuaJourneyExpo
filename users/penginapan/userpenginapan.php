@@ -704,6 +704,35 @@ $database->closeConnection();
         }
     </script>
 
+    <?php if ($view_mode === 'detail' && $penginapan_detail): ?>
+    <script>
+        // Track accommodation view
+        function trackPenginapanView(penginapanId) {
+            fetch('track_view.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    penginapan_id: penginapanId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('View tracked:', data.message);
+            })
+            .catch(error => {
+                console.error('Error tracking view:', error);
+            });
+        }
+        
+        // Track view when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            trackPenginapanView(<?php echo $penginapan_detail['id']; ?>);
+        });
+    </script>
+    <?php endif; ?>
+
     <!-- Additional CSS untuk perbaikan responsif -->
     <style>
         /* Perbaikan untuk mobile */
