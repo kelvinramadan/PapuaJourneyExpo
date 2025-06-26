@@ -65,7 +65,7 @@ $conversationId = isset($_GET['conversation_id']) ? $_GET['conversation_id'] : (
 // If requesting conversation list
 if (isset($_GET['list_conversations'])) {
     $stmt = $conn->prepare("
-        SELECT cs.conversation_id, cs.started_at, cs.last_message_at, cs.message_count,
+        SELECT cs.conversation_id, cs.created_at as started_at, cs.last_message_at, cs.message_count,
                (SELECT message FROM chat_conversations 
                 WHERE conversation_id = cs.conversation_id 
                 ORDER BY created_at DESC LIMIT 1) as last_message
@@ -85,7 +85,7 @@ if (isset($_GET['list_conversations'])) {
             'started_at' => $row['started_at'],
             'last_message_at' => $row['last_message_at'],
             'message_count' => $row['message_count'],
-            'preview' => mb_substr($row['last_message'], 0, 100) . (mb_strlen($row['last_message']) > 100 ? '...' : '')
+            'preview' => mb_substr($row['last_message'] ?? '', 0, 100) . (mb_strlen($row['last_message'] ?? '') > 100 ? '...' : '')
         ];
     }
     

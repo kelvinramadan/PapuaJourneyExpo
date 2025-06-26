@@ -566,6 +566,80 @@ ALTER TABLE `pemesanan_tiket`
 --
 ALTER TABLE `transaksi_items`
   ADD CONSTRAINT `fk_transaksi_items` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_conversations`
+--
+
+CREATE TABLE `chat_conversations` (
+  `id` int(11) NOT NULL,
+  `conversation_id` varchar(36) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `message_type` enum('user','bot') NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_conversation_sessions`
+--
+
+CREATE TABLE `chat_conversation_sessions` (
+  `conversation_id` varchar(36) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `last_message_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `message_count` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `conversation_id` (`conversation_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `chat_conversation_sessions`
+--
+ALTER TABLE `chat_conversation_sessions`
+  ADD PRIMARY KEY (`conversation_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  ADD CONSTRAINT `chat_conversations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `chat_conversation_sessions`
+--
+ALTER TABLE `chat_conversation_sessions`
+  ADD CONSTRAINT `chat_conversation_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

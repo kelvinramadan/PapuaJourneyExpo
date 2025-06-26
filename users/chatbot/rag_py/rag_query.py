@@ -17,7 +17,7 @@ load_dotenv()
 try:
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
     text_embedding_model = 'models/embedding-001'
-    generation_model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
+    generation_model = genai.GenerativeModel('gemini-2.5-flash')
 except Exception as e:
     print(f"Error configuring Generative AI: {e}", file=sys.stderr)
     sys.exit(1)
