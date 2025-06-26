@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2025 at 03:16 PM
+-- Generation Time: Jun 26, 2025 at 12:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -46,7 +46,9 @@ INSERT INTO `admin_payment_logs` (`id`, `admin_id`, `transaksi_id`, `action`, `n
 (3, 1, 6, 'confirmed', '', '2025-06-24 13:02:36'),
 (4, 1, 6, 'confirmed', '', '2025-06-24 13:04:04'),
 (5, 1, 8, 'confirmed', '', '2025-06-24 13:04:15'),
-(6, 1, 9, 'confirmed', 'bagus', '2025-06-24 13:06:01');
+(6, 1, 9, 'confirmed', 'bagus', '2025-06-24 13:06:01'),
+(7, 1, 11, 'confirmed', '', '2025-06-26 00:40:50'),
+(8, 1, 11, 'confirmed', '', '2025-06-26 00:44:30');
 
 -- --------------------------------------------------------
 
@@ -244,10 +246,7 @@ CREATE TABLE `transaksi` (
 --
 
 INSERT INTO `transaksi` (`id`, `user_id`, `transaction_code`, `total_amount`, `payment_status`, `payment_method`, `payment_proof`, `user_payment_date`, `payment_confirmed_at`, `payment_confirmed_by`, `payment_date`, `created_at`, `updated_at`) VALUES
-(6, 8, 'TRX202506231845148', 10000.00, 'paid', 'e_wallet', 'payment_TRX202506231845148_1750697187.jpg', '2025-06-25 14:45:00', '2025-06-24 20:04:04', 1, '2025-06-24 20:04:04', '2025-06-23 16:45:14', '2025-06-24 13:04:04'),
-(7, 8, 'TRX202506232048068', 28000000.00, 'paid', 'e_wallet', 'payment_TRX202506232048068_1750704504.jpg', '2025-06-26 01:51:00', '2025-06-24 20:02:28', 1, '2025-06-24 20:02:28', '2025-06-23 18:48:06', '2025-06-24 13:02:28'),
-(8, 8, 'TRX202506241503298', 819876.00, 'paid', 'bank_transfer', 'payment_TRX202506241503298_1750770238.png', '2025-06-26 00:05:00', '2025-06-24 20:04:15', 1, '2025-06-24 20:04:15', '2025-06-24 13:03:29', '2025-06-24 13:04:15'),
-(9, 8, 'TRX202506241504508', 7000000.00, 'paid', 'bank_transfer', 'payment_TRX202506241504508_1750770320.png', '2025-06-25 00:06:00', '2025-06-24 20:06:01', 1, '2025-06-24 20:06:01', '2025-06-24 13:04:50', '2025-06-24 13:06:01');
+(11, 8, 'TRX202506260238008', 50000.00, 'paid', 'bank_transfer', 'payment_TRX202506260238008_1750898415.jpg', '2025-06-27 07:40:00', '2025-06-26 07:44:30', 1, '2025-06-26 07:44:30', '2025-06-26 00:38:00', '2025-06-26 00:44:30');
 
 -- --------------------------------------------------------
 
@@ -275,10 +274,7 @@ CREATE TABLE `transaksi_items` (
 --
 
 INSERT INTO `transaksi_items` (`id`, `transaksi_id`, `item_type`, `item_id`, `item_name`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`) VALUES
-(2, 6, '', 4, '0', 1, 10000.00, 10000.00, '0000-00-00', NULL, NULL, ''),
-(3, 7, '', 4, '0', 8, 3500000.00, 28000000.00, NULL, '2025-06-25', '2025-07-03', ''),
-(4, 8, '', 5, '0', 2, 409938.00, 819876.00, '0000-00-00', NULL, NULL, ''),
-(5, 9, '', 4, '0', 2, 3500000.00, 7000000.00, NULL, '2025-06-25', '2025-06-27', '');
+(6, 11, 'wisata', 6, 'Pantai Base-G', 1, 50000.00, 50000.00, '2025-06-27', NULL, NULL, '');
 
 -- --------------------------------------------------------
 
@@ -335,7 +331,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`, `profile_image`, `created_at`, `updated_at`) VALUES
 (1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domanii', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1750312287.jpg', '2025-05-31 15:34:52', '2025-06-19 05:51:27'),
 (3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05'),
-(8, 'slemandanpapua@gmail.com', '$2y$10$DR/eR1vDhzZgUHegcbZFMut8Zan6sgUO/w45g8Gv8hgrcMRwa/leK', 'Trendo', '081357426623', 'furia puskopad block a', 'default-user.jpg', '2025-06-23 13:29:50', '2025-06-23 13:29:50');
+(8, 'slemandanpapua@gmail.com', '$2y$10$8J8g9PhSbxSBwf6bplaYY.GeWgq.7x1NtxKboIsWwJpUNpkgtf0z2', 'Trendo', '081357426645', 'furia puskopad block a', 'user_8_1750800567.jpg', '2025-06-23 13:29:50', '2025-06-24 21:29:27'),
+(9, 'samuelrobail@gmail.com', '$2y$10$.Q72hHPSWfvri1e9281fw.RCSfsJ83c8BXQRwA1oStWz3Mytibw6G', 'Trendo', '081357427945', 'furia puskopad block a', 'default-user.jpg', '2025-06-24 20:46:37', '2025-06-24 20:47:17');
 
 -- --------------------------------------------------------
 
@@ -472,7 +469,7 @@ ALTER TABLE `wisata`
 -- AUTO_INCREMENT for table `admin_payment_logs`
 --
 ALTER TABLE `admin_payment_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `artikel`
@@ -484,7 +481,7 @@ ALTER TABLE `artikel`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
@@ -514,13 +511,13 @@ ALTER TABLE `pesanpenginapan`
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `transaksi_items`
 --
 ALTER TABLE `transaksi_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `umkm`
@@ -532,7 +529,7 @@ ALTER TABLE `umkm`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `wisata`
