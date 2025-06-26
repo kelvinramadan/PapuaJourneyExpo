@@ -1,17 +1,25 @@
 /* Import base styles from my_account.css */
 @import url('my_account.css');
 
+
 /* Order-specific styles */
 
-/* Global fixes for button text */
-a.btn, button.btn {
+/* Order-specific button fixes - scoped to avoid affecting navbar */
+.orders-container a.btn, 
+.orders-container button.btn,
+.order-card a.btn,
+.order-card button.btn,
+.empty-state a.btn,
+.empty-state button.btn {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
 }
 
-.btn span {
+.orders-container .btn span,
+.order-card .btn span,
+.empty-state .btn span {
     line-height: 1;
     vertical-align: middle;
 }

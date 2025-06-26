@@ -112,11 +112,14 @@ while ($order = $orders_result->fetch_assoc()) {
     $items_stmt = $db->prepare("
         SELECT 
             ti.*,
-            CASE 
-                WHEN ti.item_type = 'wisata' THEN w.judul
-                WHEN ti.item_type = 'penginapan' THEN p.judul
-                WHEN ti.item_type = 'artikel' THEN a.judul
-            END as item_title,
+            COALESCE(
+                ti.item_name,
+                CASE 
+                    WHEN ti.item_type = 'wisata' THEN w.judul
+                    WHEN ti.item_type = 'penginapan' THEN p.judul
+                    WHEN ti.item_type = 'artikel' THEN a.judul
+                END
+            ) as item_title,
             CASE 
                 WHEN ti.item_type = 'wisata' THEN w.photo
                 WHEN ti.item_type = 'penginapan' THEN p.photo

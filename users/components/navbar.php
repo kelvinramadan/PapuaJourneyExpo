@@ -642,9 +642,11 @@ $db->close();
 }
 
 /* Adjust body padding for fixed header */
+/* Removed to prevent conflicts with page-specific styles
 body {
     padding-top: 80px;
 }
+*/
 
 /* Media Queries */
 @media (max-width: 768px) {

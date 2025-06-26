@@ -76,7 +76,7 @@ try {
     // Insert transaction items
     foreach ($cart_items as $item) {
         $stmt = $db->prepare("INSERT INTO transaksi_items (transaksi_id, item_type, item_id, item_name, quantity, price_per_unit, subtotal, booking_date, checkin_date, checkout_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iisisiddsss", 
+        $stmt->bind_param("isisiddssss", 
             $transaksi_id, 
             $item['item_type'], 
             $item['item_id'], 
