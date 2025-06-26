@@ -32,7 +32,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     $_SESSION['error_message'] = 'Transaksi tidak ditemukan!';
-    header('Location: ../transaksi/transaksi.php');
+    header('Location: ../account/my_orders.php');
     exit();
 }
 $stmt->close();
@@ -96,6 +96,6 @@ $stmt->close();
 $db->close();
 
 // Redirect to transaction history
-header('Location: ../transaksi/transaksi.php');
+header('Location: ../account/my_orders.php');
 exit();
 ?>

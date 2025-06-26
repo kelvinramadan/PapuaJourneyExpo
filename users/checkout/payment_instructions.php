@@ -469,7 +469,7 @@ $ewallet_accounts = [
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="../transaksi/transaksi.php" class="btn btn-secondary">
+                    <a href="../account/my_orders.php" class="btn btn-secondary">
                         📋 Lihat Riwayat Transaksi
                     </a>
                 </div>

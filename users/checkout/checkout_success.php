@@ -281,7 +281,7 @@ function getPaymentMethodName($method) {
             </div>
             
             <div class="action-buttons">
-                <a href="../transaksi/transaksi.php" class="btn btn-primary">
+                <a href="../account/my_orders.php" class="btn btn-primary">
                     <i class="fas fa-receipt"></i> Lihat Transaksi
                 </a>
                 <a href="../dashboard/user_dashboard.php" class="btn btn-secondary">
@@ -297,7 +297,7 @@ function getPaymentMethodName($method) {
         
         // Auto redirect after 10 seconds
         setTimeout(() => {
-            window.location.href = '../transaksi/transaksi.php';
+            window.location.href = '../account/my_orders.php';
         }, 10000);
     </script>
 </body>
