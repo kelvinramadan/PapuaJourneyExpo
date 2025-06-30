@@ -58,7 +58,7 @@ $params = [];
 $types = '';
 
 if (!empty($search)) {
-    $where_conditions[] = "(judul LIKE ? OR lokasi LIKE ? OR deskripsi LIKE ?)";
+    $where_conditions[] = "(p.judul LIKE ? OR p.lokasi LIKE ? OR p.deskripsi LIKE ?)";
     $search_param = '%' . $search . '%';
     $params[] = $search_param;
     $params[] = $search_param;
@@ -67,7 +67,7 @@ if (!empty($search)) {
 }
 
 if (!empty($tipe_filter)) {
-    $where_conditions[] = "tipe = ?";
+    $where_conditions[] = "p.tipe = ?";
     $params[] = $tipe_filter;
     $types .= 's';
 }
@@ -77,7 +77,14 @@ if (!empty($where_conditions)) {
     $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
 }
 
-$query = "SELECT * FROM penginapan {$where_clause} ORDER BY created_at DESC";
+$query = "SELECT p.*, 
+          COALESCE(rsc.total_reviews, 0) as review_count,
+          COALESCE(rsc.average_rating, 0) as average_rating
+          FROM penginapan p
+          LEFT JOIN review_summary_cache rsc 
+              ON rsc.item_type = 'penginapan' 
+              AND rsc.item_id = p.id
+          {$where_clause} ORDER BY p.created_at DESC";
 $stmt = $db->prepare($query);
 
 if (!empty($params)) {
@@ -214,6 +221,24 @@ $database->closeConnection();
                                         <?php endif; ?>
                                     </div>
                                     <?php endif; ?>
+                                    
+                                    <!-- Review Rating Display -->
+                                    <div class="card-rating">
+                                        <?php if ($penginapan['review_count'] > 0): ?>
+                                            <div class="rating-stars">
+                                                <?php 
+                                                $rating = round($penginapan['average_rating']);
+                                                for ($i = 1; $i <= 5; $i++): 
+                                                ?>
+                                                    <span class="star <?php echo $i <= $rating ? 'filled' : ''; ?>">★</span>
+                                                <?php endfor; ?>
+                                                <span class="rating-value"><?php echo number_format($penginapan['average_rating'], 1); ?></span>
+                                            </div>
+                                            <span class="review-count">(<?php echo $penginapan['review_count']; ?> review<?php echo $penginapan['review_count'] > 1 ? 's' : ''; ?>)</span>
+                                        <?php else: ?>
+                                            <span class="no-reviews">Belum ada review</span>
+                                        <?php endif; ?>
+                                    </div>
                                     
                                     <div class="card-actions">
                                         <a href="?view=detail&id=<?php echo $penginapan['id']; ?>" class="btn-detail">
@@ -514,23 +539,34 @@ $database->closeConnection();
                         mediaHtml = '<div class="review-media">';
                         review.media.forEach(media => {
                             if (media.type === 'image') {
-                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                    <img src="${media.url}" alt="Review image">
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <img src="../../${media.url}" alt="Review image">
                                 </div>`;
                             } else if (media.type === 'video') {
-                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                    <video src="${media.url}"></video>
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <video src="../../${media.url}"></video>
                                 </div>`;
                             }
                         });
                         mediaHtml += '</div>';
                     }
                     
+                    // Create avatar HTML based on whether user has profile image
+                    let avatarHtml;
+                    if (review.user.avatar) {
+                        avatarHtml = `<img src="../../uploads/profile_images/${review.user.avatar}" 
+                                           alt="${review.user.name}"
+                                           onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'reviewer-initial\\'>${review.user.name.charAt(0).toUpperCase()}</span>';">`;
+                    } else {
+                        const initial = review.user.name.charAt(0).toUpperCase();
+                        avatarHtml = `<span class="reviewer-initial">${initial}</span>`;
+                    }
+                    
                     reviewEl.innerHTML = `
                         <div class="review-header">
                             <div class="reviewer-info">
                                 <div class="reviewer-avatar">
-                                    <img src="${review.user.avatar}" alt="${review.user.name}">
+                                    ${avatarHtml}
                                 </div>
                                 <div class="reviewer-details">
                                     <h4>${review.user.name}</h4>

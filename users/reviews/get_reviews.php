@@ -172,7 +172,7 @@ try {
             $media[] = [
                 'id' => $media_item['id'],
                 'type' => $media_item['media_type'],
-                'url' => '/' . $media_item['file_path'],
+                'url' => $media_item['file_path'],
                 'order' => $media_item['upload_order']
             ];
         }
@@ -183,7 +183,7 @@ try {
             'user' => [
                 'id' => $review['user_id'],
                 'name' => $review['user_name'],
-                'avatar' => $review['user_avatar'] ? '/uploads/profile_images/' . $review['user_avatar'] : '/assets/images/default-avatar.png'
+                'avatar' => $review['user_avatar'] // Return just the filename or null
             ],
             'rating' => intval($review['rating']),
             'text' => $review['review_text'],

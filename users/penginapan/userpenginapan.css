@@ -422,6 +422,49 @@ body {
     display: inline-block;
 }
 
+/* Card Rating Styles */
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.rating-stars .star {
+    color: #ddd;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.rating-stars .star.filled {
+    color: #f39c12;
+}
+
+.rating-value {
+    margin-left: 5px;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.review-count {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.no-reviews {
+    color: #999;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
 .related-section {
     margin-top: 50px;
 }

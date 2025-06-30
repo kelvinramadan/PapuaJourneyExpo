@@ -131,9 +131,14 @@ if ($view_mode === 'dashboard') {
     $total_pages = ceil($total_articles / $items_per_page);
 
     // Get articles with pagination
-    $articles_query = "SELECT a.*, u.business_name, u.profile_image as umkm_image
+    $articles_query = "SELECT a.*, u.business_name, u.profile_image as umkm_image,
+                       COALESCE(rsc.total_reviews, 0) as review_count,
+                       COALESCE(rsc.average_rating, 0) as average_rating
                        FROM artikel a 
                        JOIN umkm u ON a.umkm_id = u.id 
+                       LEFT JOIN review_summary_cache rsc 
+                           ON rsc.item_type = 'artikel' 
+                           AND rsc.item_id = a.id
                        WHERE $where_clause
                        ORDER BY a.created_at DESC 
                        LIMIT ? OFFSET ?";
@@ -404,6 +409,24 @@ function truncateText($text, $length) {
                                         </div>
                                     <?php endif; ?>
                                     <span><?php echo htmlspecialchars($artikel['business_name']); ?></span>
+                                </div>
+                                
+                                <!-- Review Rating Display -->
+                                <div class="card-rating">
+                                    <?php if ($artikel['review_count'] > 0): ?>
+                                        <div class="rating-stars">
+                                            <?php 
+                                            $rating = round($artikel['average_rating']);
+                                            for ($i = 1; $i <= 5; $i++): 
+                                            ?>
+                                                <span class="star <?php echo $i <= $rating ? 'filled' : ''; ?>">★</span>
+                                            <?php endfor; ?>
+                                            <span class="rating-value"><?php echo number_format($artikel['average_rating'], 1); ?></span>
+                                        </div>
+                                        <span class="review-count">(<?php echo $artikel['review_count']; ?> review<?php echo $artikel['review_count'] > 1 ? 's' : ''; ?>)</span>
+                                    <?php else: ?>
+                                        <span class="no-reviews">Belum ada review</span>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <div class="card-actions">
@@ -744,23 +767,34 @@ function truncateText($text, $length) {
                     mediaHtml = '<div class="review-media">';
                     review.media.forEach(media => {
                         if (media.type === 'image') {
-                            mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                <img src="${media.url}" alt="Review image">
+                            mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                <img src="../../${media.url}" alt="Review image">
                             </div>`;
                         } else if (media.type === 'video') {
-                            mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                <video src="${media.url}"></video>
+                            mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                <video src="../../${media.url}"></video>
                             </div>`;
                         }
                     });
                     mediaHtml += '</div>';
                 }
                 
+                // Create avatar HTML based on whether user has profile image
+                let avatarHtml;
+                if (review.user.avatar) {
+                    avatarHtml = `<img src="../../uploads/profile_images/${review.user.avatar}" 
+                                       alt="${review.user.name}"
+                                       onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'reviewer-initial\\'>${review.user.name.charAt(0).toUpperCase()}</span>';">`;
+                } else {
+                    const initial = review.user.name.charAt(0).toUpperCase();
+                    avatarHtml = `<span class="reviewer-initial">${initial}</span>`;
+                }
+                
                 reviewEl.innerHTML = `
                     <div class="review-header">
                         <div class="reviewer-info">
                             <div class="reviewer-avatar">
-                                <img src="${review.user.avatar}" alt="${review.user.name}">
+                                ${avatarHtml}
                             </div>
                             <div class="reviewer-details">
                                 <h4>${review.user.name}</h4>

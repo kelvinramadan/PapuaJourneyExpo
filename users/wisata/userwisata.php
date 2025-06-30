@@ -61,23 +61,30 @@ if ($view_mode === 'detail' && $wisata_id > 0) {
 
 // Build query with filters for list view
 if ($view_mode === 'list') {
-    $sql = "SELECT * FROM wisata WHERE 1=1";
+    $sql = "SELECT w.*, 
+            COALESCE(rsc.total_reviews, 0) as review_count,
+            COALESCE(rsc.average_rating, 0) as average_rating
+            FROM wisata w
+            LEFT JOIN review_summary_cache rsc 
+                ON rsc.item_type = 'wisata' 
+                AND rsc.item_id = w.id
+            WHERE 1=1";
     $params = [];
 
     if (!empty($kategori_filter)) {
-        $sql .= " AND kategori = ?";
+        $sql .= " AND w.kategori = ?";
         $params[] = $kategori_filter;
     }
 
     if (!empty($search)) {
-        $sql .= " AND (judul LIKE ? OR deskripsi LIKE ? OR alamat LIKE ?)";
+        $sql .= " AND (w.judul LIKE ? OR w.deskripsi LIKE ? OR w.alamat LIKE ?)";
         $search_param = "%$search%";
         $params[] = $search_param;
         $params[] = $search_param;
         $params[] = $search_param;
     }
 
-    $sql .= " ORDER BY created_at DESC";
+    $sql .= " ORDER BY w.created_at DESC";
 
     // Prepare and execute query
     $stmt = $db->prepare($sql);
@@ -180,6 +187,24 @@ mysqli_close($db);
                                     
                                     <div class="card-description">
                                         <?php echo truncateText(htmlspecialchars($wisata['deskripsi']), 100); ?>
+                                    </div>
+                                    
+                                    <!-- Review Rating Display -->
+                                    <div class="card-rating">
+                                        <?php if ($wisata['review_count'] > 0): ?>
+                                            <div class="rating-stars">
+                                                <?php 
+                                                $rating = round($wisata['average_rating']);
+                                                for ($i = 1; $i <= 5; $i++): 
+                                                ?>
+                                                    <span class="star <?php echo $i <= $rating ? 'filled' : ''; ?>">★</span>
+                                                <?php endfor; ?>
+                                                <span class="rating-value"><?php echo number_format($wisata['average_rating'], 1); ?></span>
+                                            </div>
+                                            <span class="review-count">(<?php echo $wisata['review_count']; ?> review<?php echo $wisata['review_count'] > 1 ? 's' : ''; ?>)</span>
+                                        <?php else: ?>
+                                            <span class="no-reviews">Belum ada review</span>
+                                        <?php endif; ?>
                                     </div>
                                     
                                     <div class="card-actions">
@@ -484,23 +509,34 @@ mysqli_close($db);
                         mediaHtml = '<div class="review-media">';
                         review.media.forEach(media => {
                             if (media.type === 'image') {
-                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                    <img src="${media.url}" alt="Review image">
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <img src="../../${media.url}" alt="Review image">
                                 </div>`;
                             } else if (media.type === 'video') {
-                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
-                                    <video src="${media.url}"></video>
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <video src="../../${media.url}"></video>
                                 </div>`;
                             }
                         });
                         mediaHtml += '</div>';
                     }
                     
+                    // Create avatar HTML based on whether user has profile image
+                    let avatarHtml;
+                    if (review.user.avatar) {
+                        avatarHtml = `<img src="../../uploads/profile_images/${review.user.avatar}" 
+                                           alt="${review.user.name}"
+                                           onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'reviewer-initial\\'>${review.user.name.charAt(0).toUpperCase()}</span>';">`;
+                    } else {
+                        const initial = review.user.name.charAt(0).toUpperCase();
+                        avatarHtml = `<span class="reviewer-initial">${initial}</span>`;
+                    }
+                    
                     reviewEl.innerHTML = `
                         <div class="review-header">
                             <div class="reviewer-info">
                                 <div class="reviewer-avatar">
-                                    <img src="${review.user.avatar}" alt="${review.user.name}">
+                                    ${avatarHtml}
                                 </div>
                                 <div class="reviewer-details">
                                     <h4>${review.user.name}</h4>

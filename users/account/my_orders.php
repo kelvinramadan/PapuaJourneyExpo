@@ -248,6 +248,21 @@ $db->close();
                     </div>
                 </div>
 
+                <!-- Review Info Message for Paid Orders -->
+                <?php if ($active_tab == 'paid'): ?>
+                <div style="background: #e3f2fd; border: 1px solid #90caf9; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-info-circle" style="color: #1976d2; font-size: 20px;"></i>
+                    <div style="flex: 1;">
+                        <strong style="color: #1565c0;">Informasi Review:</strong>
+                        <ul style="margin: 5px 0 0 0; padding-left: 20px; font-size: 14px; color: #424242;">
+                            <li><strong>Wisata:</strong> Dapat direview setelah tanggal kunjungan</li>
+                            <li><strong>Penginapan:</strong> Dapat direview setelah tanggal check-out</li>
+                            <li><strong>Artikel/Produk:</strong> Dapat direview segera setelah pembayaran</li>
+                        </ul>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <!-- Orders List -->
                 <div class="orders-container" id="ordersContainer">
                     <?php if (empty($orders)): ?>
@@ -323,6 +338,24 @@ $db->close();
                                                         Check-out: <?php echo date('d M Y', strtotime($item['checkout_date'])); ?>
                                                     </p>
                                                 <?php endif; ?>
+                                                
+                                                <?php 
+                                                // Debug info - add ?debug=1 to URL to see this
+                                                if (isset($_GET['debug']) && $_GET['debug'] == '1' && $order['payment_status'] == 'paid'): 
+                                                    $current_date_debug = date('Y-m-d');
+                                                ?>
+                                                    <div style="background: #e3f2fd; padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 11px; border: 1px solid #90caf9;">
+                                                        <strong style="color: #1976d2;">🔍 Debug Info:</strong><br>
+                                                        <span style="color: #424242;">Current Date: <?php echo $current_date_debug; ?></span><br>
+                                                        <?php if ($item['item_type'] == 'penginapan'): ?>
+                                                            <span style="color: #424242;">Checkout Date: <?php echo $item['checkout_date'] ?? 'Not set'; ?></span><br>
+                                                            <span style="color: #424242;">Can Review: <?php echo ($current_date_debug >= ($item['checkout_date'] ?? '')) ? '✅ Yes' : '❌ No'; ?></span>
+                                                        <?php elseif ($item['item_type'] == 'wisata'): ?>
+                                                            <span style="color: #424242;">Booking Date: <?php echo $item['booking_date'] ?? 'Not set'; ?></span><br>
+                                                            <span style="color: #424242;">Can Review: <?php echo ($current_date_debug >= ($item['booking_date'] ?? '')) ? '✅ Yes' : '❌ No'; ?></span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="item-pricing">
                                                 <p class="quantity">Jml: <?php echo $item['quantity']; ?></p>
@@ -332,36 +365,54 @@ $db->close();
                                                 if ($order['payment_status'] == 'paid') {
                                                     $can_review = false;
                                                     $current_date = date('Y-m-d');
+                                                    $review_available_date = null;
+                                                    $review_status_message = '';
                                                     
                                                     // Check if event/stay date has passed
                                                     if ($item['item_type'] == 'wisata' && $item['booking_date']) {
                                                         $can_review = $current_date >= $item['booking_date'];
+                                                        $review_available_date = $item['booking_date'];
+                                                        if (!$can_review) {
+                                                            $days_until = ceil((strtotime($item['booking_date']) - strtotime($current_date)) / 86400);
+                                                            $review_status_message = "Review tersedia setelah kunjungan ({$days_until} hari lagi)";
+                                                        }
                                                     } elseif ($item['item_type'] == 'penginapan' && $item['checkout_date']) {
                                                         $can_review = $current_date >= $item['checkout_date'];
+                                                        $review_available_date = $item['checkout_date'];
+                                                        if (!$can_review) {
+                                                            $days_until = ceil((strtotime($item['checkout_date']) - strtotime($current_date)) / 86400);
+                                                            $review_status_message = "Review tersedia setelah check-out ({$days_until} hari lagi)";
+                                                        }
                                                     } elseif ($item['item_type'] == 'artikel') {
                                                         // Artikel can be reviewed immediately after payment
                                                         $can_review = true;
                                                     }
                                                     
-                                                    if ($can_review) {
-                                                        if ($item['review_id']) {
-                                                            // Already reviewed
-                                                            echo '<button class="review-btn reviewed" disabled>';
-                                                            echo '<i class="fas fa-check"></i> Sudah Direview';
-                                                            echo '</button>';
-                                                        } else {
-                                                            // Can write review
-                                                            $item_image = $image_path; // Use the image path from above
-                                                            echo '<button class="review-btn" onclick="openReviewModal(';
-                                                            echo $order['id'] . ', ';
-                                                            echo "'" . $item['item_type'] . "', ";
-                                                            echo $item['item_id'] . ', ';
-                                                            echo "'" . htmlspecialchars($item['item_title'] ?? 'Unknown Item', ENT_QUOTES) . "', ";
-                                                            echo "'" . htmlspecialchars($item_image, ENT_QUOTES) . "'";
-                                                            echo ')">';
-                                                            echo '<i class="fas fa-star"></i> Tulis Review';
-                                                            echo '</button>';
-                                                        }
+                                                    if ($item['review_id']) {
+                                                        // Already reviewed
+                                                        echo '<button class="review-btn reviewed" disabled>';
+                                                        echo '<i class="fas fa-check"></i> Sudah Direview';
+                                                        echo '</button>';
+                                                    } elseif ($can_review) {
+                                                        // Can write review
+                                                        $item_image = $image_path; // Use the image path from above
+                                                        echo '<button class="review-btn" onclick="openReviewModal(';
+                                                        echo $order['id'] . ', ';
+                                                        echo "'" . $item['item_type'] . "', ";
+                                                        echo $item['item_id'] . ', ';
+                                                        echo "'" . htmlspecialchars($item['item_title'] ?? 'Unknown Item', ENT_QUOTES) . "', ";
+                                                        echo "'" . htmlspecialchars($item_image, ENT_QUOTES) . "'";
+                                                        echo ')">';
+                                                        echo '<i class="fas fa-star"></i> Tulis Review';
+                                                        echo '</button>';
+                                                    } else {
+                                                        // Cannot review yet - show status
+                                                        echo '<div class="review-status">';
+                                                        echo '<span class="review-status-pending" title="' . htmlspecialchars($review_status_message) . '">';
+                                                        echo '<i class="fas fa-clock"></i> ';
+                                                        echo $review_status_message;
+                                                        echo '</span>';
+                                                        echo '</div>';
                                                     }
                                                 }
                                                 ?>
