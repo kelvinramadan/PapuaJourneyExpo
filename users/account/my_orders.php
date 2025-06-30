@@ -129,14 +129,20 @@ while ($order = $orders_result->fetch_assoc()) {
                 WHEN ti.item_type = 'wisata' THEN 'Tourism'
                 WHEN ti.item_type = 'penginapan' THEN p.tipe
                 WHEN ti.item_type = 'artikel' THEN a.kategori
-            END as item_category
+            END as item_category,
+            r.id as review_id,
+            r.rating as review_rating
         FROM transaksi_items ti
         LEFT JOIN wisata w ON ti.item_type = 'wisata' AND ti.item_id = w.id
         LEFT JOIN penginapan p ON ti.item_type = 'penginapan' AND ti.item_id = p.id
         LEFT JOIN artikel a ON ti.item_type = 'artikel' AND ti.item_id = a.id
+        LEFT JOIN reviews r ON r.transaksi_id = ti.transaksi_id 
+            AND r.item_type = ti.item_type 
+            AND r.item_id = ti.item_id 
+            AND r.user_id = ?
         WHERE ti.transaksi_id = ?
     ");
-    $items_stmt->bind_param("i", $order['id']);
+    $items_stmt->bind_param("ii", $user_id, $order['id']);
     $items_stmt->execute();
     $items_result = $items_stmt->get_result();
     
@@ -160,6 +166,7 @@ $db->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesanan Saya - Papua Journey</title>
     <link rel="stylesheet" href="my_orders.css">
+    <link rel="stylesheet" href="../../assets/css/reviews.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -320,6 +327,44 @@ $db->close();
                                             <div class="item-pricing">
                                                 <p class="quantity">Jml: <?php echo $item['quantity']; ?></p>
                                                 <p class="price"><?php echo formatPrice($item['subtotal']); ?></p>
+                                                <?php 
+                                                // Show review button for paid orders
+                                                if ($order['payment_status'] == 'paid') {
+                                                    $can_review = false;
+                                                    $current_date = date('Y-m-d');
+                                                    
+                                                    // Check if event/stay date has passed
+                                                    if ($item['item_type'] == 'wisata' && $item['booking_date']) {
+                                                        $can_review = $current_date >= $item['booking_date'];
+                                                    } elseif ($item['item_type'] == 'penginapan' && $item['checkout_date']) {
+                                                        $can_review = $current_date >= $item['checkout_date'];
+                                                    } elseif ($item['item_type'] == 'artikel') {
+                                                        // Artikel can be reviewed immediately after payment
+                                                        $can_review = true;
+                                                    }
+                                                    
+                                                    if ($can_review) {
+                                                        if ($item['review_id']) {
+                                                            // Already reviewed
+                                                            echo '<button class="review-btn reviewed" disabled>';
+                                                            echo '<i class="fas fa-check"></i> Sudah Direview';
+                                                            echo '</button>';
+                                                        } else {
+                                                            // Can write review
+                                                            $item_image = $image_path; // Use the image path from above
+                                                            echo '<button class="review-btn" onclick="openReviewModal(';
+                                                            echo $order['id'] . ', ';
+                                                            echo "'" . $item['item_type'] . "', ";
+                                                            echo $item['item_id'] . ', ';
+                                                            echo "'" . htmlspecialchars($item['item_title'] ?? 'Unknown Item', ENT_QUOTES) . "', ";
+                                                            echo "'" . htmlspecialchars($item_image, ENT_QUOTES) . "'";
+                                                            echo ')">';
+                                                            echo '<i class="fas fa-star"></i> Tulis Review';
+                                                            echo '</button>';
+                                                        }
+                                                    }
+                                                }
+                                                ?>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -453,5 +498,76 @@ $db->close();
             }, 5000);
         });
     </script>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="review-modal">
+        <div class="review-modal-content">
+            <div class="review-modal-header">
+                <h3>Tulis Review</h3>
+                <button class="close-modal" onclick="closeReviewModal()">&times;</button>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="review-product-info">
+                <div class="review-product-image">
+                    <img id="reviewProductImage" src="" alt="Product">
+                </div>
+                <div class="review-product-details">
+                    <h4 id="reviewProductName"></h4>
+                    <p>Berikan penilaian dan review Anda</p>
+                </div>
+            </div>
+            
+            <!-- Hidden inputs -->
+            <input type="hidden" id="reviewTransaksiId">
+            <input type="hidden" id="reviewItemType">
+            <input type="hidden" id="reviewItemId">
+            
+            <!-- Star Rating -->
+            <div class="star-rating-input">
+                <label>Rating</label>
+                <div class="stars-container">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+            </div>
+            
+            <!-- Review Text -->
+            <div class="review-text-input">
+                <label>Review Anda</label>
+                <textarea id="reviewText" placeholder="Bagaimana pengalaman Anda dengan produk/layanan ini?"></textarea>
+                <div class="char-count">
+                    <span id="charCount">0/1000</span>
+                </div>
+            </div>
+            
+            <!-- Media Upload -->
+            <div class="media-upload-section">
+                <label>Tambahkan Foto/Video (Opsional)</label>
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Klik atau drag & drop untuk upload</div>
+                    <div class="upload-info">Maksimal 5 file (Gambar: 5MB, Video: 50MB, maks 10 detik)</div>
+                    <input type="file" id="mediaInput" multiple accept="image/*,video/*" style="display: none;">
+                </div>
+                <div id="mediaPreview" class="media-preview"></div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="review-actions">
+                <button class="btn-cancel" onclick="closeReviewModal()">Batal</button>
+                <button class="btn-submit" id="submitReviewBtn">
+                    <i class="fas fa-paper-plane"></i> Kirim Review
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/reviews.js"></script>
 </body>
 </html>

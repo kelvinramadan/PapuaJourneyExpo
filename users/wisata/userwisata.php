@@ -119,6 +119,8 @@ mysqli_close($db);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wisata Papua - Jelajahi Keindahan Papua</title>
     <link rel="stylesheet" href="userwisata.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../assets/css/reviews.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>
@@ -330,6 +332,237 @@ mysqli_close($db);
                         </div>
                     </div>
                 </div>
+                
+                <!-- Reviews Section -->
+                <div class="reviews-section" id="reviews-section">
+                    <div class="reviews-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="reviews-title">⭐ Ulasan & Rating</h3>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
+                                ✍️ Tulis Review
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <!-- Review Summary -->
+                    <div class="reviews-summary">
+                        <div class="rating-overview">
+                            <p class="average-rating" id="averageRating">0.0</p>
+                            <div class="rating-stars" id="averageStars">☆☆☆☆☆</div>
+                            <p class="total-reviews" id="totalReviews">0 reviews</p>
+                        </div>
+                        
+                        <div class="rating-breakdown">
+                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <div class="rating-bar">
+                                <span class="rating-label"><?php echo $i; ?></span>
+                                <div class="rating-progress">
+                                    <div class="rating-fill" id="rating<?php echo $i; ?>Bar" style="width: 0%"></div>
+                                </div>
+                                <span class="rating-count" id="rating<?php echo $i; ?>Count">0</span>
+                            </div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Sort and Filter -->
+                    <div class="reviews-controls" style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
+                        <label for="sortReviews" style="font-weight: 600;">Urutkan:</label>
+                        <select id="sortReviews" onchange="loadReviews(1)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="newest">Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                            <option value="highest">Rating Tertinggi</option>
+                            <option value="lowest">Rating Terendah</option>
+                            <option value="helpful">Paling Membantu</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Reviews List -->
+                    <div class="reviews-list" id="reviewsList">
+                        <!-- Reviews will be loaded here via AJAX -->
+                    </div>
+                    
+                    <!-- Load More Button -->
+                    <div class="load-more-reviews">
+                        <button class="btn-load-more" id="loadMoreReviews" style="display: none;" onclick="loadMoreReviews()">
+                            Lihat Review Lainnya
+                        </button>
+                    </div>
+                </div>
+                
+                <script>
+                // Load reviews when page loads
+                let currentPage = 1;
+                let currentSort = 'newest';
+                
+                document.addEventListener('DOMContentLoaded', function() {
+                    loadReviews(1);
+                });
+                
+                function loadReviews(page = 1, append = false) {
+                    currentPage = page;
+                    currentSort = document.getElementById('sortReviews').value;
+                    
+                    console.log('Loading reviews for wisata ID:', <?php echo $wisata_detail['id']; ?>);
+                    
+                    fetch(`../reviews/get_reviews.php?item_type=wisata&item_id=<?php echo $wisata_detail['id']; ?>&page=${page}&sort_by=${currentSort}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Review data received:', data);
+                            if (data.success) {
+                                // Update summary
+                                updateReviewSummary(data.summary);
+                                
+                                // Display reviews
+                                const reviewsList = document.getElementById('reviewsList');
+                                if (!append) {
+                                    reviewsList.innerHTML = '';
+                                }
+                                
+                                if (data.reviews.length === 0 && page === 1) {
+                                    reviewsList.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Belum ada review untuk wisata ini. Jadilah yang pertama memberikan review!</p>';
+                                } else {
+                                    data.reviews.forEach(review => {
+                                        reviewsList.appendChild(createReviewElement(review));
+                                    });
+                                }
+                                
+                                // Update load more button
+                                document.getElementById('loadMoreReviews').style.display = data.pagination.has_next ? 'block' : 'none';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading reviews:', error);
+                            // Try to load with debug flag to get more details
+                            fetch(`../reviews/get_reviews.php?item_type=wisata&item_id=<?php echo $wisata_detail['id']; ?>&page=${page}&sort_by=${currentSort}&debug=true`)
+                                .then(response => response.json())
+                                .then(debugData => {
+                                    console.error('Debug response:', debugData);
+                                    if (debugData.help) {
+                                        document.getElementById('reviewsList').innerHTML = `
+                                            <div style="text-align: center; padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; margin: 20px 0;">
+                                                <p style="color: #856404; margin-bottom: 10px;">${debugData.message}</p>
+                                                <code style="background: #f8f9fa; padding: 10px; border-radius: 4px; display: block;">${debugData.help}</code>
+                                            </div>`;
+                                    } else {
+                                        document.getElementById('reviewsList').innerHTML = '<p style="text-align: center; color: red; padding: 20px;">Error loading reviews. Check console for details.</p>';
+                                    }
+                                })
+                                .catch(() => {
+                                    document.getElementById('reviewsList').innerHTML = '<p style="text-align: center; color: red; padding: 20px;">Error loading reviews. Check console for details.</p>';
+                                });
+                        });
+                }
+                
+                function loadMoreReviews() {
+                    loadReviews(currentPage + 1, true);
+                }
+                
+                function updateReviewSummary(summary) {
+                    document.getElementById('averageRating').textContent = summary.average_rating.toFixed(1);
+                    document.getElementById('totalReviews').textContent = `${summary.total_reviews} reviews`;
+                    
+                    // Update stars
+                    const stars = Math.round(summary.average_rating);
+                    document.getElementById('averageStars').textContent = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+                    
+                    // Update rating bars
+                    for (let i = 5; i >= 1; i--) {
+                        document.getElementById(`rating${i}Bar`).style.width = `${summary.rating_percentages[i]}%`;
+                        document.getElementById(`rating${i}Count`).textContent = summary.rating_distribution[i];
+                    }
+                }
+                
+                function createReviewElement(review) {
+                    const reviewEl = document.createElement('div');
+                    reviewEl.className = 'review-item';
+                    
+                    const starsHtml = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                    
+                    let mediaHtml = '';
+                    if (review.media.length > 0) {
+                        mediaHtml = '<div class="review-media">';
+                        review.media.forEach(media => {
+                            if (media.type === 'image') {
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
+                                    <img src="${media.url}" alt="Review image">
+                                </div>`;
+                            } else if (media.type === 'video') {
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('${media.url}', '_blank')" style="cursor: pointer;">
+                                    <video src="${media.url}"></video>
+                                </div>`;
+                            }
+                        });
+                        mediaHtml += '</div>';
+                    }
+                    
+                    reviewEl.innerHTML = `
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <img src="${review.user.avatar}" alt="${review.user.name}">
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4>${review.user.name}</h4>
+                                    <div class="review-date">${review.formatted_date}</div>
+                                </div>
+                            </div>
+                            <div class="review-rating" style="color: #f39c12;">${starsHtml}</div>
+                        </div>
+                        <div class="review-content">${review.text}</div>
+                        ${mediaHtml}
+                        <div class="review-actions">
+                            <div class="helpful-buttons">
+                                Apakah review ini membantu?
+                                <button class="helpful-btn ${review.user_vote === '1' ? 'voted' : ''}" 
+                                        onclick="voteHelpful(${review.id}, true)" 
+                                        ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                    <i class="fas fa-thumbs-up"></i> 
+                                    <span>${review.helpful_count}</span>
+                                </button>
+                                <button class="helpful-btn ${review.user_vote === '0' ? 'voted' : ''}" 
+                                        onclick="voteHelpful(${review.id}, false)"
+                                        ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                    <i class="fas fa-thumbs-down"></i> 
+                                    <span>${review.not_helpful_count}</span>
+                                </button>
+                            </div>
+                            ${review.is_verified ? '<div class="verified-badge"><i class="fas fa-check-circle"></i> Verified Purchase</div>' : ''}
+                        </div>
+                    `;
+                    
+                    return reviewEl;
+                }
+                
+                async function voteHelpful(reviewId, isHelpful) {
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                    alert('Silakan login untuk memberikan vote');
+                    return;
+                    <?php endif; ?>
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('review_id', reviewId);
+                        formData.append('is_helpful', isHelpful);
+                        
+                        const response = await fetch('../reviews/vote_helpful.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (!result.success && result.message) {
+                            alert(result.message);
+                        } else {
+                            // Reload reviews to update vote counts
+                            loadReviews(currentPage);
+                        }
+                    } catch (error) {
+                        console.error('Error voting:', error);
+                    }
+                }
+                </script>
                 
                 <?php if (count($related_wisata) > 0): ?>
                 <div class="articles-grid" style="margin-top: 50px;">
