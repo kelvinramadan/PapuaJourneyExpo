@@ -82,20 +82,25 @@ try {
     
     // Check if the event/stay date has passed
     $current_date = date('Y-m-d');
-    $event_date = null;
+    $can_review = false;
     
     if ($item_type === 'wisata' && $transaction['booking_date']) {
-        $event_date = $transaction['booking_date'];
+        // Wisata: can review after visit date
+        $can_review = $current_date >= $transaction['booking_date'];
+        if (!$can_review) {
+            echo json_encode(['success' => false, 'message' => 'Anda dapat memberikan review setelah tanggal kunjungan']);
+            exit;
+        }
     } elseif ($item_type === 'penginapan' && $transaction['checkout_date']) {
-        $event_date = $transaction['checkout_date'];
+        // Penginapan: can review after checkout date
+        $can_review = $current_date >= $transaction['checkout_date'];
+        if (!$can_review) {
+            echo json_encode(['success' => false, 'message' => 'Anda dapat memberikan review setelah tanggal checkout']);
+            exit;
+        }
     } elseif ($item_type === 'artikel') {
-        // For artikel, allow review after payment (no specific date)
-        $event_date = $transaction['created_at'];
-    }
-    
-    if ($event_date && $current_date < $event_date) {
-        echo json_encode(['success' => false, 'message' => 'Anda dapat memberikan review setelah tanggal kunjungan/checkout']);
-        exit;
+        // Artikel: can review immediately after payment
+        $can_review = true;
     }
     
     // Check if user has already reviewed this item in this transaction

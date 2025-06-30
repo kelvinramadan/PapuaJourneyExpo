@@ -405,63 +405,65 @@ $database->closeConnection();
                                 </form>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Reviews Section -->
-                <div class="reviews-section" id="reviews-section">
-                    <div class="reviews-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 class="reviews-title">⭐ Ulasan & Rating</h3>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
-                                ✍️ Tulis Review
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <!-- Review Summary -->
-                    <div class="reviews-summary">
-                        <div class="rating-overview">
-                            <p class="average-rating" id="averageRating">0.0</p>
-                            <div class="rating-stars" id="averageStars">☆☆☆☆☆</div>
-                            <p class="total-reviews" id="totalReviews">0 reviews</p>
-                        </div>
                         
-                        <div class="rating-breakdown">
-                            <?php for ($i = 5; $i >= 1; $i--): ?>
-                            <div class="rating-bar">
-                                <span class="rating-label"><?php echo $i; ?></span>
-                                <div class="rating-progress">
-                                    <div class="rating-fill" id="rating<?php echo $i; ?>Bar" style="width: 0%"></div>
-                                </div>
-                                <span class="rating-count" id="rating<?php echo $i; ?>Count">0</span>
+                        <!-- Reviews Section -->
+                        <div class="reviews-section" id="reviews-section">
+                            <div class="reviews-card">
+                                <div class="reviews-header">
+                                    <h3 class="reviews-title">⭐ Ulasan & Rating</h3>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
+                                        ✍️ Tulis Review
+                                    </a>
+                                <?php endif; ?>
                             </div>
-                            <?php endfor; ?>
+                            
+                            <!-- Review Summary -->
+                            <div class="reviews-summary">
+                                <div class="rating-overview">
+                                    <p class="average-rating" id="averageRating">0.0</p>
+                                    <div class="rating-stars" id="averageStars">☆☆☆☆☆</div>
+                                    <p class="total-reviews" id="totalReviews">0 reviews</p>
+                                </div>
+                                
+                                <div class="rating-breakdown">
+                                    <?php for ($i = 5; $i >= 1; $i--): ?>
+                                    <div class="rating-bar">
+                                        <span class="rating-label"><?php echo $i; ?></span>
+                                        <div class="rating-progress">
+                                            <div class="rating-fill" id="rating<?php echo $i; ?>Bar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="rating-count" id="rating<?php echo $i; ?>Count">0</span>
+                                    </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            
+                            <!-- Sort and Filter -->
+                            <div class="reviews-controls" style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
+                                <label for="sortReviews" style="font-weight: 600;">Urutkan:</label>
+                                <select id="sortReviews" onchange="loadReviews(1)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                    <option value="newest">Terbaru</option>
+                                    <option value="oldest">Terlama</option>
+                                    <option value="highest">Rating Tertinggi</option>
+                                    <option value="lowest">Rating Terendah</option>
+                                    <option value="helpful">Paling Membantu</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Reviews List -->
+                            <div class="reviews-list" id="reviewsList">
+                                <!-- Reviews will be loaded here via AJAX -->
+                            </div>
+                            
+                            <!-- Load More Button -->
+                            <div class="load-more-reviews">
+                                <button class="btn-load-more" id="loadMoreReviews" style="display: none;" onclick="loadMoreReviews()">
+                                    Lihat Review Lainnya
+                                </button>
+                            </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Sort and Filter -->
-                    <div class="reviews-controls" style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
-                        <label for="sortReviews" style="font-weight: 600;">Urutkan:</label>
-                        <select id="sortReviews" onchange="loadReviews(1)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
-                            <option value="newest">Terbaru</option>
-                            <option value="oldest">Terlama</option>
-                            <option value="highest">Rating Tertinggi</option>
-                            <option value="lowest">Rating Terendah</option>
-                            <option value="helpful">Paling Membantu</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Reviews List -->
-                    <div class="reviews-list" id="reviewsList">
-                        <!-- Reviews will be loaded here via AJAX -->
-                    </div>
-                    
-                    <!-- Load More Button -->
-                    <div class="load-more-reviews">
-                        <button class="btn-load-more" id="loadMoreReviews" style="display: none;" onclick="loadMoreReviews()">
-                            Lihat Review Lainnya
-                        </button>
                     </div>
                 </div>
                 
