@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['transaksi_id']) && iss
     $transaksi_id = (int)$_POST['transaksi_id'];
     $action = $_POST['action']; // 'confirm' or 'reject'
     $notes = $_POST['notes'] ?? '';
-    $admin_id = 1; // For now, we'll use 1 as the admin ID since there's no admin table
+    $admin_id = $_SESSION['admin_id'] ?? 1; // Use session admin_id, fallback to 1 for backward compatibility
     
     $db = getDbConnection();
     

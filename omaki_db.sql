@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 08:31 AM
+-- Generation Time: Jul 01, 2025 at 07:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `omaki_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin`
+--
+
+CREATE TABLE `admin` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`id`, `username`, `password`, `full_name`, `email`, `created_at`, `updated_at`) VALUES
+(1, 'admin', '$2y$10$s4/pWQOh1Ux41e9c5vgzPuD2E1SP6mXIAxFZ9TSQ4l9BHpYsYwqTi', 'Administrator', 'admin@papuajourney.com', '2025-07-01 16:56:28', '2025-07-01 17:01:22');
 
 -- --------------------------------------------------------
 
@@ -639,6 +662,23 @@ INSERT INTO `umkm` (`id`, `email`, `password`, `business_name`, `owner_name`, `p
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `umkm_notifications`
+--
+
+CREATE TABLE `umkm_notifications` (
+  `id` int(11) NOT NULL,
+  `umkm_id` int(11) NOT NULL,
+  `type` enum('new_order','payment_confirmed','payment_rejected') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `transaction_code` varchar(20) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -801,6 +841,13 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- Indexes for table `admin_payment_logs`
 --
 ALTER TABLE `admin_payment_logs`
@@ -957,6 +1004,15 @@ ALTER TABLE `umkm`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `umkm_notifications`
+--
+ALTER TABLE `umkm_notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `umkm_id` (`umkm_id`),
+  ADD KEY `is_read` (`is_read`),
+  ADD KEY `created_at` (`created_at`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -991,6 +1047,12 @@ ALTER TABLE `wisata_views`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `admin_payment_logs`
@@ -1095,6 +1157,12 @@ ALTER TABLE `umkm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `umkm_notifications`
+--
+ALTER TABLE `umkm_notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -1192,6 +1260,12 @@ ALTER TABLE `review_media`
 --
 ALTER TABLE `transaksi_items`
   ADD CONSTRAINT `fk_transaksi_items` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `umkm_notifications`
+--
+ALTER TABLE `umkm_notifications`
+  ADD CONSTRAINT `umkm_notifications_ibfk_1` FOREIGN KEY (`umkm_id`) REFERENCES `umkm` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `wisata_statistics`

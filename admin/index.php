@@ -3,10 +3,6 @@
 session_start();
 require_once '../config/database.php';
 
-// Simple admin authentication
-$admin_username = 'admin';
-$admin_password = 'admin123';
-
 $error_message = '';
 $success_message = '';
 
@@ -15,12 +11,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
     
-    if ($username === $admin_username && $password === $admin_password) {
-        $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_username'] = $username;
+    // Get database connection
+    $db = getDbConnection();
+    
+    // Query admin from database
+    $stmt = $db->prepare("SELECT id, username, password, full_name FROM admin WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $admin = $result->fetch_assoc();
+        
+        // Verify password
+        if (password_verify($password, $admin['password'])) {
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_username'] = $admin['username'];
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_name'] = $admin['full_name'];
+        } else {
+            $error_message = 'Username atau password admin salah!';
+        }
     } else {
-        $error_message = 'Username atau password admin salah!'; // Already in Indonesian
+        $error_message = 'Username atau password admin salah!';
     }
+    
+    $stmt->close();
+    $db->close();
 }
 
 // Handle logout
