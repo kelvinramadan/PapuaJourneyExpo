@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2025 at 11:48 PM
+-- Generation Time: Jul 01, 2025 at 08:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -48,7 +48,17 @@ INSERT INTO `admin_payment_logs` (`id`, `admin_id`, `transaksi_id`, `action`, `n
 (5, 1, 8, 'confirmed', '', '2025-06-24 13:04:15'),
 (6, 1, 9, 'confirmed', 'bagus', '2025-06-24 13:06:01'),
 (7, 1, 11, 'confirmed', '', '2025-06-26 00:40:50'),
-(8, 1, 11, 'confirmed', '', '2025-06-26 00:44:30');
+(8, 1, 11, 'confirmed', '', '2025-06-26 00:44:30'),
+(9, 1, 12, 'confirmed', '', '2025-06-30 15:43:23'),
+(10, 1, 12, 'confirmed', '', '2025-06-30 16:07:32'),
+(11, 1, 13, 'confirmed', '', '2025-06-30 16:07:36'),
+(12, 1, 13, 'confirmed', '', '2025-06-30 16:29:21'),
+(13, 1, 14, 'confirmed', '', '2025-06-30 16:29:25'),
+(14, 1, 14, 'confirmed', '', '2025-06-30 16:43:07'),
+(15, 1, 15, 'confirmed', '', '2025-06-30 16:43:12'),
+(16, 1, 15, 'confirmed', '', '2025-06-30 16:44:24'),
+(17, 1, 16, 'confirmed', '', '2025-06-30 16:44:30'),
+(18, 1, 17, 'confirmed', '', '2025-06-30 20:13:28');
 
 -- --------------------------------------------------------
 
@@ -265,7 +275,8 @@ INSERT INTO `penginapan_statistics` (`id`, `penginapan_id`, `stat_date`, `view_c
 (1, 1, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47'),
 (2, 2, '2025-06-27', 1, 1, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:39:07'),
 (3, 3, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47'),
-(4, 4, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47');
+(4, 4, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47'),
+(9, 4, '2025-06-30', 1, 1, 0, 0.00, '2025-06-30 16:42:29', '2025-06-30 16:42:29');
 
 -- --------------------------------------------------------
 
@@ -288,7 +299,8 @@ CREATE TABLE `penginapan_views` (
 --
 
 INSERT INTO `penginapan_views` (`id`, `penginapan_id`, `user_id`, `ip_address`, `view_date`, `session_id`, `user_agent`) VALUES
-(1, 2, 1, '::1', '2025-06-27 04:39:07', '6f02u1hb506npcldu15372j7qn', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+(1, 2, 1, '::1', '2025-06-27 04:39:07', '6f02u1hb506npcldu15372j7qn', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(2, 4, 8, '::1', '2025-06-30 23:42:29', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
 
 -- --------------------------------------------------------
 
@@ -324,6 +336,210 @@ INSERT INTO `pesanpenginapan` (`id`, `user_id`, `user_name`, `user_email`, `peng
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `transaksi_id` int(11) NOT NULL,
+  `item_type` enum('wisata','penginapan','artikel') NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `rating` tinyint(1) NOT NULL CHECK (`rating` >= 1 and `rating` <= 5),
+  `review_text` text NOT NULL,
+  `is_verified` tinyint(1) DEFAULT 1 COMMENT 'Auto-verified for paid transactions',
+  `is_visible` tinyint(1) DEFAULT 1 COMMENT 'Admin can hide inappropriate reviews',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `user_id`, `transaksi_id`, `item_type`, `item_id`, `rating`, `review_text`, `is_verified`, `is_visible`, `created_at`, `updated_at`) VALUES
+(1, 8, 11, 'wisata', 6, 5, 'Pantainya indah banget', 1, 1, '2025-06-30 15:44:15', '2025-06-30 15:44:15'),
+(2, 8, 14, 'wisata', 4, 4, 'Sangat Indah', 1, 1, '2025-06-30 16:29:56', '2025-06-30 16:29:56'),
+(3, 8, 16, 'artikel', 1, 5, 'mantap banget', 1, 1, '2025-06-30 20:10:08', '2025-06-30 20:10:08'),
+(4, 8, 13, 'artikel', 3, 5, 'Adminnya memiliki wawasan yang luas tentang wisata nya!', 1, 1, '2025-06-30 20:11:23', '2025-06-30 20:11:23'),
+(5, 8, 17, 'artikel', 1, 4, 'Seru bangett', 1, 1, '2025-06-30 20:13:52', '2025-06-30 20:13:52');
+
+--
+-- Triggers `reviews`
+--
+DELIMITER $$
+CREATE TRIGGER `update_review_cache_delete` AFTER DELETE ON `reviews` FOR EACH ROW BEGIN
+    IF OLD.is_visible = 1 THEN
+        -- Recalculate from scratch
+        INSERT INTO review_summary_cache (item_type, item_id, total_reviews, average_rating,
+            rating_1_count, rating_2_count, rating_3_count, rating_4_count, rating_5_count)
+        SELECT 
+            OLD.item_type,
+            OLD.item_id,
+            COUNT(*),
+            IFNULL(AVG(rating), 0),
+            SUM(IF(rating = 1, 1, 0)),
+            SUM(IF(rating = 2, 1, 0)),
+            SUM(IF(rating = 3, 1, 0)),
+            SUM(IF(rating = 4, 1, 0)),
+            SUM(IF(rating = 5, 1, 0))
+        FROM reviews
+        WHERE item_type = OLD.item_type 
+            AND item_id = OLD.item_id 
+            AND is_visible = 1
+        ON DUPLICATE KEY UPDATE
+            total_reviews = VALUES(total_reviews),
+            average_rating = VALUES(average_rating),
+            rating_1_count = VALUES(rating_1_count),
+            rating_2_count = VALUES(rating_2_count),
+            rating_3_count = VALUES(rating_3_count),
+            rating_4_count = VALUES(rating_4_count),
+            rating_5_count = VALUES(rating_5_count);
+        
+        -- Delete cache entry if no reviews left
+        DELETE FROM review_summary_cache 
+        WHERE item_type = OLD.item_type 
+            AND item_id = OLD.item_id 
+            AND total_reviews = 0;
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_review_cache_insert` AFTER INSERT ON `reviews` FOR EACH ROW BEGIN
+    IF NEW.is_visible = 1 THEN
+        INSERT INTO review_summary_cache (item_type, item_id, total_reviews, average_rating,
+            rating_1_count, rating_2_count, rating_3_count, rating_4_count, rating_5_count)
+        VALUES (NEW.item_type, NEW.item_id, 1, NEW.rating,
+            IF(NEW.rating = 1, 1, 0),
+            IF(NEW.rating = 2, 1, 0),
+            IF(NEW.rating = 3, 1, 0),
+            IF(NEW.rating = 4, 1, 0),
+            IF(NEW.rating = 5, 1, 0))
+        ON DUPLICATE KEY UPDATE
+            total_reviews = total_reviews + 1,
+            average_rating = (average_rating * (total_reviews - 1) + NEW.rating) / total_reviews,
+            rating_1_count = rating_1_count + IF(NEW.rating = 1, 1, 0),
+            rating_2_count = rating_2_count + IF(NEW.rating = 2, 1, 0),
+            rating_3_count = rating_3_count + IF(NEW.rating = 3, 1, 0),
+            rating_4_count = rating_4_count + IF(NEW.rating = 4, 1, 0),
+            rating_5_count = rating_5_count + IF(NEW.rating = 5, 1, 0);
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_review_cache_update` AFTER UPDATE ON `reviews` FOR EACH ROW BEGIN
+    -- If visibility changed or rating changed
+    IF OLD.is_visible != NEW.is_visible OR OLD.rating != NEW.rating THEN
+        -- Recalculate from scratch (simpler than tracking all changes)
+        INSERT INTO review_summary_cache (item_type, item_id, total_reviews, average_rating,
+            rating_1_count, rating_2_count, rating_3_count, rating_4_count, rating_5_count)
+        SELECT 
+            NEW.item_type,
+            NEW.item_id,
+            COUNT(*),
+            AVG(rating),
+            SUM(IF(rating = 1, 1, 0)),
+            SUM(IF(rating = 2, 1, 0)),
+            SUM(IF(rating = 3, 1, 0)),
+            SUM(IF(rating = 4, 1, 0)),
+            SUM(IF(rating = 5, 1, 0))
+        FROM reviews
+        WHERE item_type = NEW.item_type 
+            AND item_id = NEW.item_id 
+            AND is_visible = 1
+        ON DUPLICATE KEY UPDATE
+            total_reviews = VALUES(total_reviews),
+            average_rating = VALUES(average_rating),
+            rating_1_count = VALUES(rating_1_count),
+            rating_2_count = VALUES(rating_2_count),
+            rating_3_count = VALUES(rating_3_count),
+            rating_4_count = VALUES(rating_4_count),
+            rating_5_count = VALUES(rating_5_count);
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_helpfulness`
+--
+
+CREATE TABLE `review_helpfulness` (
+  `id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `is_helpful` tinyint(1) NOT NULL COMMENT '1 for helpful, 0 for not helpful',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review_helpfulness`
+--
+
+INSERT INTO `review_helpfulness` (`id`, `review_id`, `user_id`, `is_helpful`, `created_at`) VALUES
+(2, 3, 9, 1, '2025-06-30 20:11:58');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_media`
+--
+
+CREATE TABLE `review_media` (
+  `id` int(11) NOT NULL,
+  `review_id` int(11) NOT NULL,
+  `media_type` enum('image','video') NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `file_size` int(11) DEFAULT NULL COMMENT 'File size in bytes',
+  `duration` int(11) DEFAULT NULL COMMENT 'Video duration in seconds (max 10)',
+  `upload_order` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Order of upload (1-5)',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review_media`
+--
+
+INSERT INTO `review_media` (`id`, `review_id`, `media_type`, `file_path`, `file_size`, `duration`, `upload_order`, `created_at`) VALUES
+(1, 2, 'image', 'uploads/review_media/images/review_2_1_1751300996.png', 1900320, NULL, 1, '2025-06-30 16:29:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_summary_cache`
+--
+
+CREATE TABLE `review_summary_cache` (
+  `id` int(11) NOT NULL,
+  `item_type` enum('wisata','penginapan','artikel') NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `total_reviews` int(11) DEFAULT 0,
+  `average_rating` decimal(3,2) DEFAULT 0.00,
+  `rating_1_count` int(11) DEFAULT 0,
+  `rating_2_count` int(11) DEFAULT 0,
+  `rating_3_count` int(11) DEFAULT 0,
+  `rating_4_count` int(11) DEFAULT 0,
+  `rating_5_count` int(11) DEFAULT 0,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review_summary_cache`
+--
+
+INSERT INTO `review_summary_cache` (`id`, `item_type`, `item_id`, `total_reviews`, `average_rating`, `rating_1_count`, `rating_2_count`, `rating_3_count`, `rating_4_count`, `rating_5_count`, `last_updated`) VALUES
+(1, 'wisata', 6, 1, 5.00, 0, 0, 0, 0, 1, '2025-06-30 15:44:15'),
+(2, 'wisata', 4, 1, 4.00, 0, 0, 0, 1, 0, '2025-06-30 16:29:56'),
+(3, 'artikel', 1, 2, 4.50, 0, 0, 0, 1, 1, '2025-06-30 20:13:52'),
+(4, 'artikel', 3, 1, 5.00, 0, 0, 0, 0, 1, '2025-06-30 20:11:23');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `transaksi`
 --
 
@@ -348,7 +564,13 @@ CREATE TABLE `transaksi` (
 --
 
 INSERT INTO `transaksi` (`id`, `user_id`, `transaction_code`, `total_amount`, `payment_status`, `payment_method`, `payment_proof`, `user_payment_date`, `payment_confirmed_at`, `payment_confirmed_by`, `payment_date`, `created_at`, `updated_at`) VALUES
-(11, 8, 'TRX202506260238008', 50000.00, 'paid', 'bank_transfer', 'payment_TRX202506260238008_1750898415.jpg', '2025-06-27 07:40:00', '2025-06-26 07:44:30', 1, '2025-06-26 07:44:30', '2025-06-26 00:38:00', '2025-06-26 00:44:30');
+(11, 8, 'TRX202506260238008', 50000.00, 'paid', 'bank_transfer', 'payment_TRX202506260238008_1750898415.jpg', '2025-06-27 07:40:00', '2025-06-26 07:44:30', 1, '2025-06-26 07:44:30', '2025-06-26 00:38:00', '2025-06-26 00:44:30'),
+(12, 8, 'TRX202506301739148', 50000.00, 'paid', 'bank_transfer', 'payment_TRX202506301739148_1751298142.jpg', '2025-06-30 22:45:00', '2025-06-30 23:07:32', 1, '2025-06-30 23:07:32', '2025-06-30 15:39:14', '2025-06-30 16:07:32'),
+(13, 8, 'TRX202506301807128', 200000.00, 'paid', 'bank_transfer', 'payment_TRX202506301807128_1751299642.jpg', '2025-07-01 23:07:00', '2025-06-30 23:29:21', 1, '2025-06-30 23:29:21', '2025-06-30 16:07:12', '2025-06-30 16:29:21'),
+(14, 8, 'TRX202506301829048', 10000.00, 'paid', 'bank_transfer', 'payment_TRX202506301829048_1751300955.jpg', '2025-06-30 13:31:00', '2025-06-30 23:43:07', 1, '2025-06-30 23:43:07', '2025-06-30 16:29:04', '2025-06-30 16:43:07'),
+(15, 8, 'TRX202506301842498', 3500000.00, 'paid', 'bank_transfer', 'payment_TRX202506301842498_1751301782.jpg', '2025-06-30 23:45:00', '2025-06-30 23:44:24', 1, '2025-06-30 23:44:24', '2025-06-30 16:42:49', '2025-06-30 16:44:24'),
+(16, 8, 'TRX202506301844078', 75000.00, 'paid', 'bank_transfer', 'payment_TRX202506301844078_1751301859.jpg', '2025-06-30 23:44:00', '2025-06-30 23:44:30', 1, '2025-06-30 23:44:30', '2025-06-30 16:44:07', '2025-06-30 16:44:30'),
+(17, 8, 'TRX202506302213008', 75000.00, 'paid', 'bank_transfer', 'payment_TRX202506302213008_1751314390.jpg', '2025-07-01 05:15:00', '2025-07-01 03:13:28', 1, '2025-07-01 03:13:28', '2025-06-30 20:13:00', '2025-06-30 20:13:28');
 
 -- --------------------------------------------------------
 
@@ -376,7 +598,13 @@ CREATE TABLE `transaksi_items` (
 --
 
 INSERT INTO `transaksi_items` (`id`, `transaksi_id`, `item_type`, `item_id`, `item_name`, `quantity`, `price_per_unit`, `subtotal`, `booking_date`, `checkin_date`, `checkout_date`, `notes`) VALUES
-(6, 11, 'wisata', 6, 'Pantai Base-G', 1, 50000.00, 50000.00, '2025-06-27', NULL, NULL, '');
+(6, 11, 'wisata', 6, 'Pantai Base-G', 1, 50000.00, 50000.00, '2025-06-27', NULL, NULL, ''),
+(7, 12, 'wisata', 6, 'Pantai Base-G', 1, 50000.00, 50000.00, '2025-07-01', NULL, NULL, ''),
+(8, 13, 'artikel', 3, 'Tour Guide', 1, 200000.00, 200000.00, '2025-07-03', NULL, NULL, ''),
+(9, 14, 'wisata', 4, 'Karmon Waterfall', 1, 10000.00, 10000.00, '2025-06-30', NULL, NULL, ''),
+(10, 15, 'penginapan', 4, 'Papua Paradise Eco Resort', 1, 3500000.00, 3500000.00, NULL, '2025-06-30', '2025-07-01', ''),
+(11, 16, 'artikel', 1, 'Snokeling Blue', 1, 75000.00, 75000.00, '2025-07-01', NULL, NULL, ''),
+(12, 17, 'artikel', 1, 'Snokeling Blue', 1, 75000.00, 75000.00, '2025-07-01', NULL, NULL, '');
 
 -- --------------------------------------------------------
 
@@ -510,7 +738,11 @@ CREATE TABLE `wisata_statistics` (
 INSERT INTO `wisata_statistics` (`id`, `wisata_id`, `stat_date`, `view_count`, `unique_visitors`, `booking_count`, `revenue`, `created_at`, `updated_at`) VALUES
 (1, 4, '2025-06-27', 2, 2, 0, 0.00, '2025-06-26 19:50:26', '2025-06-26 20:00:53'),
 (2, 5, '2025-06-27', 1, 1, 0, 0.00, '2025-06-26 19:50:26', '2025-06-26 19:56:37'),
-(3, 6, '2025-06-27', 4, 4, 1, 50000.00, '2025-06-26 19:50:26', '2025-06-26 20:06:26');
+(3, 6, '2025-06-27', 4, 4, 1, 50000.00, '2025-06-26 19:50:26', '2025-06-26 20:06:26'),
+(11, 6, '2025-06-30', 2, 1, 0, 0.00, '2025-06-30 15:38:58', '2025-06-30 16:42:12'),
+(12, 4, '2025-06-30', 1, 1, 0, 0.00, '2025-06-30 16:28:49', '2025-06-30 16:28:49'),
+(14, 6, '2025-07-01', 1, 1, 0, 0.00, '2025-06-30 20:12:42', '2025-06-30 20:12:42'),
+(15, 4, '2025-07-01', 1, 1, 0, 0.00, '2025-06-30 20:38:42', '2025-06-30 20:38:42');
 
 -- --------------------------------------------------------
 
@@ -539,7 +771,12 @@ INSERT INTO `wisata_views` (`id`, `wisata_id`, `user_id`, `ip_address`, `view_da
 (4, 4, 9, '::1', '2025-06-27 03:00:53', 'ucpiiubit5rdoijco6am8av0a0', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0'),
 (5, 6, 9, '::1', '2025-06-27 03:01:07', 'ucpiiubit5rdoijco6am8av0a0', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0'),
 (6, 6, 8, '::1', '2025-06-27 03:03:25', '91e5qq1noabrc7f5v6d63rs5jm', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
-(7, 6, 8, '::1', '2025-06-27 03:06:25', '3aj0j4ohfec3ltu9c18ncnki20', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+(7, 6, 8, '::1', '2025-06-27 03:06:25', '3aj0j4ohfec3ltu9c18ncnki20', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(8, 6, 8, '::1', '2025-06-30 22:38:58', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(9, 4, 8, '::1', '2025-06-30 23:28:49', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(10, 6, 8, '::1', '2025-06-30 23:42:11', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(11, 6, 8, '::1', '2025-07-01 03:12:42', '59934d9knach3tfp4kqfm675sq', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(12, 4, 8, '::1', '2025-07-01 03:38:42', '59934d9knach3tfp4kqfm675sq', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
 
 -- --------------------------------------------------------
 
@@ -655,6 +892,45 @@ ALTER TABLE `pesanpenginapan`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_user_transaksi_item` (`user_id`,`transaksi_id`,`item_type`,`item_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_item` (`item_type`,`item_id`),
+  ADD KEY `idx_transaksi` (`transaksi_id`),
+  ADD KEY `idx_rating` (`rating`),
+  ADD KEY `idx_created` (`created_at`),
+  ADD KEY `idx_reviews_visible_rating` (`is_visible`,`rating`,`created_at`),
+  ADD KEY `idx_reviews_item_visible` (`item_type`,`item_id`,`is_visible`,`created_at`);
+
+--
+-- Indexes for table `review_helpfulness`
+--
+ALTER TABLE `review_helpfulness`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_vote` (`review_id`,`user_id`),
+  ADD KEY `idx_review_id` (`review_id`),
+  ADD KEY `idx_user_id` (`user_id`);
+
+--
+-- Indexes for table `review_media`
+--
+ALTER TABLE `review_media`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_review_id` (`review_id`);
+
+--
+-- Indexes for table `review_summary_cache`
+--
+ALTER TABLE `review_summary_cache`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_item` (`item_type`,`item_id`),
+  ADD KEY `idx_item` (`item_type`,`item_id`),
+  ADD KEY `idx_average_rating` (`average_rating`);
+
+--
 -- Indexes for table `transaksi`
 --
 ALTER TABLE `transaksi`
@@ -720,7 +996,7 @@ ALTER TABLE `wisata_views`
 -- AUTO_INCREMENT for table `admin_payment_logs`
 --
 ALTER TABLE `admin_payment_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `artikel`
@@ -732,7 +1008,7 @@ ALTER TABLE `artikel`
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `chat_conversations`
@@ -762,13 +1038,13 @@ ALTER TABLE `penginapan`
 -- AUTO_INCREMENT for table `penginapan_statistics`
 --
 ALTER TABLE `penginapan_statistics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `penginapan_views`
 --
 ALTER TABLE `penginapan_views`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pesanpenginapan`
@@ -777,16 +1053,40 @@ ALTER TABLE `pesanpenginapan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `review_helpfulness`
+--
+ALTER TABLE `review_helpfulness`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `review_media`
+--
+ALTER TABLE `review_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `review_summary_cache`
+--
+ALTER TABLE `review_summary_cache`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `transaksi_items`
 --
 ALTER TABLE `transaksi_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `umkm`
@@ -810,13 +1110,13 @@ ALTER TABLE `wisata`
 -- AUTO_INCREMENT for table `wisata_statistics`
 --
 ALTER TABLE `wisata_statistics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `wisata_views`
 --
 ALTER TABLE `wisata_views`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -866,6 +1166,26 @@ ALTER TABLE `penginapan_statistics`
 ALTER TABLE `penginapan_views`
   ADD CONSTRAINT `penginapan_views_ibfk_1` FOREIGN KEY (`penginapan_id`) REFERENCES `penginapan` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `penginapan_views_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `fk_reviews_transaksi` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `review_helpfulness`
+--
+ALTER TABLE `review_helpfulness`
+  ADD CONSTRAINT `fk_helpfulness_review` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_helpfulness_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `review_media`
+--
+ALTER TABLE `review_media`
+  ADD CONSTRAINT `fk_review_media` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `transaksi_items`
