@@ -41,7 +41,7 @@ if ($tables_exist) {
             COUNT(wv.id) as view_count
         FROM wisata w
         INNER JOIN wisata_views wv ON w.id = wv.wisata_id
-        WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
         GROUP BY w.id, w.judul
         ORDER BY view_count DESC
         LIMIT 10
@@ -62,7 +62,7 @@ if ($tables_exist) {
             COUNT(wv.id) as view_count
         FROM wisata w
         INNER JOIN wisata_views wv ON w.id = wv.wisata_id
-        WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
         GROUP BY w.kategori
         ORDER BY view_count DESC
     ";
@@ -87,7 +87,7 @@ if ($tables_exist) {
                 COUNT(pv.id) as view_count
             FROM penginapan p
             INNER JOIN penginapan_views pv ON p.id = pv.penginapan_id
-            WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY p.id, p.judul
             ORDER BY view_count DESC
             LIMIT 10
@@ -108,7 +108,7 @@ if ($tables_exist) {
                 COUNT(pv.id) as view_count
             FROM penginapan p
             INNER JOIN penginapan_views pv ON p.id = pv.penginapan_id
-            WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY p.tipe
             ORDER BY view_count DESC
         ";
@@ -422,9 +422,9 @@ if ($tables_exist) {
                             ?></h3>
                         </div>
                         <div class="stat-box">
-                            <p>Aktif Minggu Ini</p>
+                            <p>Aktif Bulan Ini</p>
                             <h3><?php 
-                                $active_dest = $conn->query("SELECT COUNT(DISTINCT wisata_id) as total FROM wisata_views WHERE view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['total'];
+                                $active_dest = $conn->query("SELECT COUNT(DISTINCT wisata_id) as total FROM wisata_views WHERE view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetch_assoc()['total'];
                                 echo number_format($active_dest);
                             ?></h3>
                         </div>
@@ -432,10 +432,10 @@ if ($tables_exist) {
                     
                     <!-- Trending Destinations Chart -->
                     <div class="chart-container">
-                        <h2>🔥 Top 10 Destinasi Wisata (7 Hari Terakhir)</h2>
+                        <h2>🔥 Top 10 Destinasi Wisata (30 Hari Terakhir)</h2>
                         <?php if (empty($trending_data)): ?>
                             <div class="no-data">
-                                <p>Belum ada data views dalam 7 hari terakhir.</p>
+                                <p>Belum ada data views dalam 30 hari terakhir.</p>
                                 <p>Data akan muncul setelah pengunjung membuka halaman detail wisata.</p>
                             </div>
                         <?php else: ?>
@@ -477,9 +477,9 @@ if ($tables_exist) {
                             ?></h3>
                         </div>
                         <div class="stat-box">
-                            <p>Aktif Minggu Ini</p>
+                            <p>Aktif Bulan Ini</p>
                             <h3><?php 
-                                $active_acc = $conn->query("SELECT COUNT(DISTINCT penginapan_id) as total FROM penginapan_views WHERE view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['total'];
+                                $active_acc = $conn->query("SELECT COUNT(DISTINCT penginapan_id) as total FROM penginapan_views WHERE view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetch_assoc()['total'];
                                 echo number_format($active_acc);
                             ?></h3>
                         </div>
@@ -487,10 +487,10 @@ if ($tables_exist) {
                     
                     <!-- Trending Accommodations Chart -->
                     <div class="chart-container">
-                        <h2>🔥 Top 10 Penginapan (7 Hari Terakhir)</h2>
+                        <h2>🔥 Top 10 Penginapan (30 Hari Terakhir)</h2>
                         <?php if (empty($acc_trending_data)): ?>
                             <div class="no-data">
-                                <p>Belum ada data views penginapan dalam 7 hari terakhir.</p>
+                                <p>Belum ada data views penginapan dalam 30 hari terakhir.</p>
                                 <p>Data akan muncul setelah pengunjung membuka halaman detail penginapan.</p>
                             </div>
                         <?php else: ?>
