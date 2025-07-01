@@ -1,0 +1,63 @@
+Payment Callback API Documentation
+==================================
+
+Endpoint: /api/payment_callback.php
+Method: POST
+Content-Type: application/json
+
+Purpose:
+--------
+This endpoint receives payment status updates from payment gateways (e.g., Midtrans, Xendit, etc.)
+and automatically updates transaction status and notifies UMKM vendors.
+
+Request Format:
+--------------
+{
+    "transaction_code": "TRX20250701123456",
+    "status": "success" | "failed",
+    "payment_method": "bank_transfer" | "e_wallet" | "credit_card",
+    "amount": 75000.00,
+    "signature": "sha256_hmac_signature"
+}
+
+Response Format:
+---------------
+Success (200):
+{
+    "success": true,
+    "message": "Payment status updated successfully",
+    "transaction_code": "TRX20250701123456"
+}
+
+Error (400/401/405):
+{
+    "error": "Error message"
+}
+
+Signature Verification:
+----------------------
+The signature should be calculated as:
+HMAC-SHA256(transaction_code + amount, secret_key)
+
+Features:
+---------
+1. Automatic payment confirmation/rejection
+2. UMKM notification creation
+3. Admin payment log entry
+4. Request logging for debugging
+5. Amount verification
+6. Transaction validation
+
+Security:
+---------
+- Signature verification required
+- Amount matching validation
+- IP logging for audit trail
+- Only POST method allowed
+
+Integration Notes:
+-----------------
+1. Update the secret_key in the code with your payment gateway's secret
+2. Implement the specific signature verification method for your gateway
+3. All requests are logged to /logs/payment_callbacks.log
+4. Admin ID 0 is used for automatic confirmations

@@ -51,6 +51,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['transaksi_id']) && iss
         }
         $log_stmt->close();
         
+        // Create notifications for UMKM if payment is confirmed
+        if ($action == 'confirm') {
+            // Get all UMKM vendors who have products in this transaction
+            $umkm_query = "SELECT DISTINCT a.umkm_id, a.judul, ti.quantity, ti.subtotal, u.business_name
+                          FROM transaksi_items ti
+                          JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                          JOIN umkm u ON a.umkm_id = u.id
+                          WHERE ti.transaksi_id = ?";
+            
+            $umkm_stmt = $db->prepare($umkm_query);
+            $umkm_stmt->bind_param("i", $transaksi_id);
+            $umkm_stmt->execute();
+            $umkm_result = $umkm_stmt->get_result();
+            
+            // Get transaction code
+            $trans_query = "SELECT transaction_code FROM transaksi WHERE id = ?";
+            $trans_stmt = $db->prepare($trans_query);
+            $trans_stmt->bind_param("i", $transaksi_id);
+            $trans_stmt->execute();
+            $trans_result = $trans_stmt->get_result();
+            $transaction_code = $trans_result->fetch_assoc()['transaction_code'];
+            $trans_stmt->close();
+            
+            // Create notification for each UMKM
+            while ($umkm = $umkm_result->fetch_assoc()) {
+                $notif_title = "Pembayaran Dikonfirmasi!";
+                $notif_message = "Pesanan untuk '{$umkm['judul']}' (Qty: {$umkm['quantity']}, Total: Rp " . number_format($umkm['subtotal']) . ") telah dikonfirmasi. Kode transaksi: {$transaction_code}";
+                
+                $notif_stmt = $db->prepare("INSERT INTO umkm_notifications (umkm_id, type, title, message, transaction_code) VALUES (?, 'payment_confirmed', ?, ?, ?)");
+                $notif_stmt->bind_param("isss", $umkm['umkm_id'], $notif_title, $notif_message, $transaction_code);
+                $notif_stmt->execute();
+                $notif_stmt->close();
+            }
+            $umkm_stmt->close();
+        } else if ($action == 'reject') {
+            // Create notifications for UMKM if payment is rejected
+            $umkm_query = "SELECT DISTINCT a.umkm_id, a.judul, ti.quantity
+                          FROM transaksi_items ti
+                          JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                          WHERE ti.transaksi_id = ?";
+            
+            $umkm_stmt = $db->prepare($umkm_query);
+            $umkm_stmt->bind_param("i", $transaksi_id);
+            $umkm_stmt->execute();
+            $umkm_result = $umkm_stmt->get_result();
+            
+            // Get transaction code
+            $trans_query = "SELECT transaction_code FROM transaksi WHERE id = ?";
+            $trans_stmt = $db->prepare($trans_query);
+            $trans_stmt->bind_param("i", $transaksi_id);
+            $trans_stmt->execute();
+            $trans_result = $trans_stmt->get_result();
+            $transaction_code = $trans_result->fetch_assoc()['transaction_code'];
+            $trans_stmt->close();
+            
+            while ($umkm = $umkm_result->fetch_assoc()) {
+                $notif_title = "Pembayaran Ditolak";
+                $notif_message = "Pembayaran untuk pesanan '{$umkm['judul']}' (Qty: {$umkm['quantity']}) ditolak. Kode transaksi: {$transaction_code}. Alasan: {$notes}";
+                
+                $notif_stmt = $db->prepare("INSERT INTO umkm_notifications (umkm_id, type, title, message, transaction_code) VALUES (?, 'payment_rejected', ?, ?, ?)");
+                $notif_stmt->bind_param("isss", $umkm['umkm_id'], $notif_title, $notif_message, $transaction_code);
+                $notif_stmt->execute();
+                $notif_stmt->close();
+            }
+            $umkm_stmt->close();
+        }
+        
         $db->commit();
         $success_message = "Pembayaran berhasil " . ($action == 'confirm' ? 'dikonfirmasi' : 'ditolak') . "!";
         

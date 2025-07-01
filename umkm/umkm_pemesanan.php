@@ -27,11 +27,12 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
-// Count total pemesanan
-$count_query = "SELECT COUNT(*) as total 
-                FROM pemesanan_tiket pt 
-                JOIN artikel a ON pt.artikel_id = a.id 
-                WHERE a.umkm_id = ?";
+// Count total pemesanan from new transaction system
+$count_query = "SELECT COUNT(DISTINCT ti.id) as total 
+                FROM transaksi_items ti
+                JOIN transaksi t ON ti.transaksi_id = t.id
+                JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                WHERE a.umkm_id = ? AND t.payment_status = 'paid'";
 
 $count_stmt = $db->prepare($count_query);
 $count_stmt->bind_param("i", $umkm_id);
@@ -41,13 +42,30 @@ $total_pemesanan = $count_result->fetch_assoc()['total'];
 $total_pages = ceil($total_pemesanan / $limit);
 $count_stmt->close();
 
-// Get pemesanan with pagination
-$pemesanan_query = "SELECT pt.*, a.judul as artikel_judul, a.harga as artikel_harga, a.kategori, u.full_name as user_name
-                    FROM pemesanan_tiket pt 
-                    JOIN artikel a ON pt.artikel_id = a.id 
-                    JOIN users u ON pt.user_id = u.id
-                    WHERE a.umkm_id = ?
-                    ORDER BY pt.created_at DESC 
+// Get pemesanan from new transaction system with pagination
+$pemesanan_query = "SELECT 
+                        ti.id,
+                        ti.quantity as jumlah_tiket,
+                        ti.subtotal as total_harga,
+                        ti.booking_date as tanggal_kunjungan,
+                        ti.notes as catatan,
+                        t.created_at,
+                        t.transaction_code,
+                        t.payment_confirmed_at,
+                        a.judul as artikel_judul,
+                        a.harga as artikel_harga,
+                        a.kategori,
+                        u.full_name as user_name,
+                        u.email as email_pemesan,
+                        u.phone as phone_pemesan,
+                        u.full_name as nama_pemesan,
+                        t.payment_status
+                    FROM transaksi_items ti
+                    JOIN transaksi t ON ti.transaksi_id = t.id
+                    JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                    JOIN users u ON t.user_id = u.id
+                    WHERE a.umkm_id = ? AND t.payment_status = 'paid'
+                    ORDER BY t.payment_confirmed_at DESC 
                     LIMIT ? OFFSET ?";
 
 $pemesanan_stmt = $db->prepare($pemesanan_query);
@@ -57,13 +75,14 @@ $pemesanan_result = $pemesanan_stmt->get_result();
 $pemesanan_list = $pemesanan_result->fetch_all(MYSQLI_ASSOC);
 $pemesanan_stmt->close();
 
-// Get statistics
+// Get statistics from new transaction system
 $stats_query = "SELECT 
-                    COUNT(*) as total_pemesanan,
-                    SUM(pt.total_harga) as total_pendapatan
-                FROM pemesanan_tiket pt 
-                JOIN artikel a ON pt.artikel_id = a.id 
-                WHERE a.umkm_id = ?";
+                    COUNT(DISTINCT ti.id) as total_pemesanan,
+                    SUM(ti.subtotal) as total_pendapatan
+                FROM transaksi_items ti
+                JOIN transaksi t ON ti.transaksi_id = t.id
+                JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                WHERE a.umkm_id = ? AND t.payment_status = 'paid'";
 
 $stats_stmt = $db->prepare($stats_query);
 $stats_stmt->bind_param("i", $umkm_id);
@@ -71,6 +90,45 @@ $stats_stmt->execute();
 $stats_result = $stats_stmt->get_result();
 $stats = $stats_result->fetch_assoc();
 $stats_stmt->close();
+
+// Get pending orders (awaiting payment confirmation)
+$pending_query = "SELECT 
+                    ti.id,
+                    ti.quantity as jumlah_tiket,
+                    ti.subtotal as total_harga,
+                    ti.booking_date as tanggal_kunjungan,
+                    ti.notes as catatan,
+                    t.created_at,
+                    t.transaction_code,
+                    a.judul as artikel_judul,
+                    a.harga as artikel_harga,
+                    a.kategori,
+                    u.full_name as user_name,
+                    u.email as email_pemesan,
+                    u.phone as phone_pemesan,
+                    t.payment_status
+                FROM transaksi_items ti
+                JOIN transaksi t ON ti.transaksi_id = t.id
+                JOIN artikel a ON ti.item_id = a.id AND ti.item_type = 'artikel'
+                JOIN users u ON t.user_id = u.id
+                WHERE a.umkm_id = ? AND t.payment_status = 'awaiting_confirmation'
+                ORDER BY t.created_at DESC";
+
+$pending_stmt = $db->prepare($pending_query);
+$pending_stmt->bind_param("i", $umkm_id);
+$pending_stmt->execute();
+$pending_result = $pending_stmt->get_result();
+$pending_list = $pending_result->fetch_all(MYSQLI_ASSOC);
+$pending_stmt->close();
+
+// Get recent notifications
+$notif_query = "SELECT * FROM umkm_notifications WHERE umkm_id = ? AND is_read = 0 ORDER BY created_at DESC LIMIT 5";
+$notif_stmt = $db->prepare($notif_query);
+$notif_stmt->bind_param("i", $umkm_id);
+$notif_stmt->execute();
+$notif_result = $notif_stmt->get_result();
+$notifications = $notif_result->fetch_all(MYSQLI_ASSOC);
+$notif_stmt->close();
 
 $db->close();
 
@@ -354,10 +412,82 @@ function formatDate($date) {
             </div>
         </div>
 
+        <!-- Notifications Section -->
+        <?php if (!empty($notifications)): ?>
+        <div class="notification-container" style="background: #e3f2fd; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+            <h4 style="margin: 0 0 1rem 0; color: #1976d2;">🔔 Notifikasi Terbaru</h4>
+            <div class="notification-list">
+                <?php foreach ($notifications as $notif): ?>
+                <div class="notification-item" style="background: white; padding: 1rem; margin-bottom: 0.5rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" data-id="<?php echo $notif['id']; ?>">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <h5 style="margin: 0 0 0.5rem 0; color: <?php echo $notif['type'] == 'payment_confirmed' ? '#4caf50' : '#f44336'; ?>;">
+                                <?php echo htmlspecialchars($notif['title']); ?>
+                            </h5>
+                            <p style="margin: 0 0 0.5rem 0; color: #666;">
+                                <?php echo htmlspecialchars($notif['message']); ?>
+                            </p>
+                            <small style="color: #999;">
+                                <?php echo date('d M Y H:i', strtotime($notif['created_at'])); ?>
+                            </small>
+                        </div>
+                        <button onclick="markAsRead(<?php echo $notif['id']; ?>)" style="background: #2196f3; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
+                            Tandai Dibaca
+                        </button>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <div style="text-align: right; margin-top: 1rem;">
+                <button onclick="markAllAsRead()" style="background: #1976d2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
+                    Tandai Semua Dibaca
+                </button>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Pending Orders (Awaiting Confirmation) -->
+        <?php if (!empty($pending_list)): ?>
+        <div class="table-container" style="margin-bottom: 2rem;">
+            <div class="table-header" style="background: #fff3cd; border-bottom: 1px solid #ffeaa7;">
+                <h3 style="color: #856404;">⏳ Pesanan Menunggu Konfirmasi Pembayaran (<?php echo count($pending_list); ?>)</h3>
+            </div>
+            <table class="pemesanan-table">
+                <thead>
+                    <tr style="background: #ffc107;">
+                        <th>📋 Kode Transaksi</th>
+                        <th>🎫 Artikel</th>
+                        <th>👤 Pemesan</th>
+                        <th>🎟️ Jumlah</th>
+                        <th>💰 Total</th>
+                        <th>📅 Tanggal</th>
+                        <th>🔔 Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pending_list as $pending): ?>
+                        <tr>
+                            <td><strong style="color: #856404;"><?php echo htmlspecialchars($pending['transaction_code']); ?></strong></td>
+                            <td>
+                                <div class="artikel-info"><?php echo htmlspecialchars($pending['artikel_judul']); ?></div>
+                                <span class="kategori-badge"><?php echo ucfirst($pending['kategori']); ?></span>
+                            </td>
+                            <td><?php echo htmlspecialchars($pending['user_name']); ?></td>
+                            <td style="text-align: center;"><?php echo $pending['jumlah_tiket']; ?></td>
+                            <td class="price-cell"><?php echo formatPrice($pending['total_harga']); ?></td>
+                            <td class="date-cell"><?php echo formatDate($pending['created_at']); ?></td>
+                            <td><span class="status-badge" style="background: #fff3cd; color: #856404;">⏳ Menunggu Konfirmasi</span></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
         <!-- Pemesanan Table -->
         <div class="table-container">
             <div class="table-header">
-                <h3>📋 Daftar Pemesanan (<?php echo count($pemesanan_list); ?> dari <?php echo $total_pemesanan; ?>)</h3>
+                <h3>✅ Pesanan Dikonfirmasi (<?php echo count($pemesanan_list); ?> dari <?php echo $total_pemesanan; ?>)</h3>
             </div>
 
             <?php if (empty($pemesanan_list)): ?>
@@ -370,6 +500,7 @@ function formatDate($date) {
                 <table class="pemesanan-table">
                     <thead>
                         <tr>
+                            <th>📋 Kode Transaksi</th>
                             <th>🎫 Artikel & Kategori</th>
                             <th>👤 Pemesan</th>
                             <th>🎟️ Tiket</th>
@@ -382,6 +513,13 @@ function formatDate($date) {
                     <tbody>
                         <?php foreach ($pemesanan_list as $pemesanan): ?>
                             <tr>
+                                <!-- Transaction Code -->
+                                <td>
+                                    <strong style="color: #667eea;">
+                                        <?php echo htmlspecialchars($pemesanan['transaction_code']); ?>
+                                    </strong>
+                                </td>
+                                
                                 <!-- Artikel & Kategori -->
                                 <td>
                                     <div class="artikel-info">
@@ -410,7 +548,7 @@ function formatDate($date) {
                                         <?php echo $pemesanan['jumlah_tiket']; ?> tiket
                                     </div>
                                     <div class="tanggal-kunjungan">
-                                        Kunjungan: <?php echo formatDate($pemesanan['tanggal_kunjungan']); ?>
+                                        Kunjungan: <?php echo $pemesanan['tanggal_kunjungan'] ? formatDate($pemesanan['tanggal_kunjungan']) : 'Tidak ditentukan'; ?>
                                     </div>
                                 </td>
                                 
@@ -427,7 +565,7 @@ function formatDate($date) {
                                 <!-- Status -->
                                 <td>
                                     <span class="status-badge">
-                                        ✅ Berhasil
+                                        ✅ Pembayaran Dikonfirmasi
                                     </span>
                                 </td>
                                 
@@ -474,5 +612,53 @@ function formatDate($date) {
             </a>
         </div>
     </div>
+    
+    <script>
+    // Function to mark notification as read
+    function markAsRead(notifId) {
+        fetch(`get_notifications.php?action=mark_read&id=${notifId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the notification from view
+                    const notifElement = document.querySelector(`[data-id="${notifId}"]`);
+                    if (notifElement) {
+                        notifElement.style.transition = 'opacity 0.3s';
+                        notifElement.style.opacity = '0';
+                        setTimeout(() => notifElement.remove(), 300);
+                    }
+                }
+            });
+    }
+    
+    // Function to mark all notifications as read
+    function markAllAsRead() {
+        fetch('get_notifications.php?action=mark_all_read')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove all notifications from view
+                    const container = document.querySelector('.notification-container');
+                    if (container) {
+                        container.style.transition = 'opacity 0.3s';
+                        container.style.opacity = '0';
+                        setTimeout(() => container.remove(), 300);
+                    }
+                }
+            });
+    }
+    
+    // Auto-refresh every 30 seconds to check for new notifications
+    setInterval(() => {
+        fetch('get_notifications.php?action=get')
+            .then(response => response.json())
+            .then(data => {
+                if (data.unread_count > 0 && !document.querySelector('.notification-container')) {
+                    // Reload page if there are new notifications
+                    location.reload();
+                }
+            });
+    }, 30000);
+    </script>
 </body>
 </html>
