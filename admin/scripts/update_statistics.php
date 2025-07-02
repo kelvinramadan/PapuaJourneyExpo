@@ -222,6 +222,117 @@ try {
         }
     }
     
+    // Aggregate UMKM/artikel financial statistics
+    logMessage("\nProcessing UMKM financial statistics...");
+    
+    $umkm_query = "
+        INSERT INTO umkm_financial_statistics (umkm_id, stat_date, item_count, order_count, quantity_sold, revenue, avg_order_value)
+        SELECT 
+            u.id as umkm_id,
+            ? as stat_date,
+            COUNT(DISTINCT a.id) as item_count,
+            COUNT(DISTINCT t.id) as order_count,
+            COALESCE(SUM(ti.quantity), 0) as quantity_sold,
+            COALESCE(SUM(ti.subtotal), 0) as revenue,
+            CASE 
+                WHEN COUNT(DISTINCT t.id) > 0 
+                THEN SUM(ti.subtotal) / COUNT(DISTINCT t.id)
+                ELSE 0 
+            END as avg_order_value
+        FROM umkm u
+        LEFT JOIN artikel a ON u.id = a.umkm_id
+        LEFT JOIN transaksi_items ti ON ti.item_id = a.id AND ti.item_type = 'artikel'
+        LEFT JOIN transaksi t ON ti.transaksi_id = t.id 
+            AND t.payment_status = 'paid'
+            AND DATE(t.created_at) = ?
+        WHERE u.status = 'active'
+        GROUP BY u.id
+        ON DUPLICATE KEY UPDATE
+            item_count = VALUES(item_count),
+            order_count = VALUES(order_count),
+            quantity_sold = VALUES(quantity_sold),
+            revenue = VALUES(revenue),
+            avg_order_value = VALUES(avg_order_value),
+            updated_at = CURRENT_TIMESTAMP
+    ";
+    
+    $umkm_stmt = $conn->prepare($umkm_query);
+    $umkm_stmt->bind_param("ss", $date, $date);
+    
+    if ($umkm_stmt->execute()) {
+        $umkm_affected = $umkm_stmt->affected_rows;
+        logMessage("Successfully updated statistics for {$umkm_affected} UMKM");
+    } else {
+        logMessage("Failed to update UMKM statistics: " . $umkm_stmt->error, 'ERROR');
+    }
+    
+    // Get UMKM summary
+    $umkm_summary_query = "
+        SELECT 
+            COUNT(DISTINCT umkm_id) as active_umkm,
+            SUM(order_count) as total_orders,
+            SUM(quantity_sold) as total_items_sold,
+            SUM(revenue) as total_revenue,
+            AVG(avg_order_value) as overall_avg_order_value
+        FROM umkm_financial_statistics
+        WHERE stat_date = ?
+        AND revenue > 0
+    ";
+    
+    $umkm_summary_stmt = $conn->prepare($umkm_summary_query);
+    $umkm_summary_stmt->bind_param("s", $date);
+    $umkm_summary_stmt->execute();
+    $umkm_summary = $umkm_summary_stmt->get_result()->fetch_assoc();
+    
+    logMessage("\n=== Daily Summary for UMKM - {$date} ===");
+    logMessage("Active UMKM with sales: " . $umkm_summary['active_umkm']);
+    logMessage("Total orders: " . $umkm_summary['total_orders']);
+    logMessage("Total items sold: " . $umkm_summary['total_items_sold']);
+    logMessage("Total revenue: Rp " . number_format($umkm_summary['total_revenue'], 0, ',', '.'));
+    logMessage("Average order value: Rp " . number_format($umkm_summary['overall_avg_order_value'], 0, ',', '.'));
+    
+    // Aggregate overall platform financial statistics
+    logMessage("\nProcessing overall platform financial statistics...");
+    
+    $platform_query = "
+        INSERT INTO platform_financial_statistics (stat_date, total_transactions, successful_transactions, 
+            failed_transactions, total_revenue, wisata_revenue, penginapan_revenue, artikel_revenue, 
+            avg_transaction_value, unique_customers)
+        SELECT 
+            ? as stat_date,
+            COUNT(*) as total_transactions,
+            COUNT(CASE WHEN payment_status = 'paid' THEN 1 ELSE NULL END) as successful_transactions,
+            COUNT(CASE WHEN payment_status IN ('rejected', 'cancelled') THEN 1 ELSE NULL END) as failed_transactions,
+            SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as total_revenue,
+            (SELECT COALESCE(SUM(revenue), 0) FROM wisata_statistics WHERE stat_date = ?) as wisata_revenue,
+            (SELECT COALESCE(SUM(revenue), 0) FROM penginapan_statistics WHERE stat_date = ?) as penginapan_revenue,
+            (SELECT COALESCE(SUM(revenue), 0) FROM umkm_financial_statistics WHERE stat_date = ?) as artikel_revenue,
+            AVG(CASE WHEN payment_status = 'paid' THEN total_amount ELSE NULL END) as avg_transaction_value,
+            COUNT(DISTINCT user_id) as unique_customers
+        FROM transaksi
+        WHERE DATE(created_at) = ?
+        ON DUPLICATE KEY UPDATE
+            total_transactions = VALUES(total_transactions),
+            successful_transactions = VALUES(successful_transactions),
+            failed_transactions = VALUES(failed_transactions),
+            total_revenue = VALUES(total_revenue),
+            wisata_revenue = VALUES(wisata_revenue),
+            penginapan_revenue = VALUES(penginapan_revenue),
+            artikel_revenue = VALUES(artikel_revenue),
+            avg_transaction_value = VALUES(avg_transaction_value),
+            unique_customers = VALUES(unique_customers),
+            updated_at = CURRENT_TIMESTAMP
+    ";
+    
+    $platform_stmt = $conn->prepare($platform_query);
+    $platform_stmt->bind_param("sssss", $date, $date, $date, $date, $date);
+    
+    if ($platform_stmt->execute()) {
+        logMessage("Successfully updated platform financial statistics");
+    } else {
+        logMessage("Failed to update platform statistics: " . $platform_stmt->error, 'ERROR');
+    }
+    
     // Close statements
     $stmt->close();
     $cleanup_stmt->close();
@@ -229,6 +340,9 @@ try {
     $acc_stmt->close();
     $acc_summary_stmt->close();
     $acc_cleanup_stmt->close();
+    $umkm_stmt->close();
+    $umkm_summary_stmt->close();
+    $platform_stmt->close();
     
 } catch (Exception $e) {
     // Rollback transaction on error
@@ -254,7 +368,13 @@ if (defined('ADMIN_EMAIL') && ADMIN_EMAIL) {
     $message .= "Total views: " . $acc_summary['total_views'] . "\n";
     $message .= "Unique visitors: " . $acc_summary['total_unique_visitors'] . "\n";
     $message .= "Total bookings: " . $acc_summary['total_bookings'] . "\n";
-    $message .= "Total revenue: Rp " . number_format($acc_summary['total_revenue'], 0, ',', '.') . "\n";
+    $message .= "Total revenue: Rp " . number_format($acc_summary['total_revenue'], 0, ',', '.') . "\n\n";
+    
+    $message .= "UMKM:\n";
+    $message .= "Active UMKM with sales: " . $umkm_summary['active_umkm'] . "\n";
+    $message .= "Total orders: " . $umkm_summary['total_orders'] . "\n";
+    $message .= "Total items sold: " . $umkm_summary['total_items_sold'] . "\n";
+    $message .= "Total revenue: Rp " . number_format($umkm_summary['total_revenue'], 0, ',', '.') . "\n";
     
     mail(ADMIN_EMAIL, $subject, $message);
 }

@@ -39,6 +39,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-icon"><i class="fas fa-money-check-alt"></i></span>
             <span class="btn-text">Konfirmasi Pembayaran</span>
         </a>
+        
+        <a href="financial_reports.php" class="btn <?php echo $current_page == 'financial_reports.php' ? 'active' : ''; ?>" data-tooltip="Laporan Keuangan">
+            <span class="btn-icon"><i class="fas fa-chart-line"></i></span>
+            <span class="btn-text">Laporan Keuangan</span>
+        </a>
     </nav>
     
     <div class="user-section">

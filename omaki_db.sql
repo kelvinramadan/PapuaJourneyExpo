@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 07:04 PM
+-- Generation Time: Jul 02, 2025 at 03:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -148,6 +148,28 @@ CREATE TABLE `chat_conversations` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chat_conversations`
+--
+
+INSERT INTO `chat_conversations` (`id`, `conversation_id`, `user_id`, `message_type`, `message`, `created_at`) VALUES
+(1, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'Haloo', '2025-07-02 02:48:28'),
+(2, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', 'Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?', '2025-07-02 02:48:52'),
+(3, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'Apa saja wisata di jayapura?', '2025-07-02 02:49:16'),
+(4, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', '👋 **Halo! Selamat datang kembali di Papua Journey!** Saya siap membantu Anda menjelajahi keindahan dan keunikan Jayapura. 😊\n\nAnda bertanya tentang apa saja wisata di Jayapura, ya? Tentu saja! Jayapura punya banyak sekali tempat menarik yang bisa Anda kunjungi, mulai dari keindahan alam, pengalaman budaya, hingga kuliner yang menggoda. Yuk, kita lihat beberapa di antaranya:\n\n## 🏝️ **Destinasi Wisata Jayapura & Sekitarnya**\n\n### **1. Taman Wisata Teluk Youtefa** 📍\n- **Lokasi**: Jayapura, sekitar 8 km dari pusat kota.\n- **Deskripsi**: Ini adalah surga konservasi mangrove yang memukau! Anda bisa berjalan di atas jembatan kayu sepanjang 1,2 km yang membentang di atas hutan mangrove yang lestari.\n- **Daya Tarik**:\n    - Hutan mangrove yang asri dan hijau.\n    - Pemandangan Teluk Youtefa yang indah dan menenangkan.\n    - Habitat berbagai jenis burung, cocok untuk pecinta *bird watching*.\n    - Titik terbaik untuk menikmati matahari terbenam (sunset point) yang menawan! 🌅\n- **Aktivitas**: Berjalan-jalan santai di jembatan kayu, fotografi alam, edukasi tentang konservasi mangrove, atau sekadar menikmati keindahan alam saat sunset.\n- **Waktu Terbaik**: Sore hari, terutama untuk menikmati keindahan sunset.\n- **Penting**: Tempat ini berperan vital dalam menjaga ekosistem mangrove di Jayapura.\n\n### **2. Food Tour Pasar Hamadi** 🍽️\n- **Lokasi**: Pasar tradisional terbesar di Jayapura.\n- **Deskripsi**: Ini bukan sekadar pasar, tapi pengalaman kuliner dan budaya yang tak terlupakan! Anda bisa berkeliling pasar, mencoba berbagai makanan lokal, dan berinteraksi langsung dengan penduduk setempat.\n- **Yang Wajib Dicoba**:\n    - **Keripik pisang** khas Papua.\n    - **Manisan pala** yang unik dan lezat.\n    - **Ikan asap** segar yang menggugah selera.\n    - Berbagai **buah-buahan tropis** yang mungkin belum pernah Anda lihat sebelumnya! 🥭🍍\n- **Biaya**: Sekitar Rp 75.000 - Rp 100.000 per orang untuk tur.\n- **Durasi**: Umumnya 3-4 jam.\n- **Waktu Terbaik**: Pagi hari (sekitar pukul 07:00 - 10:00) saat pasar masih ramai dan barang dagangan masih lengkap.\n\n### **3. Destinasi Populer Lainnya**\nSelain dua tempat di atas, Jayapura dan sekitarnya juga memiliki beberapa destinasi populer lain yang sangat direkomendasikan untuk Anda kunjungi. Meskipun saya belum memiliki detail spesifik tentang aktivitas di sana, saya bisa informasikan lokasinya yang menarik:\n\n*   **Danau Sentani** 🛶\n    > Danau terbesar di Papua yang menawarkan pemandangan alam yang indah dan budaya lokal yang kaya di sekitarnya.\n*   **Pantai Base G** 🏖️\n    > Salah satu pantai ikonik di Jayapura yang terkenal dengan pasir putih dan air birunya.\n*   **Bukit Teletubbies** ⛰️\n    > Bukit dengan pemandangan perbukitan hijau yang unik dan indah, mirip seperti latar tempat di acara Teletubbies. Akses menuju ke sini memang sedikit menantang, seringkali disarankan untuk menggunakan sewa mobil dengan sopir atau paket tur.\n\n---\n\nSemoga informasi ini membantu Anda merencanakan petualangan di Jayapura! Apakah ada destinasi tertentu yang ingin Anda ketahui lebih lanjut, atau mungkin Anda ingin tahu tentang transportasi dan kuliner lainnya? Jangan sungkan bertanya ya! 😊', '2025-07-02 02:49:43'),
+(5, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'apa wisata di sorong?', '2025-07-02 02:51:45'),
+(6, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', 'Mohon maaf sekali, sepertinya ada sedikit kesalahpahaman. Saya adalah **Papua Journey**, pemandu wisata virtual yang fokus utamanya adalah memberikan informasi seputar destinasi wisata, transportasi, budaya, dan kuliner di **Jayapura** dan sekitarnya. 📍\n\nJadi, untuk informasi mengenai wisata di Sorong, saya belum memiliki data detailnya. 🙏\n\nNamun, jika Anda tertarik untuk mengetahui lebih banyak tentang keindahan **Jayapura**, saya siap membantu! Apakah Anda ingin tahu lebih banyak tentang destinasi populer lainnya di Jayapura, rekomendasi kuliner yang menggugah selera, atau mungkin tips penting seputar budaya lokal? 😊 Jangan ragu untuk bertanya ya!', '2025-07-02 02:51:57'),
+(7, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'apa wisata di jakarta?', '2025-07-02 02:52:13'),
+(8, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', 'Mohon maaf sekali, sepertinya ada sedikit kesalahpahaman. Saya adalah **Papua Journey**, pemandu wisata virtual yang fokus utamanya adalah memberikan informasi seputar destinasi wisata, transportasi, budaya, dan kuliner di **Jayapura** dan sekitarnya. 📍\n\nJadi, untuk informasi mengenai wisata di Jakarta, saya belum memiliki data detailnya. 🙏\n\nNamun, jika Anda tertarik untuk mengetahui lebih banyak tentang keindahan **Jayapura**, saya siap membantu! Misalnya, apakah Anda ingin tahu lebih banyak tentang destinasi populer seperti **Danau Sentani** atau **Pantai Base G**, rekomendasi kuliner lokal yang menggugah selera, atau mungkin tips penting seputar transportasi dan budaya lokal? 😊 Jangan ragu untuk bertanya ya!', '2025-07-02 02:52:24'),
+(9, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'Berapa harga biaya masuk pantai base g?', '2025-07-02 02:52:37'),
+(10, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', 'Mohon maaf sekali, sebagai **Papua Journey**, saya belum memiliki informasi detail mengenai **harga tiket masuk** ke **Pantai Base G** saat ini. 🙏\n\nInformasi yang saya miliki lebih berfokus pada deskripsi keindahan pantainya, aktivitas yang bisa dilakukan, serta cara transportasinya.\n\nNamun, jika Anda tertarik, saya bisa berikan informasi lebih lanjut tentang **Pantai Base G** seperti lokasinya, apa saja yang menarik di sana, atau bagaimana cara menuju ke sana.\n\nApakah ada hal lain yang ingin Anda ketahui seputar wisata di **Jayapura**? Mungkin tentang transportasi ke destinasi lain, atau rekomendasi kuliner yang menggugah selera? 😊 Jangan sungkan bertanya ya!', '2025-07-02 02:52:49'),
+(11, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'user', 'Kalau dari kota jayapura ke pantai base g itu berapa jauh?', '2025-07-02 02:53:29'),
+(12, 'aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, 'bot', 'Tentu saja! Saya siap membantu Anda mengetahui lebih banyak tentang perjalanan ke **Pantai Base G** dari pusat kota Jayapura. 😊\n\n## 🚗 **Perjalanan ke Pantai Base G dari Kota Jayapura**\n\n### **Jarak dan Waktu Tempuh** 📍\n- **Jarak**: **Pantai Base G** terletak sekitar **15 km** dari pusat kota Jayapura.\n- **Waktu Tempuh**: Tergantung pada moda transportasi dan kondisi lalu lintas, perjalanan biasanya memakan waktu antara **20 hingga 30 menit**.\n\n### **Pilihan Transportasi**\nUntuk mencapai **Pantai Base G** dari pusat kota Jayapura, Anda memiliki beberapa pilihan transportasi yang nyaman:\n\n*   **1. Menggunakan Ojek** 🏍️\n    - **Perkiraan Biaya**: Rp 30.000 - Rp 40.000\n    - **Perkiraan Durasi**: Sekitar **20 menit**\n    - **Keterangan**: Ini adalah pilihan yang paling cepat dan langsung. Anda bisa menemukan ojek dengan mudah di berbagai titik di Jayapura.\n\n*   **2. Menggunakan Angkot** 🚐\n    - **Perkiraan Biaya**: Rp 10.000\n    - **Perkiraan Durasi**: Sekitar **30 menit**\n    - **Rute**: Anda bisa naik angkot dengan tujuan \"Base G\" dari pusat kota Jayapura. Ini pilihan yang lebih ekonomis.\n\n> 💡 **Tips Tambahan**:\n> Pastikan Anda menanyakan harga terlebih dahulu saat menggunakan ojek atau taksi untuk menghindari kesalahpahaman. Untuk pengalaman yang lebih fleksibel, Anda juga bisa menyewa kendaraan pribadi jika bepergian dalam kelompok.\n\n---\n\n**Pantai Base G** sendiri terkenal dengan pasir putihnya yang bersih dan air lautnya yang jernih. Sangat cocok untuk berenang, snorkeling, atau sekadar menikmati pemandangan sunset yang indah! 🌅\n\nApakah ada hal lain yang ingin Anda tanyakan seputar **Pantai Base G** atau destinasi wisata menarik lainnya di Jayapura? Jangan ragu untuk bertanya ya! 😊', '2025-07-02 02:53:44'),
+(13, '78e1a2e9-2ae6-4f8b-9a4b-d3f572e7fac8', 1, 'user', 'Apa wisata di jayapura', '2025-07-02 04:01:08'),
+(14, '78e1a2e9-2ae6-4f8b-9a4b-d3f572e7fac8', 1, 'bot', '👋 Halo! Selamat datang di Papua Journey! Saya siap membantu Anda menjelajahi keindahan Jayapura.\n\nAnda bertanya tentang wisata di Jayapura, ya? Tentu saja! Jayapura punya banyak tempat menarik yang siap memukau Anda. Yuk, kita lihat beberapa di antaranya:\n\n## 🏝️ **Destinasi Wisata Jayapura yang Wajib Dikunjungi**\n\n### 1. **Taman Wisata Teluk Youtefa** 📍\n- **Deskripsi**: Sebuah kawasan konservasi mangrove yang sangat indah, dilengkapi dengan jembatan kayu sepanjang 1,2 km yang membentang di atas hutan mangrove.\n- **Aktivitas**:\n    - Berjalan santai di jembatan kayu sambil menikmati pemandangan Teluk Youtefa yang menawan.\n    - Mengamati berbagai jenis burung (bird watching) yang menjadikan mangrove sebagai habitatnya.\n    - Berfotografi dengan latar belakang alam yang memukau.\n    - Menikmati pemandangan matahari terbenam (sunset) yang spektakuler.\n- **Lokasi**: Sekitar 8 km dari pusat kota Jayapura.\n- **Waktu Terbaik**: Sore hari, terutama untuk menikmati keindahan *sunset*.\n\n### 2. **Pantai Base G** 🏖️\n- **Deskripsi**: Salah satu pantai paling terkenal di Jayapura dengan pasir putih dan air laut yang jernih. Cocok untuk bersantai dan menikmati suasana pantai.\n- **Aktivitas**: Berenang, bersantai di tepi pantai, atau sekadar menikmati pemandangan laut yang indah.\n\n### 3. **Danau Sentani** 🏞️\n- **Deskripsi**: Danau terbesar di Papua yang dikelilingi oleh pegunungan hijau dan perkampungan adat. Menawarkan pemandangan alam yang asri dan budaya lokal yang kaya.\n- **Aktivitas**:\n    - Menyusuri danau dengan perahu.\n    - Mengunjungi pulau-pulau kecil di tengah danau.\n    - Menikmati keindahan alam dan budaya masyarakat adat Sentani.\n\n### 4. **Bukit Teletubbies** ⛰️\n- **Deskripsi**: Julukan untuk deretan bukit bergelombang yang menyerupai latar tempat tinggal karakter Teletubbies, dengan padang rumput hijau yang luas.\n- **Aktivitas**: Menikmati pemandangan alam yang menakjubkan, berfoto dengan latar perbukitan hijau.\n- **Catatan**: Akses ke sini sedikit menantang, disarankan menggunakan kendaraan sewaan atau paket tur.\n\n## 🍽️ **Wisata Kuliner di Jayapura**\n\n### **Food Tour Pasar Hamadi** 🍍🦐\n- **Deskripsi**: Pengalaman tur kuliner yang mengajak Anda berkeliling pasar tradisional terbesar di Jayapura.\n- **Highlights**:\n    - Mencicipi berbagai makanan lokal khas Papua.\n    - Belajar tentang bahan-bahan tradisional.\n    - Berinteraksi langsung dengan pedagang lokal.\n    - Membeli oleh-oleh khas Papua.\n- **Wajib Dicoba**: Keripik pisang, manisan pala, ikan asap, dan berbagai buah-buahan tropis segar.\n- **Waktu Terbaik**: Pagi hari (07:00 - 10:00) agar Anda bisa merasakan hiruk pikuk pasar dan mendapatkan makanan segar.\n\n> 💡 **Tips Tambahan**: Jangan ragu untuk mencoba kuliner lokal yang mungkin belum pernah Anda temui sebelumnya. Aroma rempah dan rasa yang unik pasti akan jadi pengalaman tak terlupakan!\n\nApakah ada destinasi tertentu yang ingin Anda ketahui lebih lanjut, atau mungkin Anda ingin tahu tentang transportasi dan cara menuju tempat-tempat ini? 😊', '2025-07-02 04:01:48'),
+(15, '78e1a2e9-2ae6-4f8b-9a4b-d3f572e7fac8', 1, 'user', 'Apa kuliner ter enak di jayapura', '2025-07-02 04:02:28'),
+(16, '78e1a2e9-2ae6-4f8b-9a4b-d3f572e7fac8', 1, 'bot', 'Tentu saja! Mencari kuliner \"terenak\" memang seru sekali, apalagi di Jayapura yang punya cita rasa khas Papua! 😋\n\nMeskipun rasa itu subjektif, saya bisa rekomendasikan beberapa pilihan kuliner yang sangat populer dan wajib Anda coba untuk merasakan keaslian Jayapura. Siap-siap ngiler ya!\n\n## 🍽️ **Kuliner Jayapura yang Wajib Dicoba!**\n\n### 1. **Papeda dan Ikan Kuah Kuning** 🐟🍚\n> Ini adalah **hidangan ikonik Papua** yang wajib Anda cicipi! Papeda adalah makanan pokok berupa bubur sagu kental yang disajikan dengan ikan kuah kuning yang kaya rempah. Rasanya asam, gurih, dan segar, sangat cocok dipadukan dengan papeda yang tawar.\n\n- **Tempat Rekomendasi**:\n    - **Rumah Makan Papua Asli** 📍\n        - **Lokasi**: Jl. Ahmad Yani, Jayapura.\n        - **Spesialisasi**: Papeda, Ikan kuah kuning, Sayur ganemo.\n        - **Kisaran Harga**: Rp 25.000 - 75.000 per porsi.\n        - **Suasana**: Tradisional Papua dengan dekorasi khas, memberikan pengalaman makan yang otentik.\n        - **Jam Buka**: 10:00 - 22:00 WIT.\n\n### 2. **Seafood Bakar (Ikan, Udang, Cumi)** 🦐🦑\n> Berada di pesisir, Jayapura punya hasil laut segar yang luar biasa! Ikan, udang, atau cumi bakar dengan bumbu khas Papua akan menggoyang lidah Anda. Biasanya disajikan dengan sambal dabu-dabu atau sambal rica yang pedasnya nendang!\n\n- **Tempat Rekomendasi**:\n    - **Warung Ikan Bakar Hamadi** ⭐\n        - **Lokasi**: Pasar Hamadi, Jayapura (area pinggir laut).\n        - **Spesialisasi**: Ikan bakar, Udang bakar, Cumi bakar.\n        - **Kisaran Harga**: Rp 30.000 - 100.000 per porsi, tergantung jenis dan ukuran *seafood*.\n        - **Suasana**: Warung pinggir laut yang casual dan ramai, cocok untuk menikmati santapan sambil merasakan angin laut.\n        - **Jam Buka**: 16:00 - 23:00 WIT.\n\n### 3. **Camilan & Buah Khas Pasar Hamadi** 🍍🍌\n> Selain hidangan berat, jangan lewatkan petualangan kuliner di pasar tradisional! Di sini Anda bisa menemukan berbagai camilan dan buah-buahan unik Papua.\n\n- **Yang Wajib Dicoba**:\n    - **Keripik pisang**: Krispi dan manis, cocok untuk oleh-oleh.\n    - **Manisan pala**: Rasa manis asam yang menyegarkan dari buah pala asli Papua.\n    - **Ikan asap**: Ikan segar yang diasap dengan metode tradisional, aromanya khas dan rasanya gurih.\n    - Berbagai **buah-buahan tropis segar** yang mungkin jarang Anda temui di daerah lain.\n\n- **Pengalaman Terbaik**: Ikuti **Food Tour Pasar Hamadi** yang sudah kita bahas sebelumnya! Ini cara terbaik untuk mencicipi beragam jajanan dan berinteraksi langsung dengan budaya lokal.\n    - **Waktu Terbaik**: Pagi hari (07:00 - 10:00) untuk merasakan hiruk pikuk pasar dan mendapatkan pilihan makanan paling segar.\n\n> 💡 **Tips Kuliner**: Jangan takut untuk mencoba hal baru! Masyarakat Jayapura sangat ramah, Anda bisa bertanya rekomendasi langsung kepada penduduk lokal atau pedagang untuk pengalaman kuliner terbaik.\n\nSemoga petualangan kuliner Anda di Jayapura semakin berkesan! Ada lagi yang ingin Anda ketahui tentang wisata Jayapura? 😊', '2025-07-02 04:02:46');
+
 -- --------------------------------------------------------
 
 --
@@ -161,6 +183,14 @@ CREATE TABLE `chat_conversation_sessions` (
   `last_message_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `message_count` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chat_conversation_sessions`
+--
+
+INSERT INTO `chat_conversation_sessions` (`conversation_id`, `user_id`, `created_at`, `last_message_at`, `message_count`) VALUES
+('78e1a2e9-2ae6-4f8b-9a4b-d3f572e7fac8', 1, '2025-07-02 04:01:08', '2025-07-02 04:02:46', 4),
+('aca6848f-e2cf-45cb-93d5-6a9f36e195f5', 8, '2025-07-02 02:48:28', '2025-07-02 02:53:44', 12);
 
 -- --------------------------------------------------------
 
@@ -355,6 +385,36 @@ CREATE TABLE `pesanpenginapan` (
 
 INSERT INTO `pesanpenginapan` (`id`, `user_id`, `user_name`, `user_email`, `penginapan_id`, `penginapan_judul`, `jumlah_kamar`, `jumlah_malam`, `harga_per_malam`, `total_harga`, `tanggal_checkin`, `tanggal_checkout`, `catatan`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Brian Domanii', 'brian@gmail.com', 4, 'Papua Paradise Eco Resort', 2, 1, 3500000.00, 7000000.00, '0000-00-00', '2025-06-21', 'ditunggu', '2025-06-19 19:50:07', '2025-06-19 19:50:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `platform_financial_statistics`
+--
+
+CREATE TABLE `platform_financial_statistics` (
+  `id` int(11) NOT NULL,
+  `stat_date` date NOT NULL,
+  `total_transactions` int(11) DEFAULT 0,
+  `successful_transactions` int(11) DEFAULT 0,
+  `failed_transactions` int(11) DEFAULT 0,
+  `total_revenue` decimal(15,2) DEFAULT 0.00,
+  `wisata_revenue` decimal(15,2) DEFAULT 0.00,
+  `penginapan_revenue` decimal(15,2) DEFAULT 0.00,
+  `artikel_revenue` decimal(15,2) DEFAULT 0.00,
+  `avg_transaction_value` decimal(15,2) DEFAULT 0.00,
+  `unique_customers` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `platform_financial_statistics`
+--
+
+INSERT INTO `platform_financial_statistics` (`id`, `stat_date`, `total_transactions`, `successful_transactions`, `failed_transactions`, `total_revenue`, `wisata_revenue`, `penginapan_revenue`, `artikel_revenue`, `avg_transaction_value`, `unique_customers`, `created_at`, `updated_at`) VALUES
+(1, '2025-07-02', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0, '2025-07-02 12:41:35', '2025-07-02 12:41:35'),
+(2, '2025-07-01', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0, '2025-07-02 12:41:35', '2025-07-02 12:41:35');
 
 -- --------------------------------------------------------
 
@@ -662,6 +722,25 @@ INSERT INTO `umkm` (`id`, `email`, `password`, `business_name`, `owner_name`, `p
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `umkm_financial_statistics`
+--
+
+CREATE TABLE `umkm_financial_statistics` (
+  `id` int(11) NOT NULL,
+  `umkm_id` int(11) NOT NULL,
+  `stat_date` date NOT NULL,
+  `item_count` int(11) DEFAULT 0,
+  `order_count` int(11) DEFAULT 0,
+  `quantity_sold` int(11) DEFAULT 0,
+  `revenue` decimal(15,2) DEFAULT 0.00,
+  `avg_order_value` decimal(15,2) DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `umkm_notifications`
 --
 
@@ -939,6 +1018,14 @@ ALTER TABLE `pesanpenginapan`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `platform_financial_statistics`
+--
+ALTER TABLE `platform_financial_statistics`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `stat_date_unique` (`stat_date`),
+  ADD KEY `idx_stat_date` (`stat_date`);
+
+--
 -- Indexes for table `reviews`
 --
 ALTER TABLE `reviews`
@@ -985,7 +1072,8 @@ ALTER TABLE `transaksi`
   ADD UNIQUE KEY `transaction_code` (`transaction_code`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `idx_user_transactions` (`user_id`,`payment_status`),
-  ADD KEY `idx_payment_status_proof` (`payment_status`,`payment_proof`);
+  ADD KEY `idx_payment_status_proof` (`payment_status`,`payment_proof`),
+  ADD KEY `idx_payment_status_date` (`payment_status`,`created_at`);
 
 --
 -- Indexes for table `transaksi_items`
@@ -1002,6 +1090,15 @@ ALTER TABLE `transaksi_items`
 ALTER TABLE `umkm`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `umkm_financial_statistics`
+--
+ALTER TABLE `umkm_financial_statistics`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `umkm_date_unique` (`umkm_id`,`stat_date`),
+  ADD KEY `idx_umkm_id` (`umkm_id`),
+  ADD KEY `idx_stat_date` (`stat_date`);
 
 --
 -- Indexes for table `umkm_notifications`
@@ -1076,7 +1173,7 @@ ALTER TABLE `cart_items`
 -- AUTO_INCREMENT for table `chat_conversations`
 --
 ALTER TABLE `chat_conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `pemesanan`
@@ -1113,6 +1210,12 @@ ALTER TABLE `penginapan_views`
 --
 ALTER TABLE `pesanpenginapan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `platform_financial_statistics`
+--
+ALTER TABLE `platform_financial_statistics`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -1155,6 +1258,12 @@ ALTER TABLE `transaksi_items`
 --
 ALTER TABLE `umkm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `umkm_financial_statistics`
+--
+ALTER TABLE `umkm_financial_statistics`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `umkm_notifications`
@@ -1260,6 +1369,12 @@ ALTER TABLE `review_media`
 --
 ALTER TABLE `transaksi_items`
   ADD CONSTRAINT `fk_transaksi_items` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `umkm_financial_statistics`
+--
+ALTER TABLE `umkm_financial_statistics`
+  ADD CONSTRAINT `fk_umkm_stats_umkm` FOREIGN KEY (`umkm_id`) REFERENCES `umkm` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `umkm_notifications`
