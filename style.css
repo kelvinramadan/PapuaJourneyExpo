@@ -1422,6 +1422,7 @@ body {
     color: var(--text-color);
     font-size: 1.2rem;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .footer-social .social-icons a:hover {
