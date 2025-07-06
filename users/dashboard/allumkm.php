@@ -874,27 +874,21 @@ function truncateText($text, $length) {
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-links">
-                <h3>UMKM Papua</h3>
+                <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="?kategori=jasa">Jasa</a></li>
-                    <li><a href="?kategori=event">Event</a></li>
-                    <li><a href="?kategori=kuliner">Kuliner</a></li>
-                    <li><a href="?kategori=kerajinan">Kerajinan</a></li>
-                    <li><a href="?kategori=wisata">Wisata</a></li>
+                    <li><a href="#destinations">Destinations</a></li>
+                    <li><a href="#experiences">Experiences</a></li>
+                    <li><a href="#plan">Plan your trip</a></li>
+                    <li><a href="#umkm">UMKM</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
-                <h3>Bantuan</h3>
-                <ul>
-                    <li><a href="../account/my_orders.php">Pesanan Saya</a></li>
-                    <li><a href="../cart/view_cart.php">Keranjang</a></li>
-                    <li><a href="../users/user_dashboard.php">Beranda</a></li>
-                </ul>
-            </div>
-            <div class="footer-social">
-                <h3>Hubungi Kami</h3>
+                <h3>Contact Us</h3>
                 <p>Email: <a href="mailto:info@papuajourney.com">info@papuajourney.com</a></p>
                 <p>Phone: <a href="tel:+62123456789">+62 123 456 789</a></p>
+            </div>
+            <div class="footer-social">
+                <h3>Follow Us</h3>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -907,7 +901,6 @@ function truncateText($text, $length) {
             <p>&copy; 2025 Papua Journey. All rights reserved.</p>
         </div>
     </footer>
-
     <script>
         // Auto submit search form on Enter
         document.querySelector('input[name="search"]')?.addEventListener('keypress', function(e) {
