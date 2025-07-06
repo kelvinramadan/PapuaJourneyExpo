@@ -1,5 +1,5 @@
 <?php
-// navbar.php - Komponen Navbar yang dapat digunakan ulang dengan fungsi profile
+// navbar.php 
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -222,7 +222,7 @@ $db->close();
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <style>
-/* Root Variables to match index.php */
+/* Root Variables to match user dashboard */
 :root {
     --primary-color: #536245;
     --secondary-color: #d9d9d9;
@@ -242,8 +242,13 @@ $db->close();
     box-sizing: border-box;
 }
 
+/* Reset navbar styles to prevent conflicts */
+.pj-navbar-wrapper {
+    position: relative;
+    z-index: 1000;
+}
 
-/* Header - Exact copy from index.php */
+/* Header - Exact copy from user dashboard but with navbar class prefix */
 .pj-navbar-wrapper .pj-navbar-header {
     position: fixed;
     top: 0;
@@ -259,6 +264,10 @@ $db->close();
 .pj-navbar-wrapper .pj-navbar-header.scrolled {
     background-color: rgba(255, 255, 255, 0.98);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.pj-navbar-wrapper .pj-navbar-header.header-hidden {
+    transform: translateY(-100%);
 }
 
 /* Navigation */
@@ -341,11 +350,15 @@ $db->close();
 
 .pj-navbar-wrapper .nav-links a {
     text-decoration: none;
-    color: var(--text-color-secondary);
+    color: var(--text-color);
     font-weight: 500;
     transition: var(--transition);
     position: relative;
     padding: 5px 0;
+}
+
+.pj-navbar-wrapper .pj-navbar-header.scrolled .nav-links a {
+    color: var(--text-color-secondary);
 }
 
 .pj-navbar-wrapper .nav-links a:hover {
@@ -641,34 +654,6 @@ $db->close();
     color: white;
 }
 
-/* Adjust body padding for fixed header */
-/* Removed to prevent conflicts with page-specific styles
-body {
-    padding-top: 80px;
-}
-*/
-
-/* Media Queries */
-@media (max-width: 768px) {
-    .pj-navbar-wrapper .pj-navbar-header {
-        padding: 1rem;
-    }
-    
-    .pj-navbar-wrapper .nav-links {
-        display: none;
-    }
-    
-    .pj-navbar-wrapper .mobile-menu-toggle {
-        display: flex;
-    }
-    
-    .pj-navbar-wrapper .user-avatar {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-    }
-}
-
 /* Notification Messages */
 .pj-navbar-wrapper .notification-message {
     position: fixed;
@@ -820,11 +805,36 @@ body {
     background: #5a6268;
     box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
 }
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .pj-navbar-wrapper .pj-navbar-header {
+        padding: 1rem;
+    }
+    
+    .pj-navbar-wrapper .nav-links {
+        display: none;
+    }
+    
+    .pj-navbar-wrapper .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .pj-navbar-wrapper .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .pj-navbar-wrapper .search-container {
+        display: none;
+    }
+}
 </style>
 
 <!-- Papua Journey Navbar Component -->
 <div class="pj-navbar-wrapper">
-    <header class="pj-navbar-header" id="header">
+    <header class="pj-navbar-header" id="pj-header">
     <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
             <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
@@ -832,7 +842,7 @@ body {
         </a>
         
         <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+        <button class="mobile-menu-toggle" id="pj-mobile-toggle" aria-label="Toggle mobile menu">
             <span></span>
             <span></span>
             <span></span>
@@ -874,13 +884,13 @@ body {
     </nav>
     
     <!-- Mobile Navigation -->
-    <div class="mobile-nav">
+    <div class="mobile-nav" id="pj-mobile-nav">
         <div class="mobile-nav-header">
             <div class="logo">
                 <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
                 <p>Journey</p>
             </div>
-            <button class="mobile-nav-close">
+            <button class="mobile-nav-close" id="pj-mobile-close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -1010,98 +1020,135 @@ body {
 </div>
 
 <script>
-// Get header element
-const header = document.getElementById('header');
-// Ensure we're working with the Papua Journey navbar
-if (header && header.classList.contains('pj-navbar-header')) {
-let lastScroll = 0;
-
-// Header scroll behavior
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
+// Ensure navbar script is properly scoped and doesn't conflict with page scripts
+(function() {
+    'use strict';
     
-    // Add/remove scrolled class
-    if (currentScroll > 50) {
-        header.classList.add('scrolled');
+    // Get header element with specific ID
+    const header = document.getElementById('pj-header');
+    const mobileToggle = document.getElementById('pj-mobile-toggle');
+    const mobileNav = document.getElementById('pj-mobile-nav');
+    const mobileClose = document.getElementById('pj-mobile-close');
+    
+    if (!header) return; // Exit if header not found
+    
+    let lastScroll = 0;
+
+    // Header scroll behavior
+    function handleScroll() {
+        const currentScroll = window.pageYOffset;
+        
+        // Add/remove scrolled class
+        if (currentScroll > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+        
+        // Hide/show header on scroll
+        if (currentScroll > lastScroll && currentScroll > 100) {
+            header.classList.add('header-hidden');
+        } else {
+            header.classList.remove('header-hidden');
+        }
+        
+        lastScroll = currentScroll;
+    }
+
+    // Throttled scroll handler
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        scrollTimeout = setTimeout(handleScroll, 10);
+    });
+
+    // Mobile Menu Toggle
+    if (mobileToggle && mobileNav) {
+        mobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            mobileToggle.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        });
+    }
+
+    if (mobileClose && mobileNav && mobileToggle) {
+        mobileClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            mobileToggle.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', function(event) {
+        if (mobileNav && mobileNav.classList.contains('active') && 
+            mobileToggle && !mobileNav.contains(event.target) && 
+            !mobileToggle.contains(event.target)) {
+            mobileToggle.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Modal functions - scoped to avoid conflicts
+    window.pjOpenModal = function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    window.pjCloseModal = function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Global functions for backward compatibility
+    window.openModal = window.pjOpenModal;
+    window.closeModal = window.pjCloseModal;
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Auto-hide notification messages
+    function setupNotifications() {
+        const messages = document.querySelectorAll('.pj-navbar-wrapper .notification-message');
+        messages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.transition = 'opacity 0.5s, transform 0.5s';
+                message.style.opacity = '0';
+                message.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    if (message.parentNode) {
+                        message.parentNode.removeChild(message);
+                    }
+                }, 500);
+            }, 5000);
+        });
+    }
+
+    // Initialize notifications when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupNotifications);
     } else {
-        header.classList.remove('scrolled');
+        setupNotifications();
     }
-    
-    // Hide/show header on scroll
-    if (currentScroll > lastScroll && currentScroll > 100) {
-        header.classList.add('header-hidden');
-    } else {
-        header.classList.remove('header-hidden');
-    }
-    
-    lastScroll = currentScroll;
-});
 
-// Mobile Menu Toggle
-const mobileMenuToggle = document.querySelector('.pj-navbar-wrapper .mobile-menu-toggle');
-const mobileNav = document.querySelector('.pj-navbar-wrapper .mobile-nav');
-const mobileNavClose = document.querySelector('.pj-navbar-wrapper .mobile-nav-close');
-
-if (mobileMenuToggle && mobileNav) {
-    mobileMenuToggle.addEventListener('click', function() {
-        mobileMenuToggle.classList.toggle('active');
-        mobileNav.classList.toggle('active');
-        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
-    });
-}
-
-if (mobileNavClose && mobileNav) {
-    mobileNavClose.addEventListener('click', function() {
-        mobileMenuToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-}
-
-// Close mobile menu on outside click
-document.addEventListener('click', function(event) {
-    if (mobileNav && mobileNav.classList.contains('active') && 
-        !mobileNav.contains(event.target) && 
-        !mobileMenuToggle.contains(event.target)) {
-        mobileMenuToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-});
-
-
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-}
-
-} // Close the if statement for header check
-
-// Auto-hide notification messages
-document.addEventListener('DOMContentLoaded', function() {
-    const messages = document.querySelectorAll('.pj-navbar-wrapper .notification-message');
-    messages.forEach(message => {
-        setTimeout(() => {
-            message.style.transition = 'opacity 0.5s, transform 0.5s';
-            message.style.opacity = '0';
-            message.style.transform = 'translateX(100%)';
-            setTimeout(() => message.remove(), 500);
-        }, 5000);
-    });
-});
+})();
 </script>
 </div> <!-- End of pj-navbar-wrapper -->
