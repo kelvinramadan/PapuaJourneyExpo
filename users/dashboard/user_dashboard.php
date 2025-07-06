@@ -193,1523 +193,19 @@ function truncateText($text, $length) {
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <link rel="stylesheet" href="../../assets/css/reviews.css">
+    <link rel="stylesheet" href="userdashboard.css">
     
     <!-- Scripts -->
     <script src="../../script.js" defer></script>
-    
-    <style>
-    :root{
-        --primary-color: #536245;
-        --secondary-color: #d9d9d9;
-        --button-color: #DC9B11;
-        --button-hover-color: #f4b63b;
-        --text-color: #FFFCF7;
-        --text-color-secondary: #191919;
-        --background-color: #EBE7E4;
-        --transition: all 0.3s ease-in-out;
-        --shadow: #333333b2;
-        --success-color: #4CAF50;
-        --error-color: #f44336;
-        --info-color: #2196F3;
-    }
-
-    /* Base Styles */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        scroll-behavior: smooth;
-        line-height: 1.6;
-        overflow-x: hidden;
-        padding-top: 80px; /* Account for fixed navbar */
-    }
-
-    /* Scroll Progress Bar */
-    .scroll-progress-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 0%;
-        height: 3px;
-        background: linear-gradient(to right, var(--button-color), var(--button-hover-color));
-        z-index: 10000;
-        transition: width 0.2s ease-out;
-    }
-
-    /* Enhanced Hero Section */
-    .hero {
-        height: 100vh;
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url(../../assets/banner.jpg) no-repeat center center/cover;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: var(--text-color);
-        position: relative;
-        overflow: hidden;
-        margin-top: -80px; /* Compensate for body padding-top */
-    }
-
-    .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
-        pointer-events: none;
-    }
-
-    .hero-content {
-        max-width: 900px;
-        padding: 0 20px;
-        z-index: 1;
-        animation: heroFadeIn 1s ease-out;
-    }
-
-    @keyframes heroFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .hero-badge {
-        display: inline-block;
-        padding: 8px 20px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-        animation: fadeInDown 0.8s ease-out 0.2s both;
-    }
-
-    .hero-title {
-        font-size: 3.5rem;
-        margin-bottom: 1.5rem;
-        font-weight: 700;
-        line-height: 1.2;
-    }
-
-    .hero-title-line {
-        display: block;
-        animation: fadeInUp 0.8s ease-out;
-    }
-
-    .hero-title-line:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .hero-title .highlight {
-        color: var(--button-color);
-        text-shadow: 0 0 30px rgba(220, 155, 17, 0.5);
-    }
-
-    .hero-description {
-        font-size: 1.3rem;
-        margin-bottom: 2.5rem;
-        opacity: 0.9;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        animation: fadeInUp 0.8s ease-out 0.4s both;
-    }
-
-    .hero-actions {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-bottom: 3rem;
-        animation: fadeInUp 0.8s ease-out 0.6s both;
-    }
-
-    .btn {
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 50px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .btn-primary {
-        background-color: var(--button-color);
-        color: var(--text-color);
-    }
-
-    .btn-primary:hover {
-        background-color: var(--button-hover-color);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(220, 155, 17, 0.4);
-    }
-
-    .btn-secondary {
-        background-color: transparent;
-        color: var(--text-color);
-        border: 2px solid var(--text-color);
-    }
-
-    .btn-secondary:hover {
-        background-color: var(--text-color);
-        color: var(--primary-color);
-        transform: translateY(-3px);
-    }
-
-    /* Hero Stats */
-    .hero-stats {
-        display: flex;
-        gap: 3rem;
-        justify-content: center;
-        animation: fadeInUp 0.8s ease-out 0.8s both;
-    }
-
-    .stat-item {
-        text-align: center;
-    }
-
-    .stat-item h3 {
-        font-size: 2.5rem;
-        margin-bottom: 5px;
-        color: var(--button-color);
-    }
-
-    .stat-item p {
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-
-    .hero-scroll-indicator {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: bounce 2s ease-in-out infinite;
-    }
-
-    .hero-scroll-indicator i {
-        font-size: 2rem;
-        opacity: 0.7;
-    }
-
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% {
-            transform: translateX(-50%) translateY(0);
-        }
-        40% {
-            transform: translateX(-50%) translateY(-10px);
-        }
-        60% {
-            transform: translateX(-50%) translateY(-5px);
-        }
-    }
-
-    /* Destinations Section */
-    .destinations {
-        padding: 5rem 2rem;
-        background-color: var(--background-color);
-        position: relative;
-    }
-
-    .destination-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        align-items: center;
-    }
-
-    .section-label {
-        display: inline-block;
-        color: var(--button-color);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-
-    .destination-title h2 {
-        font-size: 2.5rem;
-        font-weight: 600;
-        color: var(--text-color-secondary);
-        margin-bottom: 1.5rem;
-        line-height: 1.3;
-    }
-
-    .destination-title p {
-        font-size: 1.1rem;
-        color: #666;
-        margin-bottom: 2rem;
-        line-height: 1.8;
-    }
-
-    .destination-features {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .feature-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #666;
-        font-size: 0.9rem;
-    }
-
-    .feature-item i {
-        color: var(--button-color);
-    }
-
-    .destination-media {
-        position: relative;
-    }
-
-    .video-container {
-        position: relative;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    .video-container video {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    .video-play-button {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .video-play-button:hover {
-        background: white;
-        transform: scale(1.1);
-    }
-
-    .destination-cards {
-        position: absolute;
-        bottom: -30px;
-        left: -30px;
-        display: flex;
-        gap: 15px;
-    }
-
-    .mini-card {
-        background: white;
-        border-radius: 15px;
-        padding: 10px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .mini-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-
-    .mini-card img {
-        width: 80px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-bottom: 5px;
-    }
-
-    .mini-card span {
-        display: block;
-        text-align: center;
-        font-size: 0.8rem;
-        color: var(--text-color-secondary);
-        font-weight: 500;
-    }
-
-    /* Experiences Section */
-    .experiences {
-        background-color: var(--primary-color);
-        padding: 5rem 2rem;
-        text-align: center;
-        color: #fff;
-    }
-
-    .experiences h2 {
-        color: #fff;
-        font-size: 2.5rem;
-        margin-bottom: 3rem;
-        font-weight: 600;
-    }
-
-    .experiences-icons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 3rem;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .icon-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .icon-item:hover {
-        transform: translateY(-10px);
-    }
-
-    .icon {
-        font-size: 3rem;
-        color: var(--button-color);
-        background-color: rgba(255, 255, 255, 0.95);
-        border-radius: 50%;
-        width: 100px;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .icon:hover {
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-        background-color: white;
-    }
-
-    .icon-item p {
-        color: var(--text-color);
-        font-size: 0.95rem;
-        margin-top: 1rem;
-        font-weight: 600;
-    }
-
-    /* Interests Section */
-    .interests {
-        padding: 5rem 2rem;
-        background: var(--background-color);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .interest-title {
-        text-align: center;
-        max-width: 600px;
-        margin: 0 auto 3rem;
-    }
-
-    .interest-title h2 {
-        font-size: 2.5rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .interest-title p {
-        color: #666;
-        font-size: 1.1rem;
-    }
-
-    .interest-wrapper {
-        position: relative;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .slider-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: white;
-        border: none;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-
-    .slider-nav:hover {
-        background: var(--button-color);
-        color: white;
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .slider-nav-prev {
-        left: -25px;
-    }
-
-    .slider-nav-next {
-        right: -25px;
-    }
-
-    .interest-slider {
-        display: flex;
-        gap: 2rem;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        padding: 2rem 0 3rem;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .interest-slider::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .interest-slider::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-
-    .interest-slider::-webkit-scrollbar-thumb {
-        background: var(--button-color);
-        border-radius: 10px;
-    }
-
-    .interest-card {
-        position: relative;
-        min-width: 300px;
-        height: 400px;
-        border-radius: 20px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        scroll-snap-align: start;
-        flex-shrink: 0;
-    }
-
-    .interest-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .interest-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7));
-        transition: all 0.3s ease;
-    }
-
-    .interest-card:hover .interest-overlay {
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
-    }
-
-    .interest-content {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 2rem;
-        color: white;
-        text-align: center;
-        z-index: 2;
-    }
-
-    .interest-content i {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        display: block;
-    }
-
-    .interest-content h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-
-    .interest-content p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin-bottom: 1rem;
-    }
-
-    .interest-tag {
-        display: inline-block;
-        padding: 5px 15px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    /* Plan Section */
-    .plan-trip {
-        padding: 5rem 2rem;
-        background-color: #f8f8f8;
-        text-align: center;
-    }
-
-    .plan-trip h2 {
-        font-size: 2.5rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 3rem;
-        font-weight: 600;
-    }
-
-    .plan-content {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-
-    .plan-card {
-        background-color: white;
-        border: none;
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: left;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        cursor: pointer;
-    }
-
-    .plan-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-    }
-
-    .plan-card i {
-        color: var(--button-color);
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .plan-card h3 {
-        font-size: 1.3rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 0.8rem;
-        font-weight: 600;
-    }
-
-    .plan-card p {
-        font-size: 0.95rem;
-        color: #666;
-        line-height: 1.6;
-    }
-
-    /* UMKM Section Styles */
-    .umkm-section {
-        padding: 5rem 2rem;
-        background-color: #f8f8f8;
-    }
-
-    .umkm-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .umkm-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-
-    .umkm-header h2 {
-        font-size: 2.5rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .umkm-header p {
-        color: #666;
-        font-size: 1.1rem;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    /* Filters */
-    .filters-section {
-        margin-bottom: 2rem;
-    }
-
-    .filters-row {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .search-box-umkm {
-        flex: 1;
-        position: relative;
-    }
-
-    .search-box-umkm input {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 25px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-    }
-
-    .search-box-umkm input:focus {
-        border-color: var(--button-color);
-        outline: none;
-    }
-
-    .category-filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        justify-content: center;
-    }
-
-    .category-btn {
-        padding: 8px 16px;
-        background: white;
-        color: var(--text-color-secondary);
-        text-decoration: none;
-        border-radius: 20px;
-        border: 2px solid #e0e0e0;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .category-btn:hover,
-    .category-btn.active {
-        background: var(--button-color);
-        color: white;
-        border-color: var(--button-color);
-    }
-
-    /* Articles Grid */
-    .articles-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .article-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .article-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-    }
-
-    .article-image {
-        position: relative;
-        height: 200px;
-        overflow: hidden;
-    }
-
-    .article-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    .article-card:hover .article-image img {
-        transform: scale(1.05);
-    }
-
-    .placeholder-image {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: #999;
-    }
-
-    .card-category {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        padding: 5px 12px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    .category-jasa { color: #3498db; }
-    .category-event { color: #e74c3c; }
-    .category-kuliner { color: #f39c12; }
-    .category-kerajinan { color: #9b59b6; }
-    .category-wisata { color: #27ae60; }
-
-    .article-card-content {
-        padding: 1.5rem;
-    }
-
-    .article-card-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-color-secondary);
-        margin-bottom: 0.8rem;
-        line-height: 1.3;
-    }
-
-    .article-card-price {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--button-color);
-        margin-bottom: 0.8rem;
-    }
-
-    .card-description {
-        color: #666;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-    }
-
-    .card-umkm {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 1rem;
-        padding: 8px 0;
-        border-top: 1px solid #f0f0f0;
-        font-size: 0.9rem;
-        color: #666;
-    }
-
-    .umkm-avatar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .card-rating {
-        margin-bottom: 1rem;
-    }
-
-    .rating-stars {
-        display: inline-flex;
-        gap: 2px;
-        margin-right: 8px;
-    }
-
-    .star {
-        color: #ddd;
-        font-size: 0.9rem;
-    }
-
-    .star.filled {
-        color: #f39c12;
-    }
-
-    .rating-value {
-        font-weight: 600;
-        color: var(--text-color-secondary);
-        margin-right: 5px;
-    }
-
-    .review-count,
-    .no-reviews {
-        font-size: 0.8rem;
-        color: #999;
-    }
-
-    .card-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .btn-detail {
-        background: var(--button-color);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .btn-detail:hover {
-        background: var(--button-hover-color);
-        transform: translateY(-2px);
-    }
-
-    .card-date {
-        font-size: 0.8rem;
-        color: #999;
-    }
-
-    /* Pagination */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: 2rem;
-    }
-
-    .pagination a,
-    .pagination span {
-        padding: 10px 15px;
-        background: white;
-        color: var(--text-color-secondary);
-        text-decoration: none;
-        border-radius: 8px;
-        border: 2px solid #e0e0e0;
-        transition: all 0.3s ease;
-    }
-
-    .pagination a:hover {
-        background: var(--button-color);
-        color: white;
-        border-color: var(--button-color);
-    }
-
-    .pagination .current {
-        background: var(--button-color);
-        color: white;
-        border-color: var(--button-color);
-    }
-
-    .view-all-btn {
-        display: block;
-        width: fit-content;
-        margin: 2rem auto 0;
-        padding: 12px 30px;
-        background: var(--button-color);
-        color: white;
-        text-decoration: none;
-        border-radius: 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .view-all-btn:hover {
-        background: var(--button-hover-color);
-        transform: translateY(-2px);
-    }
-
-    /* Article Detail Styles */
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--button-color);
-        text-decoration: none;
-        font-weight: 600;
-        margin-bottom: 2rem;
-        transition: color 0.3s ease;
-    }
-
-    .back-button:hover {
-        color: var(--button-hover-color);
-    }
-
-    .article-detail {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        margin-bottom: 3rem;
-    }
-
-    .article-header {
-        position: relative;
-        height: 400px;
-        overflow: hidden;
-    }
-
-    .article-header img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .article-category {
-        position: absolute;
-        top: 30px;
-        left: 30px;
-        padding: 10px 20px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 25px;
-        font-weight: 600;
-    }
-
-    .article-content {
-        padding: 3rem;
-    }
-
-    .article-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--text-color-secondary);
-        margin-bottom: 1.5rem;
-        line-height: 1.2;
-    }
-
-    .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .article-price {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--button-color);
-    }
-
-    .article-date {
-        color: #666;
-        font-size: 1rem;
-    }
-
-    .article-description {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: #555;
-        margin-bottom: 3rem;
-    }
-
-    /* Testimonials Section */
-    .testimonials {
-        padding: 5rem 2rem;
-        background: white;
-    }
-
-    .testimonials-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .testimonials-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-
-    .testimonials-header h2 {
-        font-size: 2.5rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .testimonials-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-
-    .testimonial-card {
-        background: #f8f8f8;
-        padding: 2rem;
-        border-radius: 15px;
-        transition: all 0.3s ease;
-    }
-
-    .testimonial-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .testimonial-rating {
-        margin-bottom: 1rem;
-    }
-
-    .testimonial-rating i {
-        color: var(--button-color);
-        font-size: 1.1rem;
-    }
-
-    .testimonial-card p {
-        color: #666;
-        font-style: italic;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-    }
-
-    .testimonial-author {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .testimonial-author img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .testimonial-author h4 {
-        margin: 0;
-        color: var(--text-color-secondary);
-        font-size: 1rem;
-    }
-
-    .testimonial-author span {
-        color: #999;
-        font-size: 0.9rem;
-    }
-
-    .testimonial-author .avatar-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        flex-shrink: 0;
-    }
-
-    /* Interest Card Backgrounds */
-    .interest-card.food {
-        background: url('../../assets/food.jpg') center/cover;
-    }
-
-    .interest-card.culture {
-        background: url('../../assets/culture.png') center/cover;
-    }
-
-    .interest-card.adventures {
-        background: url('../../assets/diving.jpg') center/cover;
-    }
-
-    .interest-card.tracking {
-        background: url('../../assets/tracking.png') center/cover;
-    }
-
-    .interest-card.wildlife {
-        background: url('../../assets/wildlife.jpg') center/cover;
-    }
-
-    /* Scroll to Top Button */
-    .scroll-to-top {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: var(--button-color);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        z-index: 999;
-    }
-
-    .scroll-to-top.show {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .scroll-to-top:hover {
-        background: var(--button-hover-color);
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Footer */
-    .footer {
-        background-color: var(--primary-color);
-        color: var(--text-color);
-        padding: 60px 20px 30px;
-    }
-
-    .footer-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 40px;
-        max-width: 1200px;
-        margin: 0 auto 40px;
-    }
-
-    .footer h3 {
-        font-size: 1.3rem;
-        margin-bottom: 20px;
-        color: var(--button-color);
-    }
-
-    .footer-links ul {
-        list-style: none;
-    }
-
-    .footer-links ul li {
-        margin-bottom: 12px;
-    }
-
-    .footer-links ul li a {
-        color: var(--text-color);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-block;
-    }
-
-    .footer-links ul li a:hover {
-        color: var(--button-color);
-        transform: translateX(5px);
-    }
-
-    .footer-contact p,
-    .footer-contact a {
-        color: var(--text-color);
-        font-size: 0.95rem;
-        line-height: 1.8;
-        text-decoration: none;
-    }
-
-    .footer-contact a:hover {
-        color: var(--button-color);
-    }
-
-    .footer-social .social-icons {
-        display: flex;
-        gap: 15px;
-    }
-
-    .footer-social .social-icons a {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-color);
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-    }
-
-    .footer-social .social-icons a:hover {
-        background: var(--button-color);
-        transform: translateY(-5px);
-    }
-
-    .footer-bottom {
-        text-align: center;
-        padding-top: 30px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-
-    /* Animation Classes */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.6s ease;
-    }
-
-    .fade-in-visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Loading States */
-    .skeleton {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-    }
-
-    @keyframes loading {
-        0% {
-            background-position: 200% 0;
-        }
-        100% {
-            background-position: -200% 0;
-        }
-    }
-
-    /* Utility Classes */
-    .text-center {
-        text-align: center;
-    }
-
-    .mt-1 { margin-top: 1rem; }
-    .mt-2 { margin-top: 2rem; }
-    .mt-3 { margin-top: 3rem; }
-
-    .mb-1 { margin-bottom: 1rem; }
-    .mb-2 { margin-bottom: 2rem; }
-    .mb-3 { margin-bottom: 3rem; }
-
-    .gap-1 { gap: 1rem; }
-    .gap-2 { gap: 2rem; }
-    .gap-3 { gap: 3rem; }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .destination-container {
-            grid-template-columns: 1fr;
-            text-align: center;
-        }
-        
-        .destination-media {
-            margin-top: 2rem;
-        }
-        
-        .destination-cards {
-            position: static;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        body {
-            padding-top: 70px; /* Reduced for mobile */
-        }
-        
-        .hero {
-            margin-top: -70px;
-        }
-        
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .hero-description {
-            font-size: 1.1rem;
-        }
-        
-        .hero-actions {
-            flex-direction: column;
-            width: 100%;
-            padding: 0 20px;
-        }
-        
-        .btn {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .hero-stats {
-            gap: 1.5rem;
-        }
-        
-        .stat-item h3 {
-            font-size: 2rem;
-        }
-        
-        .destinations,
-        .plan-trip,
-        .testimonials,
-        .umkm-section {
-            padding: 3rem 1rem;
-        }
-        
-        .slider-nav {
-            display: none;
-        }
-        
-        .article-title {
-            font-size: 2rem;
-        }
-        
-        .article-meta {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-        
-        .category-filters {
-            justify-content: flex-start;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        
-        .filters-row {
-            flex-direction: column;
-        }
-        
-        .articles-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .scroll-to-top {
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .hero-title {
-            font-size: 2rem;
-        }
-        
-        .section-label {
-            font-size: 0.8rem;
-        }
-        
-        h2 {
-            font-size: 2rem !important;
-        }
-    }
-
-    /* Alert Styles */
-    .alert {
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-    }
-
-    .alert-success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-
-    .alert-error {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-
-    .results-info {
-        margin-bottom: 1rem;
-        color: #666;
-        font-size: 0.9rem;
-    }
-
-    .no-results {
-        text-align: center;
-        padding: 3rem;
-        color: #666;
-    }
-
-    .no-results h3 {
-        color: var(--text-color-secondary);
-        margin-bottom: 1rem;
-    }
-
-    /* Print Styles */
-    @media print {
-        .scroll-to-top,
-        .pj-navbar-wrapper,
-        .notification-overlay {
-            display: none !important;
-        }
-        
-        body {
-            font-size: 12pt;
-            line-height: 1.4;
-            padding-top: 0;
-        }
-        
-        .article-detail {
-            box-shadow: none;
-            border: 1px solid #ddd;
-        }
-    }
-    </style>
     
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress-bar"></div>
-
     <?php if ($view_mode === 'detail' && $article): ?>
         <!-- Article Detail View -->
-        <div class="main-content">
+        <div style="padding-top: 100px;">
             <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
                 <a href="?" class="back-button">
                     ⬅️ Kembali ke Beranda
@@ -1768,8 +264,328 @@ function truncateText($text, $length) {
                         <div class="article-description">
                             <?php echo nl2br(htmlspecialchars($article['deskripsi'])); ?>
                         </div>
+                        
+                        <!-- Booking Form -->
+                        <div class="booking-form">
+                            <h3>🎫 Pesan Tiket</h3>
+                            <div id="cart-message" style="display: none;"></div>
+                            <form id="add-to-cart-form">
+                                <input type="hidden" name="item_type" value="artikel">
+                                <input type="hidden" name="item_id" value="<?php echo $article['id']; ?>">
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="nama_pemesan">Nama Pemesan</label>
+                                        <input type="text" id="nama_pemesan" value="<?php echo htmlspecialchars($user_data['full_name']); ?>" readonly>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="email_pemesan">Email</label>
+                                        <input type="email" id="email_pemesan" value="<?php echo htmlspecialchars($user_data['email']); ?>" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="jumlah_tiket">Jumlah Tiket *</label>
+                                        <input type="number" name="quantity" id="jumlah_tiket" min="1" max="10" value="1" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="tanggal_kunjungan">Tanggal Kunjungan *</label>
+                                        <input type="date" name="booking_date" id="tanggal_kunjungan" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="catatan">Catatan Tambahan</label>
+                                    <textarea name="notes" id="catatan" rows="3" placeholder="Catatan khusus untuk pemesanan Anda..."></textarea>
+                                </div>
+                                
+                                <div class="total-price">
+                                    <h4>Total: <span id="total-amount"><?php echo formatPrice($article['harga']); ?></span></h4>
+                                </div>
+                                
+                                <button type="button" onclick="addToCart()" class="btn-book">
+                                    🛒 Tambahkan ke Keranjang
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="umkm-section-detail">
+                            <div class="umkm-header-detail">
+                                <?php if ($article['umkm_image']): ?>
+                                    <img src="../../uploads/profile_images/<?php echo htmlspecialchars($article['umkm_image']); ?>" 
+                                         alt="<?php echo htmlspecialchars($article['business_name']); ?>" class="umkm-avatar-detail">
+                                <?php else: ?>
+                                    <div class="umkm-avatar-placeholder">
+                                        🏪
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <div class="umkm-info">
+                                    <h3><?php echo htmlspecialchars($article['business_name']); ?></h3>
+                                    <p><strong>Pemilik:</strong> <?php echo htmlspecialchars($article['owner_name']); ?></p>
+                                    <p><strong>Jenis Usaha:</strong> <?php echo ucfirst(htmlspecialchars($article['business_type'])); ?></p>
+                                </div>
+                            </div>
+                            
+                            <div class="umkm-details">
+                                <div class="umkm-detail-item">
+                                    <span>📞</span>
+                                    <div>
+                                        <strong>Telepon</strong><br>
+                                        <?php echo htmlspecialchars($article['phone']); ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="umkm-detail-item">
+                                    <span>📍</span>
+                                    <div>
+                                        <strong>Alamat</strong><br>
+                                        <?php echo htmlspecialchars($article['address']); ?>
+                                    </div>
+                                </div>
+                                
+                                <?php if ($article['umkm_description']): ?>
+                                <div class="umkm-detail-item" style="grid-column: 1 / -1;">
+                                    <span>📝</span>
+                                    <div>
+                                        <strong>Tentang UMKM</strong><br>
+                                        <?php echo nl2br(htmlspecialchars($article['umkm_description'])); ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reviews Section -->
+                    <div class="reviews-section" id="reviews-section">
+                        <div class="reviews-card">
+                            <div class="reviews-header">
+                                <h3 class="reviews-title">⭐ Ulasan & Rating</h3>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
+                                        ✍️ Tulis Review
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <!-- Review Summary -->
+                            <div class="reviews-summary">
+                                <div class="rating-overview">
+                                    <p class="average-rating" id="averageRating">0.0</p>
+                                    <div class="rating-stars" id="averageStars">☆☆☆☆☆</div>
+                                    <p class="total-reviews" id="totalReviews">0 reviews</p>
+                                </div>
+                                
+                                <div class="rating-breakdown">
+                                    <?php for ($i = 5; $i >= 1; $i--): ?>
+                                    <div class="rating-bar">
+                                        <span class="rating-label"><?php echo $i; ?></span>
+                                        <div class="rating-progress">
+                                            <div class="rating-fill" id="rating<?php echo $i; ?>Bar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="rating-count" id="rating<?php echo $i; ?>Count">0</span>
+                                    </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            
+                            <!-- Sort and Filter -->
+                            <div class="reviews-controls" style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
+                                <label for="sortReviews" style="font-weight: 600;">Urutkan:</label>
+                                <select id="sortReviews" onchange="loadReviews(1)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                    <option value="newest">Terbaru</option>
+                                    <option value="oldest">Terlama</option>
+                                    <option value="highest">Rating Tertinggi</option>
+                                    <option value="lowest">Rating Terendah</option>
+                                    <option value="helpful">Paling Membantu</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Reviews List -->
+                            <div class="reviews-list" id="reviewsList">
+                                <!-- Reviews will be loaded here via AJAX -->
+                            </div>
+                            
+                            <!-- Load More Button -->
+                            <div class="load-more-reviews">
+                                <button class="btn-load-more" id="loadMoreReviews" style="display: none;" onclick="loadMoreReviews()">
+                                    Lihat Review Lainnya
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <script>
+                // Load reviews when page loads
+                let currentPage = 1;
+                let currentSort = 'newest';
+                
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (document.getElementById('reviews-section')) {
+                        loadReviews(1);
+                    }
+                });
+                
+                function loadReviews(page = 1, append = false) {
+                    currentPage = page;
+                    currentSort = document.getElementById('sortReviews').value;
+                    
+                    fetch(`../reviews/get_reviews.php?item_type=artikel&item_id=<?php echo $article['id']; ?>&page=${page}&sort_by=${currentSort}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update summary
+                                updateReviewSummary(data.summary);
+                                
+                                // Display reviews
+                                const reviewsList = document.getElementById('reviewsList');
+                                if (!append) {
+                                    reviewsList.innerHTML = '';
+                                }
+                                
+                                if (data.reviews.length === 0 && page === 1) {
+                                    reviewsList.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Belum ada review untuk produk ini. Jadilah yang pertama memberikan review!</p>';
+                                } else {
+                                    data.reviews.forEach(review => {
+                                        reviewsList.appendChild(createReviewElement(review));
+                                    });
+                                }
+                                
+                                // Update load more button
+                                document.getElementById('loadMoreReviews').style.display = data.pagination.has_next ? 'block' : 'none';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading reviews:', error);
+                            document.getElementById('reviewsList').innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Error loading reviews. Pastikan database review sudah terinstall.</p>';
+                        });
+                }
+                
+                function loadMoreReviews() {
+                    loadReviews(currentPage + 1, true);
+                }
+                
+                function updateReviewSummary(summary) {
+                    document.getElementById('averageRating').textContent = summary.average_rating.toFixed(1);
+                    document.getElementById('totalReviews').textContent = `${summary.total_reviews} reviews`;
+                    
+                    // Update stars
+                    const stars = Math.round(summary.average_rating);
+                    document.getElementById('averageStars').textContent = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+                    
+                    // Update rating bars
+                    for (let i = 5; i >= 1; i--) {
+                        document.getElementById(`rating${i}Bar`).style.width = `${summary.rating_percentages[i]}%`;
+                        document.getElementById(`rating${i}Count`).textContent = summary.rating_distribution[i];
+                    }
+                }
+                
+                function createReviewElement(review) {
+                    const reviewEl = document.createElement('div');
+                    reviewEl.className = 'review-item';
+                    
+                    const starsHtml = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                    
+                    let mediaHtml = '';
+                    if (review.media.length > 0) {
+                        mediaHtml = '<div class="review-media">';
+                        review.media.forEach(media => {
+                            if (media.type === 'image') {
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <img src="../../${media.url}" alt="Review image">
+                                </div>`;
+                            } else if (media.type === 'video') {
+                                mediaHtml += `<div class="review-media-item" onclick="window.open('../../${media.url}', '_blank')" style="cursor: pointer;">
+                                    <video src="../../${media.url}"></video>
+                                </div>`;
+                            }
+                        });
+                        mediaHtml += '</div>';
+                    }
+                    
+                    // Create avatar HTML based on whether user has profile image
+                    let avatarHtml;
+                    if (review.user.avatar) {
+                        avatarHtml = `<img src="../../uploads/profile_images/${review.user.avatar}" 
+                                           alt="${review.user.name}"
+                                           onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'reviewer-initial\\'>${review.user.name.charAt(0).toUpperCase()}</span>';">`;
+                    } else {
+                        const initial = review.user.name.charAt(0).toUpperCase();
+                        avatarHtml = `<span class="reviewer-initial">${initial}</span>`;
+                    }
+                    
+                    reviewEl.innerHTML = `
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    ${avatarHtml}
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4>${review.user.name}</h4>
+                                    <div class="review-date">${review.formatted_date}</div>
+                                </div>
+                            </div>
+                            <div class="review-rating" style="color: #f39c12;">${starsHtml}</div>
+                        </div>
+                        <div class="review-content">${review.text}</div>
+                        ${mediaHtml}
+                        <div class="review-actions">
+                            <div class="helpful-buttons">
+                                Apakah review ini membantu?
+                                <button class="helpful-btn ${review.user_vote === '1' ? 'voted' : ''}" 
+                                        onclick="voteHelpful(${review.id}, true)" 
+                                        ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                    <i class="fas fa-thumbs-up"></i> 
+                                    <span>${review.helpful_count}</span>
+                                </button>
+                                <button class="helpful-btn ${review.user_vote === '0' ? 'voted' : ''}" 
+                                        onclick="voteHelpful(${review.id}, false)"
+                                        ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                    <i class="fas fa-thumbs-down"></i> 
+                                    <span>${review.not_helpful_count}</span>
+                                </button>
+                            </div>
+                            ${review.is_verified ? '<div class="verified-badge"><i class="fas fa-check-circle"></i> Verified Purchase</div>' : ''}
+                        </div>
+                    `;
+                    
+                    return reviewEl;
+                }
+                
+                async function voteHelpful(reviewId, isHelpful) {
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                    alert('Silakan login untuk memberikan vote');
+                    return;
+                    <?php endif; ?>
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('review_id', reviewId);
+                        formData.append('is_helpful', isHelpful);
+                        
+                        const response = await fetch('../reviews/vote_helpful.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (!result.success && result.message) {
+                            alert(result.message);
+                        } else {
+                            // Reload reviews to update vote counts
+                            loadReviews(currentPage);
+                        }
+                    } catch (error) {
+                        console.error('Error voting:', error);
+                    }
+                }
+                </script>
                 
                 <?php if (count($related_articles) > 0): ?>
                 <div style="margin-top: 3rem;">
@@ -1803,7 +619,7 @@ function truncateText($text, $length) {
     
     <?php elseif ($view_mode === 'umkm'): ?>
         <!-- UMKM Browse View -->
-        <div class="main-content">
+        <div style="padding-top: 100px;">
             <div class="umkm-section">
                 <div class="umkm-container">
                     <a href="?" class="back-button">
@@ -2042,6 +858,10 @@ function truncateText($text, $length) {
                             <span>Best Rated</span>
                         </div>
                     </div>
+                    <button class="btn btn-primary" onclick="showDestinationModal()">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </button>
                 </div>
                 <div class="destination-media">
                     <div class="video-container">
@@ -2067,7 +887,7 @@ function truncateText($text, $length) {
         </section>
 
         <section id="experiences" class="experiences">
-            <h2>Your Gateway to <b>Authentic Experiences</b></h2>
+            <h2>Your Gateaway to <b>Authentic Experiences</b></h2>
             <div class="experiences-icons">
                 <div class="icon-item">
                     <div class="icon">
@@ -2198,6 +1018,7 @@ function truncateText($text, $length) {
                 </div>
             </div>
         </section>
+
 
         <!-- UMKM Section -->
         <section class="umkm-section" id="umkm">
@@ -2407,158 +1228,237 @@ function truncateText($text, $length) {
     </footer>
 
     <script>
-        // Ensure dashboard script is properly scoped and doesn't conflict with navbar
-        (function() {
-            'use strict';
-            
-            // Auto submit search form on Enter
-            const searchInput = document.querySelector('input[name="search"]');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        this.form.submit();
-                    }
-                });
+        // Auto submit search form on Enter
+        document.querySelector('input[name="search"]')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.form.submit();
             }
-            
-            // Smooth scroll for pagination and navigation - only for dashboard links
-            document.querySelectorAll('.pagination a, .nav-links a[href^="#"]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href').startsWith('#')) {
-                        e.preventDefault();
-                        const target = document.querySelector(this.getAttribute('href'));
-                        if (target) {
-                            target.scrollIntoView({ behavior: 'smooth' });
-                        }
+        });
+        
+        // Smooth scroll for pagination and navigation
+        document.querySelectorAll('.pagination a, .nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
                     }
-                });
-            });
-            
-            // Scroll progress bar
-            function updateScrollProgress() {
-                const scrollProgress = document.querySelector('.scroll-progress-bar');
-                if (scrollProgress) {
-                    const scrollTop = window.pageYOffset;
-                    const docHeight = document.body.offsetHeight - window.innerHeight;
-                    const scrollPercent = (scrollTop / docHeight) * 100;
-                    scrollProgress.style.width = scrollPercent + '%';
                 }
+            });
+        });
+        
+        // Calculate total price based on quantity for booking form
+        document.getElementById('jumlah_tiket')?.addEventListener('input', function() {
+            const quantity = parseInt(this.value) || 1;
+            const pricePerTicket = <?php echo isset($article['harga']) ? $article['harga'] : 0; ?>;
+            const total = quantity * pricePerTicket;
+            const totalElement = document.getElementById('total-amount');
+            if (totalElement) {
+                totalElement.textContent = formatPrice(total);
+            }
+        });
+        
+        function formatPrice(price) {
+            return 'Rp ' + price.toLocaleString('id-ID');
+        }
+        
+        // Add to cart function for logged in users
+        function addToCart() {
+            const form = document.getElementById('add-to-cart-form');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menambahkan...';
+            
+            fetch('../cart/add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
                 
-                // Show/hide scroll to top button
-                const scrollBtn = document.querySelector('.scroll-to-top');
-                if (scrollBtn) {
-                    if (window.pageYOffset > 300) {
-                        scrollBtn.classList.add('show');
-                    } else {
-                        scrollBtn.classList.remove('show');
-                    }
-                }
-            }
-            
-            // Throttled scroll handler for better performance
-            let scrollTimeout;
-            window.addEventListener('scroll', function() {
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-                scrollTimeout = setTimeout(updateScrollProgress, 10);
-            });
-            
-            // Animate stats counter
-            function animateStats() {
-                const stats = document.querySelectorAll('.stat-number');
-                stats.forEach(stat => {
-                    const target = parseInt(stat.getAttribute('data-target'));
-                    let current = parseInt(stat.textContent) || 0;
-                    const increment = target / 100;
+                if (data.success) {
+                    // Show success notification
+                    showNotification();
                     
-                    if (current < target) {
-                        stat.textContent = Math.ceil(current + increment);
-                        setTimeout(animateStats, 20);
-                    } else {
-                        stat.textContent = target;
+                    // Update cart badge if exists
+                    const cartBadge = document.querySelector('.cart-badge');
+                    if (cartBadge && data.cart_count) {
+                        cartBadge.textContent = data.cart_count;
                     }
-                });
-            }
-            
-            // Start animation when page loads
-            window.addEventListener('load', function() {
-                setTimeout(animateStats, 1000);
-            });
-            
-            // Fade in animation for elements
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in-visible');
-                    }
-                });
-            }, observerOptions);
-            
-            document.querySelectorAll('.fade-in').forEach(el => {
-                observer.observe(el);
-            });
-            
-            // Interest slider functionality
-            window.slideInterests = function(direction) {
-                const slider = document.getElementById('interestSlider');
-                if (!slider) return;
-                
-                const cardWidth = 320; // card width + gap
-                const currentScroll = slider.scrollLeft;
-                
-                if (direction === 'next') {
-                    slider.scrollTo({
-                        left: currentScroll + cardWidth,
-                        behavior: 'smooth'
-                    });
                 } else {
-                    slider.scrollTo({
-                        left: currentScroll - cardWidth,
-                        behavior: 'smooth'
-                    });
+                    alert('❌ ' + data.message);
                 }
-            };
-            
-            // Video sound toggle
-            window.toggleVideoSound = function(button) {
-                const video = button.parentElement.querySelector('video');
-                if (video) {
-                    if (video.muted) {
-                        video.muted = false;
-                        button.querySelector('i').className = 'fas fa-volume-up';
-                    } else {
-                        video.muted = true;
-                        button.querySelector('i').className = 'fas fa-volume-mute';
-                    }
-                }
-            };
-            
-            // Set minimum date for any date inputs
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('input[type="date"]').forEach(input => {
-                input.setAttribute('min', today);
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                console.error('Error:', error);
+                // Show success notification as fallback
+                showNotification();
             });
+        }
+        
+        // Show notification function
+        function showNotification() {
+            const overlay = document.getElementById('notification-overlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                
+                // Hide notification after 2 seconds
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                }, 2000);
+            }
+        }
+        
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('.mobile-nav')?.classList.toggle('active');
+        });
+        
+        document.querySelector('.mobile-nav-close')?.addEventListener('click', function() {
+            document.querySelector('.mobile-menu-toggle')?.classList.remove('active');
+            document.querySelector('.mobile-nav')?.classList.remove('active');
+        });
+        
+        // Scroll progress bar
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.querySelector('.scroll-progress-bar');
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
             
-            // Show notification function for cart operations
-            window.showNotification = function() {
-                const overlay = document.getElementById('notification-overlay');
-                if (overlay) {
-                    overlay.classList.add('show');
-                    
-                    // Hide notification after 2 seconds
-                    setTimeout(function() {
-                        overlay.classList.remove('show');
-                    }, 2000);
+            // Show/hide scroll to top button
+            const scrollBtn = document.querySelector('.scroll-to-top');
+            if (scrollTop > 300) {
+                scrollBtn.classList.add('show');
+            } else {
+                scrollBtn.classList.remove('show');
+            }
+            
+            // Header scroll effect
+            const header = document.querySelector('.header');
+            if (scrollTop > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Animate stats counter
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const count = parseInt(stat.textContent);
+                const increment = target / 100;
+                
+                if (count < target) {
+                    stat.textContent = Math.ceil(count + increment);
+                    setTimeout(() => animateStats(), 20);
+                } else {
+                    stat.textContent = target;
                 }
-            };
+            });
+        }
+        
+        // Start animation when page loads
+        window.addEventListener('load', () => {
+            setTimeout(animateStats, 1000);
+        });
+        
+        // Fade in animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Interest slider functionality
+        function slideInterests(direction) {
+            const slider = document.getElementById('interestSlider');
+            const cardWidth = 320; // card width + gap
+            const currentScroll = slider.scrollLeft;
             
-        })();
+            if (direction === 'next') {
+                slider.scrollTo({
+                    left: currentScroll + cardWidth,
+                    behavior: 'smooth'
+                });
+            } else {
+                slider.scrollTo({
+                    left: currentScroll - cardWidth,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Tab functionality for booking form
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Here you could add logic to show different form content based on tab
+                console.log('Selected tab:', this.getAttribute('data-tab'));
+            });
+        });
+        
+        // Form validation
+        document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const destination = document.getElementById('destination').value;
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+            
+            if (!destination || !checkin || !checkout) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Check if checkout is after checkin
+            if (new Date(checkout) <= new Date(checkin)) {
+                alert('Check-out date must be after check-in date');
+                return;
+            }
+            
+            alert('Booking search completed! This would typically redirect to results page.');
+        });
+        
+        // Set minimum date for booking form
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin')?.setAttribute('min', today);
+        document.getElementById('checkout')?.setAttribute('min', today);
+        
+        // Update checkout min date when checkin changes
+        document.getElementById('checkin')?.addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            const minCheckout = checkinDate.toISOString().split('T')[0];
+            document.getElementById('checkout').setAttribute('min', minCheckout);
+        });
     </script>
 </body>
 </html>
