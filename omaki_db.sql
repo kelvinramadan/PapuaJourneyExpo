@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 02, 2025 at 03:52 PM
+-- Generation Time: Jul 06, 2025 at 08:35 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -81,7 +81,8 @@ INSERT INTO `admin_payment_logs` (`id`, `admin_id`, `transaksi_id`, `action`, `n
 (15, 1, 15, 'confirmed', '', '2025-06-30 16:43:12'),
 (16, 1, 15, 'confirmed', '', '2025-06-30 16:44:24'),
 (17, 1, 16, 'confirmed', '', '2025-06-30 16:44:30'),
-(18, 1, 17, 'confirmed', '', '2025-06-30 20:13:28');
+(18, 1, 17, 'confirmed', '', '2025-06-30 20:13:28'),
+(19, 1, 18, 'confirmed', '', '2025-07-06 06:00:58');
 
 -- --------------------------------------------------------
 
@@ -109,7 +110,16 @@ CREATE TABLE `artikel` (
 INSERT INTO `artikel` (`id`, `umkm_id`, `judul`, `deskripsi`, `harga`, `kategori`, `gambar`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Snokeling Blue', 'kegiatan rekreasi di perairan dangkal yang memungkinkan Anda menikmati keindahan bawah laut tanpa harus menyelam terlalu dalam atau menggunakan peralatan selam skuba. Anda berenang di permukaan atau dekat permukaan sambil mengamati kehidupan laut, seperti ikan, terumbu karang, dan berbagai biota laut lainnya.', 75000.00, 'wisata', 'artikel_1_1748761560.jpg', 'active', '2025-06-01 07:06:00', '2025-06-01 07:06:00'),
 (2, 1, 'Hiu Blue Sky', 'Orang lain berlibur hanya ingin menikmati keindahan pantai dengan pasir putih sambil duduk berjemur dan menikmati sejuknya angin dan suara ombak. Tapi kamu wajib mencoba kegiatan berenang dengan hiu, yang bisa dilakukan di Wayag.\r\n\r\nBerenang dengan segerombolan hiu adalah hal yang langkah bagi banyak orang yang belum pernah liburan ke Wayag Raja Ampat. Karena saat ke Wayag kamu akan kaget dengan banyak hiu yang berenang di sepanjang pinggiran pantai.', 100000.00, 'wisata', 'artikel_1_1748764972.jpg', 'active', '2025-06-01 08:02:52', '2025-06-01 08:02:52'),
-(3, 4, 'Tour Guide', 'Kami menyediakan layanan tour guide profesional yang siap menemani Anda menjelajahi keindahan dan keunikan destinasi wisata dengan cara yang lebih personal dan berkesan. Dengan pengalaman, keramahan, dan pengetahuan lokal yang mendalam, kami tidak hanya menjadi pemandu, tapi juga sahabat perjalanan Anda. Setiap rute kami rancang fleksibel sesuai keinginan Anda, menghadirkan pengalaman wisata yang otentik—mulai dari menikmati alam yang memukau, mengenal budaya dan tradisi lokal, hingga mencicipi kuliner khas yang menggugah selera. Keamanan dan kenyamanan Anda adalah prioritas kami, sehingga Anda bisa menikmati liburan tanpa khawatir. Jadikan setiap perjalanan lebih dari sekadar kunjungan, tetapi petualangan yang meninggalkan kesan mendalam bersama kami.', 200000.00, 'jasa', 'artikel_4_1749613163.jpg', 'active', '2025-06-11 03:39:23', '2025-06-19 05:54:51');
+(3, 4, 'Tour Guide', 'Kami menyediakan layanan tour guide profesional yang siap menemani Anda menjelajahi keindahan dan keunikan destinasi wisata dengan cara yang lebih personal dan berkesan. Dengan pengalaman, keramahan, dan pengetahuan lokal yang mendalam, kami tidak hanya menjadi pemandu, tapi juga sahabat perjalanan Anda. Setiap rute kami rancang fleksibel sesuai keinginan Anda, menghadirkan pengalaman wisata yang otentik—mulai dari menikmati alam yang memukau, mengenal budaya dan tradisi lokal, hingga mencicipi kuliner khas yang menggugah selera. Keamanan dan kenyamanan Anda adalah prioritas kami, sehingga Anda bisa menikmati liburan tanpa khawatir. Jadikan setiap perjalanan lebih dari sekadar kunjungan, tetapi petualangan yang meninggalkan kesan mendalam bersama kami.', 200000.00, 'jasa', 'artikel_4_1749613163.jpg', 'active', '2025-06-11 03:39:23', '2025-06-19 05:54:51'),
+(4, 5, 'Udang Selingkuh Bakar', 'Udang air tawar besar yang berasal dari Wamena, disebut “selingkuh” karena bentuknya mirip lobster. Dibakar dengan bumbu khas Papua dan disajikan dengan sambal colo-colo.', 120000.00, 'kuliner', 'artikel_5_1751775180.jpeg', 'active', '2025-07-06 04:13:00', '2025-07-06 04:14:27'),
+(5, 5, 'Papeda Ikan Kuah Kuning', 'ubur sagu kenyal khas Papua, disajikan bersama ikan tongkol dalam kuah kuning gurih berbumbu kunyit dan jeruk nipis.', 70000.00, 'kuliner', 'artikel_5_1751775225.jpg', 'active', '2025-07-06 04:13:45', '2025-07-06 04:20:12'),
+(6, 5, 'Sate Ulat Sagu', 'Ulat sagu pilihan dibakar dan diberi bumbu rempah. Camilan berprotein tinggi dan populer di daerah pedalaman.', 45000.00, 'kuliner', 'artikel_5_1751775363.jpeg', 'active', '2025-07-06 04:16:03', '2025-07-06 04:16:03'),
+(7, 6, 'Nasi Goreng Ikan Asar', 'Nasi goreng khas Papua dengan taburan ikan asar (ikan asap) dan daun bawang lokal, menciptakan rasa smoky yang menggoda.', 30000.00, 'kuliner', 'artikel_6_1751782538.jpeg', 'active', '2025-07-06 06:15:38', '2025-07-06 06:15:38'),
+(8, 6, 'Ikan Bakar Sambal Colo', 'Ikan laut segar khas Danau Sentani yang dibakar dengan bumbu rempah Papua, disajikan bersama sambal colo-colo dan nasi panas.', 70000.00, 'kuliner', 'artikel_6_1751782581.jpg', 'active', '2025-07-06 06:16:21', '2025-07-06 06:16:21'),
+(9, 6, 'Udang Saus Sagu Pedas', 'Udang segar dimasak dengan saus khas dari olahan sagu dan cabai lokal, menghasilkan perpaduan rasa gurih dan pedas.', 85000.00, 'kuliner', 'artikel_6_1751782649.jpeg', 'active', '2025-07-06 06:17:29', '2025-07-06 06:17:29'),
+(10, 7, 'Paket Pernikahan Adat Papua', 'Lengkap dengan dekorasi, pakaian adat, dan musik tradisional Papua.', 8000000.00, 'event', 'artikel_7_1751783353.jpg', 'active', '2025-07-06 06:29:13', '2025-07-06 06:29:13'),
+(11, 8, 'Noken Serat Anggrek Hutan', 'Noken eksklusif dari bahan alami anggrek liar khas Papua.', 230000.00, 'kerajinan', 'artikel_8_1751783601.jpeg', 'active', '2025-07-06 06:33:21', '2025-07-06 06:33:21'),
+(12, 8, 'Noken Custom Warna', 'Cocok untuk oleh-oleh dan souvenir resmi dan bisa pilih warna dan ukuran sesuai permintaan.', 150000.00, 'kerajinan', 'artikel_8_1751783678.jpg', 'active', '2025-07-06 06:34:38', '2025-07-06 06:34:38');
 
 -- --------------------------------------------------------
 
@@ -445,7 +455,9 @@ INSERT INTO `reviews` (`id`, `user_id`, `transaksi_id`, `item_type`, `item_id`, 
 (2, 8, 14, 'wisata', 4, 4, 'Sangat Indah', 1, 1, '2025-06-30 16:29:56', '2025-06-30 16:29:56'),
 (3, 8, 16, 'artikel', 1, 5, 'mantap banget', 1, 1, '2025-06-30 20:10:08', '2025-06-30 20:10:08'),
 (4, 8, 13, 'artikel', 3, 5, 'Adminnya memiliki wawasan yang luas tentang wisata nya!', 1, 1, '2025-06-30 20:11:23', '2025-06-30 20:11:23'),
-(5, 8, 17, 'artikel', 1, 4, 'Seru bangett', 1, 1, '2025-06-30 20:13:52', '2025-06-30 20:13:52');
+(5, 8, 17, 'artikel', 1, 4, 'Seru bangett', 1, 1, '2025-06-30 20:13:52', '2025-06-30 20:13:52'),
+(6, 1, 18, 'artikel', 4, 5, 'Awalnya kek ngerasa mahal kan, niatnya nyoba eh taunya enak bgtt, besok klo kesini mau rebuy enakkkk', 1, 1, '2025-07-06 06:06:11', '2025-07-06 06:06:11'),
+(7, 1, 18, 'artikel', 6, 5, 'Underestimate menjijikan ternyata enakkk', 1, 1, '2025-07-06 06:06:32', '2025-07-06 06:06:32');
 
 --
 -- Triggers `reviews`
@@ -564,7 +576,8 @@ CREATE TABLE `review_helpfulness` (
 --
 
 INSERT INTO `review_helpfulness` (`id`, `review_id`, `user_id`, `is_helpful`, `created_at`) VALUES
-(2, 3, 9, 1, '2025-06-30 20:11:58');
+(2, 3, 9, 1, '2025-06-30 20:11:58'),
+(3, 4, 1, 1, '2025-07-06 06:10:14');
 
 -- --------------------------------------------------------
 
@@ -588,7 +601,8 @@ CREATE TABLE `review_media` (
 --
 
 INSERT INTO `review_media` (`id`, `review_id`, `media_type`, `file_path`, `file_size`, `duration`, `upload_order`, `created_at`) VALUES
-(1, 2, 'image', 'uploads/review_media/images/review_2_1_1751300996.png', 1900320, NULL, 1, '2025-06-30 16:29:56');
+(1, 2, 'image', 'uploads/review_media/images/review_2_1_1751300996.png', 1900320, NULL, 1, '2025-06-30 16:29:56'),
+(2, 6, 'image', 'uploads/review_media/images/review_6_1_1751781971.jpg', 125923, NULL, 1, '2025-07-06 06:06:11');
 
 -- --------------------------------------------------------
 
@@ -618,7 +632,9 @@ INSERT INTO `review_summary_cache` (`id`, `item_type`, `item_id`, `total_reviews
 (1, 'wisata', 6, 1, 5.00, 0, 0, 0, 0, 1, '2025-06-30 15:44:15'),
 (2, 'wisata', 4, 1, 4.00, 0, 0, 0, 1, 0, '2025-06-30 16:29:56'),
 (3, 'artikel', 1, 2, 4.50, 0, 0, 0, 1, 1, '2025-06-30 20:13:52'),
-(4, 'artikel', 3, 1, 5.00, 0, 0, 0, 0, 1, '2025-06-30 20:11:23');
+(4, 'artikel', 3, 1, 5.00, 0, 0, 0, 0, 1, '2025-06-30 20:11:23'),
+(6, 'artikel', 4, 1, 5.00, 0, 0, 0, 0, 1, '2025-07-06 06:06:11'),
+(7, 'artikel', 6, 1, 5.00, 0, 0, 0, 0, 1, '2025-07-06 06:06:32');
 
 -- --------------------------------------------------------
 
@@ -653,7 +669,8 @@ INSERT INTO `transaksi` (`id`, `user_id`, `transaction_code`, `total_amount`, `p
 (14, 8, 'TRX202506301829048', 10000.00, 'paid', 'bank_transfer', 'payment_TRX202506301829048_1751300955.jpg', '2025-06-30 13:31:00', '2025-06-30 23:43:07', 1, '2025-06-30 23:43:07', '2025-06-30 16:29:04', '2025-06-30 16:43:07'),
 (15, 8, 'TRX202506301842498', 3500000.00, 'paid', 'bank_transfer', 'payment_TRX202506301842498_1751301782.jpg', '2025-06-30 23:45:00', '2025-06-30 23:44:24', 1, '2025-06-30 23:44:24', '2025-06-30 16:42:49', '2025-06-30 16:44:24'),
 (16, 8, 'TRX202506301844078', 75000.00, 'paid', 'bank_transfer', 'payment_TRX202506301844078_1751301859.jpg', '2025-06-30 23:44:00', '2025-06-30 23:44:30', 1, '2025-06-30 23:44:30', '2025-06-30 16:44:07', '2025-06-30 16:44:30'),
-(17, 8, 'TRX202506302213008', 75000.00, 'paid', 'bank_transfer', 'payment_TRX202506302213008_1751314390.jpg', '2025-07-01 05:15:00', '2025-07-01 03:13:28', 1, '2025-07-01 03:13:28', '2025-06-30 20:13:00', '2025-06-30 20:13:28');
+(17, 8, 'TRX202506302213008', 75000.00, 'paid', 'bank_transfer', 'payment_TRX202506302213008_1751314390.jpg', '2025-07-01 05:15:00', '2025-07-01 03:13:28', 1, '2025-07-01 03:13:28', '2025-06-30 20:13:00', '2025-06-30 20:13:28'),
+(18, 1, 'TRX202507060800151', 285000.00, 'paid', 'bank_transfer', 'payment_TRX202507060800151_1751781634.png', '2025-07-06 13:00:00', '2025-07-06 13:00:58', 1, '2025-07-06 13:00:58', '2025-07-06 06:00:15', '2025-07-06 06:00:58');
 
 -- --------------------------------------------------------
 
@@ -687,7 +704,9 @@ INSERT INTO `transaksi_items` (`id`, `transaksi_id`, `item_type`, `item_id`, `it
 (9, 14, 'wisata', 4, 'Karmon Waterfall', 1, 10000.00, 10000.00, '2025-06-30', NULL, NULL, ''),
 (10, 15, 'penginapan', 4, 'Papua Paradise Eco Resort', 1, 3500000.00, 3500000.00, NULL, '2025-06-30', '2025-07-01', ''),
 (11, 16, 'artikel', 1, 'Snokeling Blue', 1, 75000.00, 75000.00, '2025-07-01', NULL, NULL, ''),
-(12, 17, 'artikel', 1, 'Snokeling Blue', 1, 75000.00, 75000.00, '2025-07-01', NULL, NULL, '');
+(12, 17, 'artikel', 1, 'Snokeling Blue', 1, 75000.00, 75000.00, '2025-07-01', NULL, NULL, ''),
+(13, 18, 'artikel', 4, 'Udang Selingkuh Bakar', 2, 120000.00, 240000.00, '2025-07-07', NULL, NULL, '1 Porsi pedas 1 Porsi Tidak'),
+(14, 18, 'artikel', 6, 'Sate Ulat Sagu', 1, 45000.00, 45000.00, '2025-07-07', NULL, NULL, '');
 
 -- --------------------------------------------------------
 
@@ -717,7 +736,11 @@ CREATE TABLE `umkm` (
 
 INSERT INTO `umkm` (`id`, `email`, `password`, `business_name`, `owner_name`, `phone`, `address`, `business_type`, `description`, `profile_image`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'papuabluedive@gmail.com', '$2y$10$YlaHkKRycMeWJHaibTo6HOsY335duiKFrLsSTwXnKdLw6v6kS.l2G', 'Papua Blue Dive', 'Kepin Marhaban', '082166384920', 'Jln. Wisata Laut No. 7, Distrik Waisai, Kabupaten Raja Ampat, Papua Barat Daya', 'wisata', '“Papua Blue Dive adalah layanan snorkeling profesional yang menghadirkan pengalaman eksplorasi terumbu karang dan keindahan laut Papua, khususnya di wilayah Raja Ampat.”', 'umkm_1_1748710091.png', 'active', '2025-05-31 15:35:59', '2025-05-31 16:48:17'),
-(4, 'trenguide@gmail.com', '$2y$10$Q1N04h86zSwRnGlDP1CSfOau1Jg6Mrk57Yyt6QlcE/5O52092Tdda', 'Tren Tour Guide', 'Trendo', '09277246729', 'Jl. Soa Siu Dok 2 Bawah Jayapura, Papua.', 'jasa', 'Jasa pemandu Tour Guide', 'default-umkm.jpg', 'active', '2025-06-11 03:36:41', '2025-06-11 03:37:08');
+(4, 'trenguide@gmail.com', '$2y$10$Q1N04h86zSwRnGlDP1CSfOau1Jg6Mrk57Yyt6QlcE/5O52092Tdda', 'Tren Tour Guide', 'Trendo', '09277246729', 'Jl. Soa Siu Dok 2 Bawah Jayapura, Papua.', 'jasa', 'Jasa pemandu Tour Guide', 'default-umkm.jpg', 'active', '2025-06-11 03:36:41', '2025-06-11 03:37:08'),
+(5, 'honairasa@gmail.com', '$2y$10$u4wOKNfcQVUhuSzIqzJo6eBX/j6Wo5A3dtWOLFJLY3akvHak2oju6', 'Rumah Makan Honai Rasa', 'Ester Maintindom', '0810967123456', 'Jl. Trikora No.15, Distrik Abepura, Kota Jayapura, Papua 99351', 'kuliner', 'Terinspirasi dari bentuk rumah adat Honai, restoran ini mengusung konsep tradisional-modern yang menyajikan aneka kuliner khas Pegunungan Tengah Papua. Interior kayu, aroma rempah khas, dan musik etnik menciptakan suasana yang hangat dan autentik.', 'umkm_5_1751775094.png', 'active', '2025-07-06 04:06:14', '2025-07-06 04:11:34'),
+(6, 'dapurlautsentani@gmail.com', '$2y$10$TOQrV3.8h2Cw1aecp8LgB.wl6Da5fbi/FND.moANzjoJWKzl/wRrO', 'Dapur Laut Sentani', 'Azwandi Kaka', '0810967123456', 'Jl. Raya Danau Sentani No.3, Kampung Harapan, Distrik Sentani Timur, Kabupaten Jayapura, Papua 99352', 'jasa', 'Dikelilingi panorama Danau Sentani, restoran ini menyajikan berbagai hidangan laut segar yang diolah dengan resep turun-temurun masyarakat Sentani. Cocok untuk wisatawan yang ingin mencicipi cita rasa laut Papua yang otentik.', 'umkm_6_1751782303.png', 'active', '2025-07-06 04:08:08', '2025-07-06 06:11:43'),
+(7, 'mamarosa@gmail.com', '$2y$10$VbPs8wSTNYj/SL91danwnu1nZPxUIJB/5QdWykRwdlWAsR1qWBqpC', 'Mama Rosa Event Organizer', 'Rosa Yikwa', '085377779898', 'Jl. Kemiri Dalam, Abepura, Jayapura', 'event', 'Menyediakan layanan penyelenggaraan acara budaya, pernikahan adat Papua, dan festival lokal.', 'umkm_7_1751783229.jpg', 'active', '2025-07-06 06:23:13', '2025-07-06 06:27:09'),
+(8, 'kriyanoken@gmail.com', '$2y$10$8s/1joOaRHxFsp1PpkDaKefsfW14AenTC1BecDXGHfgsl7FmVuvpO', 'Kriya Noken Papua', 'Maria Magai', '085211118899', 'Jl. Merdeka No. 45, Kota Jayapura', 'kerajinan', 'Usaha yang fokus pada pembuatan dan penjualan noken asli Papua dari serat alami.', 'umkm_8_1751783505.png', 'active', '2025-07-06 06:24:36', '2025-07-06 06:31:45');
 
 -- --------------------------------------------------------
 
@@ -755,6 +778,14 @@ CREATE TABLE `umkm_notifications` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `umkm_notifications`
+--
+
+INSERT INTO `umkm_notifications` (`id`, `umkm_id`, `type`, `title`, `message`, `transaction_code`, `is_read`, `created_at`) VALUES
+(1, 5, 'payment_confirmed', 'Pembayaran Dikonfirmasi!', 'Pesanan untuk \'Udang Selingkuh Bakar\' (Qty: 2, Total: Rp 240,000) telah dikonfirmasi. Kode transaksi: TRX202507060800151', 'TRX202507060800151', 1, '2025-07-06 06:00:58'),
+(2, 5, 'payment_confirmed', 'Pembayaran Dikonfirmasi!', 'Pesanan untuk \'Sate Ulat Sagu\' (Qty: 1, Total: Rp 45,000) telah dikonfirmasi. Kode transaksi: TRX202507060800151', 'TRX202507060800151', 1, '2025-07-06 06:00:58');
+
 -- --------------------------------------------------------
 
 --
@@ -778,7 +809,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`, `profile_image`, `created_at`, `updated_at`) VALUES
-(1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domanii', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1750312287.jpg', '2025-05-31 15:34:52', '2025-06-19 05:51:27'),
+(1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domani', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1751782135.jpg', '2025-05-31 15:34:52', '2025-07-06 06:09:18'),
 (3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05'),
 (8, 'slemandanpapua@gmail.com', '$2y$10$8J8g9PhSbxSBwf6bplaYY.GeWgq.7x1NtxKboIsWwJpUNpkgtf0z2', 'Trendo', '081357426645', 'furia puskopad block a', 'user_8_1750800567.jpg', '2025-06-23 13:29:50', '2025-06-24 21:29:27'),
 (9, 'samuelrobail@gmail.com', '$2y$10$.Q72hHPSWfvri1e9281fw.RCSfsJ83c8BXQRwA1oStWz3Mytibw6G', 'Ibnu', '081357427945', 'furia puskopad block a', 'default-user.jpg', '2025-06-24 20:46:37', '2025-06-26 19:59:19');
@@ -861,7 +892,8 @@ INSERT INTO `wisata_statistics` (`id`, `wisata_id`, `stat_date`, `view_count`, `
 (11, 6, '2025-06-30', 2, 1, 0, 0.00, '2025-06-30 15:38:58', '2025-06-30 16:42:12'),
 (12, 4, '2025-06-30', 1, 1, 0, 0.00, '2025-06-30 16:28:49', '2025-06-30 16:28:49'),
 (14, 6, '2025-07-01', 1, 1, 0, 0.00, '2025-06-30 20:12:42', '2025-06-30 20:12:42'),
-(15, 4, '2025-07-01', 1, 1, 0, 0.00, '2025-06-30 20:38:42', '2025-06-30 20:38:42');
+(15, 4, '2025-07-01', 1, 1, 0, 0.00, '2025-06-30 20:38:42', '2025-06-30 20:38:42'),
+(16, 6, '2025-07-06', 1, 1, 0, 0.00, '2025-07-06 05:54:58', '2025-07-06 05:54:58');
 
 -- --------------------------------------------------------
 
@@ -895,7 +927,8 @@ INSERT INTO `wisata_views` (`id`, `wisata_id`, `user_id`, `ip_address`, `view_da
 (9, 4, 8, '::1', '2025-06-30 23:28:49', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
 (10, 6, 8, '::1', '2025-06-30 23:42:11', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
 (11, 6, 8, '::1', '2025-07-01 03:12:42', '59934d9knach3tfp4kqfm675sq', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
-(12, 4, 8, '::1', '2025-07-01 03:38:42', '59934d9knach3tfp4kqfm675sq', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+(12, 4, 8, '::1', '2025-07-01 03:38:42', '59934d9knach3tfp4kqfm675sq', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(13, 6, 1, '::1', '2025-07-06 12:54:58', 'lcpoqp1fupu8798bhaahg7rtm7', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
 
 -- --------------------------------------------------------
 
@@ -1155,19 +1188,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `admin_payment_logs`
 --
 ALTER TABLE `admin_payment_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `artikel`
 --
 ALTER TABLE `artikel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `chat_conversations`
@@ -1221,43 +1254,43 @@ ALTER TABLE `platform_financial_statistics`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `review_helpfulness`
 --
 ALTER TABLE `review_helpfulness`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `review_media`
 --
 ALTER TABLE `review_media`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `review_summary_cache`
 --
 ALTER TABLE `review_summary_cache`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `transaksi_items`
 --
 ALTER TABLE `transaksi_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `umkm`
 --
 ALTER TABLE `umkm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `umkm_financial_statistics`
@@ -1269,7 +1302,7 @@ ALTER TABLE `umkm_financial_statistics`
 -- AUTO_INCREMENT for table `umkm_notifications`
 --
 ALTER TABLE `umkm_notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1287,13 +1320,13 @@ ALTER TABLE `wisata`
 -- AUTO_INCREMENT for table `wisata_statistics`
 --
 ALTER TABLE `wisata_statistics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `wisata_views`
 --
 ALTER TABLE `wisata_views`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
