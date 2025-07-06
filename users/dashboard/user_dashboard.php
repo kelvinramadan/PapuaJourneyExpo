@@ -1,4 +1,5 @@
 <?php
+//user_dashboard.php
 session_start();
 
 // Check if user is logged in and is a regular user
@@ -82,12 +83,13 @@ if ($view_mode === 'detail' && $article_id > 0) {
     $stmt->close();
 }
 
-// Get articles for dashboard view with filtering
-$articles = [];
-$total_articles = 0;
-$total_pages = 1;
+// Check if viewing UMKM list view
+elseif ($view_mode === 'umkm') {
+    // Get articles for UMKM view with filtering
+    $articles = [];
+    $total_articles = 0;
+    $total_pages = 1;
 
-if ($view_mode === 'dashboard') {
     // Build WHERE clause for filtering
     $where_conditions = ["a.status = 'active'"];
     $params = [];
@@ -154,6 +156,29 @@ if ($view_mode === 'dashboard') {
         $articles_result = $articles_stmt->get_result();
         $articles = $articles_result->fetch_all(MYSQLI_ASSOC);
         $articles_stmt->close();
+    }
+}
+
+// Get articles for dashboard view - MODIFIED FOR RANDOM 6 ARTICLES
+$articles = [];
+
+if ($view_mode === 'dashboard') {
+    // Get 6 random articles for homepage display
+    $articles_query = "SELECT a.*, u.business_name, u.profile_image as umkm_image,
+                       COALESCE(rsc.total_reviews, 0) as review_count,
+                       COALESCE(rsc.average_rating, 0) as average_rating
+                       FROM artikel a 
+                       JOIN umkm u ON a.umkm_id = u.id 
+                       LEFT JOIN review_summary_cache rsc 
+                           ON rsc.item_type = 'artikel' 
+                           AND rsc.item_id = a.id
+                       WHERE a.status = 'active'
+                       ORDER BY RAND() 
+                       LIMIT 6";
+
+    $articles_result = $db->query($articles_query);
+    if ($articles_result) {
+        $articles = $articles_result->fetch_all(MYSQLI_ASSOC);
     }
 }
 
@@ -1020,7 +1045,7 @@ function truncateText($text, $length) {
         </section>
 
 
-        <!-- UMKM Section -->
+        <!-- UMKM Section - MODIFIED TO SHOW ONLY 6 RANDOM CARDS -->
         <section class="umkm-section" id="umkm">
             <div class="umkm-container">
                 <div class="umkm-header fade-in">
@@ -1031,7 +1056,7 @@ function truncateText($text, $length) {
                 
                 <?php if (count($articles) > 0): ?>
                 <div class="articles-grid fade-in">
-                    <?php foreach (array_slice($articles, 0, 8) as $artikel): ?>
+                    <?php foreach ($articles as $artikel): ?>
                         <div class="article-card" onclick="location.href='?view=detail&id=<?php echo $artikel['id']; ?>'">
                             <div class="article-image">
                                 <?php if ($artikel['gambar']): ?>
@@ -1107,7 +1132,8 @@ function truncateText($text, $length) {
                     <?php endforeach; ?>
                 </div>
                 
-                <a href="?view=umkm" class="view-all-btn">
+                <!-- MODIFIED: Link to new all UMKM page -->
+                <a href="allumkm.php" class="view-all-btn">
                     <i class="fas fa-arrow-right"></i>
                     Lihat Semua UMKM
                 </a>
@@ -1459,6 +1485,25 @@ function truncateText($text, $length) {
             const minCheckout = checkinDate.toISOString().split('T')[0];
             document.getElementById('checkout').setAttribute('min', minCheckout);
         });
+
+        // Video sound toggle function
+        function toggleVideoSound(button) {
+            const video = button.parentElement.querySelector('video');
+            const icon = button.querySelector('i');
+            
+            if (video.muted) {
+                video.muted = false;
+                icon.className = 'fas fa-volume-up';
+            } else {
+                video.muted = true;
+                icon.className = 'fas fa-volume-mute';
+            }
+        }
+
+        // Show destination modal function (placeholder)
+        function showDestinationModal() {
+            alert('Learn More modal would open here. This is a placeholder function.');
+        }
     </script>
 </body>
 </html>
