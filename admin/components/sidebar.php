@@ -27,7 +27,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
         
         <a href="wisata_analytics.php" class="btn <?php echo $current_page == 'wisata_analytics.php' ? 'active' : ''; ?>" data-tooltip="Analytics">
             <span class="btn-icon"><i class="fas fa-chart-bar"></i></span>
-            <span class="btn-text">Analitik</span>
+            <span class="btn-text">Analitik Wisata</span>
+        </a>
+        
+        <a href="abandoned_cart_analytics.php" class="btn <?php echo $current_page == 'abandoned_cart_analytics.php' ? 'active' : ''; ?>" data-tooltip="Abandoned Cart Analytics">
+            <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
+            <span class="btn-text">Abandoned Cart</span>
         </a>
         
         <a href="adminpenginapan.php" class="btn <?php echo $current_page == 'adminpenginapan.php' ? 'active' : ''; ?>" data-tooltip="Penginapan">

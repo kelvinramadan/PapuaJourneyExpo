@@ -522,5 +522,9 @@ function getItemTypeLabel($type) {
             itemToDelete = null;
         }
     </script>
+    
+    <!-- Abandoned Cart Tracking -->
+    <link rel="stylesheet" href="../../assets/css/abandoned-cart-modal.css">
+    <script src="../../assets/js/abandoned-cart-tracker.js"></script>
 </body>
 </html>

@@ -100,6 +100,15 @@ try {
     $stmt->execute();
     $stmt->close();
     
+    // Mark any abandoned carts as recovered for this user and session
+    markCartAsRecovered($db, $user_id, session_id());
+    
+    // Mark checkout completion in cart session
+    $session_update = $db->prepare("UPDATE user_cart_sessions SET checkout_completed = 1 WHERE user_id = ? AND session_id = ?");
+    $session_update->bind_param("is", $user_id, session_id());
+    $session_update->execute();
+    $session_update->close();
+    
     // Commit transaction
     $db->commit();
     
@@ -123,3 +132,19 @@ try {
 } finally {
     $db->close();
 }
+
+// Function to mark abandoned carts as recovered
+function markCartAsRecovered($db, $user_id, $session_id) {
+    // Find recent abandoned carts for this user that are not yet recovered
+    $stmt = $db->prepare("
+        UPDATE abandoned_carts 
+        SET is_recovered = 1, recovered_at = NOW(), recovery_method = 'direct_return'
+        WHERE user_id = ? 
+        AND (session_id = ? OR abandonment_timestamp > DATE_SUB(NOW(), INTERVAL 24 HOUR))
+        AND is_recovered = 0
+    ");
+    $stmt->bind_param("is", $user_id, $session_id);
+    $stmt->execute();
+    $stmt->close();
+}
+?>
