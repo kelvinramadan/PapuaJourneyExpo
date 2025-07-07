@@ -1,0 +1,511 @@
+/* umkm.css - UMKM Pemesanan Page Styles */
+:root {
+    --primary-color: #536245;
+    --secondary-color: #d9d9d9;
+    --button-color: #DC9B11;
+    --button-hover-color: #f4b63b;
+    --text-color: #FFFCF7;
+    --text-color-secondary: #191919;
+    --background-color: #EBE7E4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background-color);
+    color: var(--text-color-secondary);
+    line-height: 1.6;
+    margin-left: 280px;
+    min-height: 100vh;
+}
+
+/* Main Container */
+.pemesanan-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Section */
+.header-section {
+    background: linear-gradient(135deg, var(--primary-color), #6a7c5e);
+    color: var(--text-color);
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.header-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.header-section p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+/* Statistics Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--button-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Notification Container */
+.notification-container {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border-left: 5px solid #2196f3;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.notification-container h4 {
+    margin: 0 0 1rem 0;
+    color: #1976d2;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #4caf50;
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.notification-item h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.notification-item p {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.notification-item small {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--secondary-color);
+    margin-bottom: 2rem;
+}
+
+.table-header {
+    background: var(--primary-color);
+    color: var(--text-color);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.table-header h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Table Styles */
+.pemesanan-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.pemesanan-table thead {
+    background: var(--button-color);
+    color: var(--text-color);
+}
+
+.pemesanan-table th,
+.pemesanan-table td {
+    padding: 1.2rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+
+.pemesanan-table th {
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pemesanan-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.pemesanan-table tbody tr:hover {
+    background: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.pemesanan-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.pemesanan-table tbody tr:nth-child(even):hover {
+    background: #f0f0f0;
+}
+
+/* Table Cell Specific Styles */
+.artikel-info {
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.kategori-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: var(--secondary-color);
+    color: var(--text-color-secondary);
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.user-info {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.pemesan-details {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.pemesan-details strong {
+    color: var(--text-color-secondary);
+}
+
+.tiket-info {
+    font-weight: 600;
+    color: var(--button-color);
+    margin-bottom: 0.3rem;
+    font-size: 1.1rem;
+}
+
+.tanggal-kunjungan {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.price-cell {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #27ae60;
+    text-align: right;
+}
+
+.date-cell {
+    color: #666;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #c3e6cb;
+}
+
+.catatan-cell {
+    max-width: 200px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #555;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #666;
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    color: #888;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+}
+
+.pagination a,
+.pagination span {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background: var(--button-color);
+    color: var(--text-color);
+    transform: translateY(-2px);
+}
+
+.pagination .current {
+    background: var(--primary-color);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    body {
+        margin-left: 0;
+    }
+    
+    .pemesanan-container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-section {
+        padding: 2rem 1.5rem;
+    }
+    
+    .header-section h1 {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .pemesanan-table {
+        min-width: 800px;
+    }
+    
+    .pemesanan-table th,
+    .pemesanan-table td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .notification-container {
+        padding: 1rem;
+    }
+    
+    .notification-item {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pemesanan-container {
+        padding: 0.5rem;
+    }
+    
+    .header-section {
+        padding: 1.5rem 1rem;
+        border-radius: 15px;
+    }
+    
+    .header-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-section p {
+        font-size: 1rem;
+    }
+    
+    .table-header {
+        padding: 1rem;
+    }
+    
+    .pemesanan-table th,
+    .pemesanan-table td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .notification-item {
+        padding: 0.8rem;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+    }
+    
+    .pagination a,
+    .pagination span {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Button Styles for Actions */
+button {
+    background: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+button:hover {
+    background: var(--button-hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 155, 17, 0.3);
+}
+
+button.btn-secondary {
+    background: var(--secondary-color);
+    color: var(--text-color-secondary);
+}
+
+button.btn-secondary:hover {
+    background: #c0c0c0;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table-container,
+.stats-grid,
+.notification-container {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Loading States */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.loading::after {
+    content: "⏳";
+    font-size: 2rem;
+    display: block;
+    margin-top: 1rem;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
