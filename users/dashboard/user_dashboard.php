@@ -942,69 +942,69 @@ function truncateText($text, $length) {
         </section>
 
         <section class="interests" id="interest">
-            <div class="interest-container">
-                <div class="interest-title fade-in">
-                    <span class="section-label">Choose Your Adventure</span>
-                    <h2>Explore Your <b>Interests</b></h2>
-                    <p>Select your preferred activities and we'll create a personalized itinerary just for you</p>
-                </div>
-                <div class="interest-wrapper fade-in">
-                    <button class="slider-nav slider-nav-prev" onclick="slideInterests('prev')">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="interest-slider" id="interestSlider">
-                        <div class="interest-card food" data-category="culinary">
-                            <div class="interest-overlay"></div>
-                            <div class="interest-content">
-                                <i class="fi fi-rr-hamburger-soda"></i>
-                                <h3>Food & Drink</h3>
-                                <p>Taste authentic Papuan cuisine</p>
-                                <span class="interest-tag">20+ Restaurants</span>
-                            </div>
-                        </div>
-                        <div class="interest-card culture" data-category="cultural">
-                            <div class="interest-overlay"></div>
-                            <div class="interest-content">
-                                <i class="fi fi-rr-people"></i>
-                                <h3>Culture & Heritage</h3>
-                                <p>Experience traditional ceremonies</p>
-                                <span class="interest-tag">15+ Villages</span>
-                            </div>
-                        </div>
-                        <div class="interest-card adventures" data-category="marine">
-                            <div class="interest-overlay"></div>
-                            <div class="interest-content">
-                                <i class="fi fi-rr-dolphin"></i>
-                                <h3>Underwater Adventures</h3>
-                                <p>Dive in pristine coral reefs</p>
-                                <span class="interest-tag">30+ Dive Sites</span>
-                            </div>
-                        </div>
-                        <div class="interest-card tracking" data-category="hiking">
-                            <div class="interest-overlay"></div>
-                            <div class="interest-content">
-                                <i class="fi fi-br-mountain"></i>
-                                <h3>Trekking Tours</h3>
-                                <p>Hike through rainforests</p>
-                                <span class="interest-tag">25+ Trails</span>
-                            </div>
-                        </div>
-                        <div class="interest-card wildlife" data-category="wildlife">
-                            <div class="interest-overlay"></div>
-                            <div class="interest-content">
-                                <i class="fi fi-rr-bird"></i>
-                                <h3>Wildlife & Nature</h3>
-                                <p>See exotic birds of paradise</p>
-                                <span class="interest-tag">40+ Species</span>
-                            </div>
+        <div class="interest-container">
+            <div class="interest-title fade-in">
+                <span class="section-label">Choose Your Adventure</span>
+                <h2>Explore Your <b>Interests</b></h2>
+                <p>Select your preferred activities and we'll create a personalized itinerary just for you</p>
+            </div>
+            <div class="interest-wrapper fade-in">
+                <button class="slider-nav slider-nav-prev" onclick="slideInterests('prev')">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="interest-slider" id="interestSlider">
+                    <div class="interest-card food" data-category="culinary" onclick="navigateToCategory('culinary')">
+                        <div class="interest-overlay"></div>
+                        <div class="interest-content">
+                            <i class="fi fi-rr-hamburger-soda"></i>
+                            <h3>Food & Drink</h3>
+                            <p>Taste authentic Papuan cuisine</p>
+                            <span class="interest-tag">20+ Restaurants</span>
                         </div>
                     </div>
-                    <button class="slider-nav slider-nav-next" onclick="slideInterests('next')">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <div class="interest-card culture" data-category="cultural" onclick="navigateToCategory('cultural')">
+                        <div class="interest-overlay"></div>
+                        <div class="interest-content">
+                            <i class="fi fi-rr-people"></i>
+                            <h3>Culture & Heritage</h3>
+                            <p>Experience traditional ceremonies</p>
+                            <span class="interest-tag">15+ Villages</span>
+                        </div>
+                    </div>
+                    <div class="interest-card adventures" data-category="marine" onclick="navigateToCategory('marine')">
+                        <div class="interest-overlay"></div>
+                        <div class="interest-content">
+                            <i class="fi fi-rr-dolphin"></i>
+                            <h3>Underwater Adventures</h3>
+                            <p>Dive in pristine coral reefs</p>
+                            <span class="interest-tag">30+ Dive Sites</span>
+                        </div>
+                    </div>
+                    <div class="interest-card tracking" data-category="hiking" onclick="navigateToCategory('hiking')">
+                        <div class="interest-overlay"></div>
+                        <div class="interest-content">
+                            <i class="fi fi-br-mountain"></i>
+                            <h3>Trekking Tours</h3>
+                            <p>Hike through rainforests</p>
+                            <span class="interest-tag">25+ Trails</span>
+                        </div>
+                    </div>
+                    <div class="interest-card wildlife" data-category="wildlife" onclick="navigateToCategory('wildlife')">
+                        <div class="interest-overlay"></div>
+                        <div class="interest-content">
+                            <i class="fi fi-rr-bird"></i>
+                            <h3>Wildlife & Nature</h3>
+                            <p>See exotic birds of paradise</p>
+                            <span class="interest-tag">40+ Species</span>
+                        </div>
+                    </div>
                 </div>
+                <button class="slider-nav slider-nav-next" onclick="slideInterests('next')">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
-        </section>
+        </div>
+    </section>
 
         <section class="plan-trip" id="plan">
             <div class="plan-container">
@@ -1436,6 +1436,33 @@ function truncateText($text, $length) {
                     left: currentScroll - cardWidth,
                     behavior: 'smooth'
                 });
+            }
+        }
+
+        function navigateToCategory(category) {
+            const categoryUrls = {
+                'culinary': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kuliner',
+                'cultural': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=event',
+                'marine': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
+                'hiking': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
+                'wildlife': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kerajinan'
+            };
+            
+            const targetUrl = categoryUrls[category];
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        }
+
+        // Slider functionality (you need to implement this if not already available)
+        function slideInterests(direction) {
+            const slider = document.getElementById('interestSlider');
+            const scrollAmount = 320; // width of card + gap
+            
+            if (direction === 'prev') {
+                slider.scrollLeft -= scrollAmount;
+            } else {
+                slider.scrollLeft += scrollAmount;
             }
         }
         
