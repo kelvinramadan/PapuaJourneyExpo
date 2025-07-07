@@ -11,8 +11,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
 
 $page_title = 'Keranjang Ditinggalkan';
 
-// Configuration for abandoned cart definition
-$abandoned_hours = isset($_GET['hours']) ? max(1, (int)$_GET['hours']) : 24;
+// Configuration for abandoned cart definition (in minutes for testing)
+$abandoned_minutes = isset($_GET['minutes']) ? max(1, (int)$_GET['minutes']) : 1;
 
 // Filters
 $date_filter = $_GET['date_from'] ?? '';
@@ -24,7 +24,7 @@ $max_value = $_GET['max_value'] ?? '';
 $db = getDbConnection();
 
 // Build WHERE clause for filters
-$where_conditions = ["DATE_ADD(c.updated_at, INTERVAL {$abandoned_hours} HOUR) < NOW()"];
+$where_conditions = ["DATE_ADD(c.updated_at, INTERVAL {$abandoned_minutes} MINUTE) < NOW()"];
 $params = [];
 $types = "";
 
@@ -72,7 +72,7 @@ $abandoned_carts_query = "
         COUNT(c.id) as items_count,
         SUM(c.subtotal) as cart_total,
         MAX(c.updated_at) as last_activity,
-        TIMESTAMPDIFF(HOUR, MAX(c.updated_at), NOW()) as hours_abandoned,
+        TIMESTAMPDIFF(MINUTE, MAX(c.updated_at), NOW()) as minutes_abandoned,
         GROUP_CONCAT(
             CONCAT(
                 CASE 
@@ -121,7 +121,7 @@ $abandoned_products_query = "
     LEFT JOIN wisata w ON c.item_type = 'wisata' AND c.item_id = w.id
     LEFT JOIN penginapan p ON c.item_type = 'penginapan' AND c.item_id = p.id
     LEFT JOIN artikel a ON c.item_type = 'artikel' AND c.item_id = a.id
-    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_hours} HOUR) < NOW()
+    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_minutes} MINUTE) < NOW()
     GROUP BY c.item_type, c.item_id
     ORDER BY abandon_count DESC
     LIMIT 10
@@ -137,7 +137,7 @@ $stats_query = "
         SUM(c.subtotal) as total_abandoned_value,
         AVG(c.subtotal) as avg_item_value
     FROM cart_items c
-    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_hours} HOUR) < NOW()
+    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_minutes} MINUTE) < NOW()
 ";
 
 $stats = $db->query($stats_query)->fetch_assoc();
@@ -150,7 +150,7 @@ $category_stats_query = "
         COUNT(c.id) as items_count,
         SUM(c.subtotal) as total_value
     FROM cart_items c
-    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_hours} HOUR) < NOW()
+    WHERE DATE_ADD(c.updated_at, INTERVAL {$abandoned_minutes} MINUTE) < NOW()
     GROUP BY c.item_type
     ORDER BY total_value DESC
 ";
@@ -162,13 +162,15 @@ function formatPrice($price) {
     return 'Rp ' . number_format($price, 0, ',', '.');
 }
 
-function formatDuration($hours) {
-    if ($hours < 24) {
-        return $hours . ' jam';
-    } elseif ($hours < 168) { // 7 days
-        return round($hours / 24, 1) . ' hari';
+function formatDuration($minutes) {
+    if ($minutes < 60) {
+        return $minutes . ' menit';
+    } elseif ($minutes < 1440) { // 24 hours
+        return round($minutes / 60, 1) . ' jam';
+    } elseif ($minutes < 10080) { // 7 days
+        return round($minutes / 1440, 1) . ' hari';
     } else {
-        return round($hours / 168, 1) . ' minggu';
+        return round($minutes / 10080, 1) . ' minggu';
     }
 }
 
@@ -486,8 +488,8 @@ function getItemTypeLabel($type) {
                     <form method="GET" style="margin: 0;">
                         <div class="filters-grid">
                             <div class="filter-group">
-                                <label>Ditinggalkan selama (jam):</label>
-                                <input type="number" name="hours" value="<?php echo $abandoned_hours; ?>" min="1" max="8760">
+                                <label>Ditinggalkan selama (menit):</label>
+                                <input type="number" name="minutes" value="<?php echo $abandoned_minutes; ?>" min="1" max="525600">
                             </div>
                             <div class="filter-group">
                                 <label>Tanggal Dari:</label>
@@ -629,8 +631,8 @@ function getItemTypeLabel($type) {
                                         <span><?php echo $cart['last_activity']; ?></span>
                                     </div>
                                 </div>
-                                <div class="duration-badge <?php echo $cart['hours_abandoned'] > 168 ? 'old' : 'recent'; ?>">
-                                    Ditinggalkan <?php echo formatDuration($cart['hours_abandoned']); ?>
+                                <div class="duration-badge <?php echo $cart['minutes_abandoned'] > 10080 ? 'old' : 'recent'; ?>">
+                                    Ditinggalkan <?php echo formatDuration($cart['minutes_abandoned']); ?>
                                 </div>
                             </div>
                         </div>

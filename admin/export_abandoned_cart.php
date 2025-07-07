@@ -9,8 +9,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit();
 }
 
-// Configuration for abandoned cart definition
-$abandoned_hours = isset($_GET['hours']) ? max(1, (int)$_GET['hours']) : 24;
+// Configuration for abandoned cart definition (in minutes for testing)
+$abandoned_minutes = isset($_GET['minutes']) ? max(1, (int)$_GET['minutes']) : 1;
 
 // Filters
 $date_filter = $_GET['date_from'] ?? '';
@@ -22,7 +22,7 @@ $max_value = $_GET['max_value'] ?? '';
 $db = getDbConnection();
 
 // Build WHERE clause for filters (same as main page)
-$where_conditions = ["DATE_ADD(c.updated_at, INTERVAL {$abandoned_hours} HOUR) < NOW()"];
+$where_conditions = ["DATE_ADD(c.updated_at, INTERVAL {$abandoned_minutes} MINUTE) < NOW()"];
 $params = [];
 $types = "";
 
@@ -70,7 +70,7 @@ $abandoned_carts_query = "
         COUNT(c.id) as items_count,
         SUM(c.subtotal) as cart_total,
         MAX(c.updated_at) as last_activity,
-        TIMESTAMPDIFF(HOUR, MAX(c.updated_at), NOW()) as hours_abandoned,
+        TIMESTAMPDIFF(MINUTE, MAX(c.updated_at), NOW()) as minutes_abandoned,
         GROUP_CONCAT(
             CONCAT(
                 CASE 
@@ -121,7 +121,7 @@ $headers = [
     'Jumlah Item',
     'Total Nilai (Rp)',
     'Aktivitas Terakhir',
-    'Jam Ditinggalkan',
+    'Menit Ditinggalkan',
     'Kategori',
     'Daftar Item'
 ];
@@ -155,7 +155,7 @@ foreach ($abandoned_carts as $cart) {
         $cart['items_count'],
         formatPrice($cart['cart_total']),
         $cart['last_activity'],
-        $cart['hours_abandoned'],
+        $cart['minutes_abandoned'],
         implode(', ', $typeLabels),
         $cart['items_list']
     ];
