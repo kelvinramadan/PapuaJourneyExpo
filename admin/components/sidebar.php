@@ -44,6 +44,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-icon"><i class="fas fa-chart-line"></i></span>
             <span class="btn-text">Laporan Keuangan</span>
         </a>
+        
+        <a href="abandoned_cart.php" class="btn <?php echo $current_page == 'abandoned_cart.php' ? 'active' : ''; ?>" data-tooltip="Keranjang Ditinggalkan">
+            <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
+            <span class="btn-text">Keranjang Ditinggalkan</span>
+        </a>
     </nav>
     
     <div class="user-section">
