@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Abandoned Cart Tracking - Papua Journey</title>
+    <link rel="stylesheet" href="../assets/css/abandoned-cart-modal.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .demo-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .cart-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .cart-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .demo-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛒 Demo Abandoned Cart Tracking System</h1>
+    
+    <div class="info-box">
+        <h3>Cara Menguji Sistem Abandoned Cart:</h3>
+        <ol>
+            <li>Klik tombol "Add to Cart" untuk mensimulasikan penambahan item</li>
+            <li>Tunggu 30 detik atau coba keluar dari halaman</li>
+            <li>Survey popup akan muncul untuk menanyakan alasan abandonment</li>
+            <li>Pilih alasan dan submit untuk melihat tracking bekerja</li>
+            <li>Cek admin dashboard untuk melihat data abandonment</li>
+        </ol>
+    </div>
+    
+    <div class="demo-container">
+        <h2>Keranjang Belanja Demo</h2>
+        <p>Items in cart: <span class="cart-badge" id="cart-count">0</span></p>
+        
+        <div id="cart-items">
+            <!-- Cart items will appear here -->
+        </div>
+        
+        <div class="demo-actions">
+            <button class="btn add-to-cart-btn" onclick="addDemoItem()">
+                🏝️ Add Wisata Raja Ampat
+            </button>
+            <button class="btn add-to-cart-btn" onclick="addDemoItem()">
+                🍽️ Add Kuliner Papeda
+            </button>
+            <button class="btn add-to-cart-btn" onclick="addDemoItem()">
+                🏨 Add Penginapan
+            </button>
+            <button class="btn btn-danger" onclick="clearCart()">
+                Clear Cart
+            </button>
+        </div>
+        
+        <button class="btn btn-checkout" id="checkout-btn" style="background: #28a745; font-size: 16px; padding: 15px 30px;">
+            💳 Checkout (Simulasi)
+        </button>
+    </div>
+    
+    <div class="info-box">
+        <h3>Status Tracking:</h3>
+        <div id="tracking-status">
+            <p>✅ Sistem tracking dimuat</p>
+            <p id="session-status">🔄 Memulai session tracking...</p>
+            <p id="activity-status">📊 Monitoring aktivitas user...</p>
+        </div>
+    </div>
+    
+    <div class="demo-container">
+        <h3>Test Abandonment Scenarios:</h3>
+        <div class="demo-actions">
+            <button class="btn" onclick="triggerTimeoutTest()">
+                ⏰ Test Timeout (30 detik)
+            </button>
+            <button class="btn" onclick="triggerExitTest()">
+                🚪 Test Page Exit
+            </button>
+            <button class="btn" onclick="showSurveyManually()">
+                📝 Show Survey Manual
+            </button>
+            <button class="btn" onclick="simulateInactivity()">
+                😴 Simulate Inactivity
+            </button>
+        </div>
+    </div>
+    
+    <script src="../assets/js/abandoned-cart-tracker.js"></script>
+    <script>
+        let cartItems = [];
+        let demoProducts = [
+            { id: 1, name: 'Wisata Raja Ampat', price: 500000, type: 'wisata' },
+            { id: 2, name: 'Kuliner Papeda', price: 25000, type: 'artikel' },
+            { id: 3, name: 'Penginapan Papua', price: 200000, type: 'penginapan' }
+        ];
+        
+        function addDemoItem() {
+            const randomProduct = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+            const existingItem = cartItems.find(item => item.id === randomProduct.id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({
+                    ...randomProduct,
+                    quantity: 1,
+                    cart_id: Date.now()
+                });
+            }
+            
+            updateCartDisplay();
+            updateStatus('🛒 Item added to cart: ' + randomProduct.name);
+        }
+        
+        function removeItem(index) {
+            cartItems.splice(index, 1);
+            updateCartDisplay();
+            updateStatus('🗑️ Item removed from cart');
+        }
+        
+        function clearCart() {
+            cartItems = [];
+            updateCartDisplay();
+            updateStatus('🧹 Cart cleared');
+        }
+        
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            
+            cartCount.textContent = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (cartItems.length === 0) {
+                cartContainer.innerHTML = '<p style="text-align: center; color: #666;">Keranjang kosong</p>';
+            } else {
+                cartContainer.innerHTML = cartItems.map((item, index) => `
+                    <div class="cart-item">
+                        <h4>${item.name}</h4>
+                        <p>Harga: Rp ${item.price.toLocaleString()}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                        <p>Subtotal: Rp ${(item.price * item.quantity).toLocaleString()}</p>
+                        <button class="btn btn-danger" onclick="removeItem(${index})">Remove</button>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateStatus(message) {
+            const statusElement = document.getElementById('activity-status');
+            statusElement.innerHTML = `📊 ${message} (${new Date().toLocaleTimeString()})`;
+        }
+        
+        // Test functions
+        function triggerTimeoutTest() {
+            updateStatus('⏰ Starting 30-second timeout test...');
+            setTimeout(() => {
+                if (cartItems.length > 0) {
+                    updateStatus('⚠️ Timeout reached - abandonment should trigger');
+                }
+            }, 30000);
+        }
+        
+        function triggerExitTest() {
+            updateStatus('🚪 Simulating page exit...');
+            window.dispatchEvent(new Event('beforeunload'));
+        }
+        
+        function showSurveyManually() {
+            if (window.AbandonedCartTracker) {
+                updateStatus('📝 Manually triggering survey...');
+                // This would need to be exposed in the tracker class
+            } else {
+                alert('Tracker not available - check console for errors');
+            }
+        }
+        
+        function simulateInactivity() {
+            updateStatus('😴 Simulating inactivity...');
+            document.dispatchEvent(new Event('visibilitychange'));
+        }
+        
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartDisplay();
+            
+            // Update session status
+            setTimeout(() => {
+                document.getElementById('session-status').innerHTML = '✅ Session tracking aktif';
+            }, 1000);
+            
+            // Add some demo items initially
+            setTimeout(() => {
+                addDemoItem();
+                updateStatus('Demo cart initialized with sample item');
+            }, 2000);
+        });
+        
+        // Override console.log to show tracking events
+        const originalLog = console.log;
+        console.log = function(...args) {
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('Abandoned Cart')) {
+                updateStatus('🔍 ' + args[0]);
+            }
+            originalLog.apply(console, args);
+        };
+    </script>
+</body>
+</html>
