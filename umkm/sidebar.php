@@ -211,12 +211,6 @@ if (!file_exists($profile_image_path)) {
                 </a>
             </li>
             <li>
-                <a href="add_artikel.php" class="<?php echo ($current_page == 'add_artikel.php') ? 'active' : ''; ?>">
-                    <span class="menu-icon">➕</span>
-                    <span class="menu-text">Tambah Artikel</span>
-                </a>
-            </li>
-            <li>
                 <a href="umkm_pemesanan.php" class="<?php echo ($current_page == 'umkm_pemesanan.php') ? 'active' : ''; ?>">
                     <span class="menu-icon">📦</span>
                     <span class="menu-text">Pemesanan</span>
