@@ -205,6 +205,12 @@ if (!file_exists($profile_image_path)) {
         <h4>Menu Utama</h4>
         <ul>
             <li>
+                <a href="umkm_analytics.php" class="<?php echo ($current_page == 'umkm_analitics.php') ? 'active' : ''; ?>">
+                    <span class="menu-icon">📦</span>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li>
                 <a href="umkm_dashboard.php" class="<?php echo ($current_page == 'umkm_dashboard.php') ? 'active' : ''; ?>">
                     <span class="menu-icon">📋</span>
                     <span class="menu-text">Kelola Artikel</span>
