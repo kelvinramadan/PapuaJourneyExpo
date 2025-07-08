@@ -94,24 +94,56 @@ if (!isset($_SESSION['admin_logged_in'])) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Login - Papua Journey</title>
-        <link rel="stylesheet" href="admin.css">
+        
+        <!-- Stylesheets -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        
         <style>
+            :root {
+                --primary-color: #536245;
+                --secondary-color: #d9d9d9;
+                --button-color: #DC9B11;
+                --button-hover-color: #f4b63b;
+                --text-color: #FFFCF7;
+                --text-color-secondary: #191919;
+                --background-color: #EBE7E4;
+                --transition: all 0.3s ease-in-out;
+                --shadow: #333333b2;
+                --success-color: #4CAF50;
+                --error-color: #f44336;
+                --info-color: #2196F3;
+            }
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
             body {
-                background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+                font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+                background-color: var(--background-color);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                padding: 2rem;
             }
             
             .login-container {
-                animation: fadeIn 0.5s ease-out;
+                background: white;
+                padding: 3rem;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 450px;
+                animation: fadeInUp 0.8s ease-out;
             }
             
-            @keyframes fadeIn {
+            @keyframes fadeInUp {
                 from {
                     opacity: 0;
-                    transform: translateY(20px);
+                    transform: translateY(30px);
                 }
                 to {
                     opacity: 1;
@@ -119,43 +151,223 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 }
             }
             
-            .login-logo {
-                font-size: 3rem;
-                margin-bottom: 1rem;
+            .login-header {
+                text-align: center;
+                margin-bottom: 2.5rem;
+            }
+            
+            .logo-section {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .logo-section img {
+                height: 50px;
+                width: auto;
+            }
+            
+            .logo-section p {
+                font-size: 1.8rem;
+                color: var(--button-color);
+                font-weight: 600;
+                margin: 0;
+            }
+            
+            .login-header h1 {
+                color: var(--text-color-secondary);
+                margin-bottom: 0.5rem;
+                font-size: 2rem;
+                font-weight: 600;
+            }
+            
+            .login-header p {
+                color: #666;
+                font-size: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--text-color-secondary);
+                font-weight: 500;
+                font-size: 0.95rem;
+            }
+            
+            .form-group input {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                height: 48px;
+                border: 2px solid var(--secondary-color);
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: var(--transition);
+                background-color: #ffffff;
+            }
+            
+            .form-group input:hover {
+                border-color: var(--button-color);
+                background-color: #fafafa;
+            }
+            
+            .form-group input:focus {
+                outline: none;
+                border-color: var(--button-color);
+                background-color: white;
+                box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
+            }
+            
+            .form-icon {
+                position: relative;
+            }
+            
+            .form-icon i {
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--secondary-color);
+                transition: color 0.3s ease;
+                pointer-events: none;
+            }
+            
+            .form-icon input:focus + i {
+                color: var(--button-color);
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 1rem;
+                background-color: var(--button-color);
+                color: var(--text-color);
+                border: none;
+                border-radius: 50px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .btn:hover {
+                background-color: var(--button-hover-color);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(220, 155, 17, 0.3);
+            }
+            
+            .error-message {
+                background: #fee;
+                color: var(--error-color);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-bottom: 1.5rem;
+                border-left: 4px solid var(--error-color);
+                line-height: 1.5;
+                font-size: 0.9rem;
+                animation: shake 0.5s ease-in-out;
+            }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+            
+            .admin-badge {
+                display: inline-block;
+                background: rgba(83, 98, 69, 0.1);
+                color: var(--primary-color);
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                margin-top: 0.5rem;
+            }
+            
+            .home-link {
+                position: absolute;
+                top: 2rem;
+                left: 2rem;
+                color: var(--text-color-secondary);
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+                transition: var(--transition);
+            }
+            
+            .home-link:hover {
+                color: var(--button-color);
+            }
+            
+            @media (max-width: 768px) {
+                .login-container {
+                    padding: 2rem;
+                }
+                
+                .home-link {
+                    top: 1rem;
+                    left: 1rem;
+                }
             }
         </style>
     </head>
     <body>
-        <div class="login-container card" style="max-width: 400px; width: 90%;">
-            <div class="card-body" style="padding: 2.5rem;">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div class="login-logo">🏝️</div>
-                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Login Admin</h1>
-                    <p style="color: var(--text-secondary);">Masuk ke panel admin Papua Journey</p>
+        <a href="../index.php" class="home-link">
+            <i class="fas fa-arrow-left"></i>
+            Kembali ke Beranda
+        </a>
+        
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo-section">
+                    <img src="../assets/logo.png" alt="Papua Journey Logo">
+                    <p>Journey</p>
+                </div>
+                <h1>Login Admin</h1>
+                <p>Masuk ke panel administrator</p>
+                <span class="admin-badge">Administrator Only</span>
+            </div>
+            
+            <?php if ($error_message): ?>
+                <div class="error-message">
+                    <i class="fas fa-times-circle"></i>
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
+            
+            <form method="POST" action="">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="form-icon">
+                        <input type="text" name="username" id="username" placeholder="Masukkan username admin" required autofocus>
+                        <i class="fas fa-user"></i>
+                    </div>
                 </div>
                 
-                <?php if ($error_message): ?>
-                    <div class="alert alert-error">
-                        <?php echo htmlspecialchars($error_message); ?>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="form-icon">
+                        <input type="password" name="password" id="password" placeholder="Masukkan password admin" required>
+                        <i class="fas fa-lock"></i>
                     </div>
-                <?php endif; ?>
+                </div>
                 
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" required autofocus>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" name="password" id="password" class="form-control" required>
-                    </div>
-                    
-                    <button type="submit" name="admin_login" class="btn btn-primary btn-lg" style="width: 100%;">
-                        Masuk
-                    </button>
-                </form>
-            </div>
+                <button type="submit" name="admin_login" class="btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login Admin
+                </button>
+            </form>
         </div>
     </body>
     </html>
