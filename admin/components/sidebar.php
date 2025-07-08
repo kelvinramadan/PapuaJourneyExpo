@@ -49,6 +49,41 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
             <span class="btn-text">Keranjang Ditinggalkan</span>
         </a>
+        
+        <!-- Business Intelligence Section -->
+        <div style="margin: 1rem 0; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+            <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase;">Business Intelligence</span>
+        </div>
+        
+        <a href="executive_dashboard.php" class="btn <?php echo $current_page == 'executive_dashboard.php' ? 'active' : ''; ?>" data-tooltip="Executive Dashboard">
+            <span class="btn-icon"><i class="fas fa-tachometer-alt"></i></span>
+            <span class="btn-text">Executive Dashboard</span>
+        </a>
+        
+        <a href="predictive_analytics.php" class="btn <?php echo $current_page == 'predictive_analytics.php' ? 'active' : ''; ?>" data-tooltip="Predictive Analytics">
+            <span class="btn-icon"><i class="fas fa-crystal-ball"></i></span>
+            <span class="btn-text">Predictive Analytics</span>
+        </a>
+        
+        <a href="business_intelligence.php" class="btn <?php echo $current_page == 'business_intelligence.php' ? 'active' : ''; ?>" data-tooltip="Business Intelligence">
+            <span class="btn-icon"><i class="fas fa-brain"></i></span>
+            <span class="btn-text">Business Intelligence</span>
+        </a>
+        
+        <a href="recommendation_system.php" class="btn <?php echo $current_page == 'recommendation_system.php' ? 'active' : ''; ?>" data-tooltip="AI Recommendations">
+            <span class="btn-icon"><i class="fas fa-robot"></i></span>
+            <span class="btn-text">AI Recommendations</span>
+        </a>
+        
+        <a href="data_mining.php" class="btn <?php echo $current_page == 'data_mining.php' ? 'active' : ''; ?>" data-tooltip="Data Mining">
+            <span class="btn-icon"><i class="fas fa-search"></i></span>
+            <span class="btn-text">Data Mining</span>
+        </a>
+        
+        <a href="integrated_reports.php" class="btn <?php echo $current_page == 'integrated_reports.php' ? 'active' : ''; ?>" data-tooltip="Business Reports">
+            <span class="btn-icon"><i class="fas fa-file-alt"></i></span>
+            <span class="btn-text">Business Reports</span>
+        </a>
     </nav>
     
     <div class="user-section">

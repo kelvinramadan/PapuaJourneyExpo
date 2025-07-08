@@ -611,6 +611,115 @@ $page_title = 'Dashboard';
                     </div>
                 </div>
                 
+                <!-- Business Intelligence Quick Access -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">🧠 Business Intelligence Suite</h3>
+                        <span style="font-size: 0.85rem; color: #6B7280;">Advanced analytics and decision support</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            
+                            <a href="executive_dashboard.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">📊</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">Executive Dashboard</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">High-level KPIs & metrics</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Strategic overview with real-time business metrics and comparative analytics
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="predictive_analytics.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">🔮</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">Predictive Analytics</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">AI-powered forecasting</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Revenue forecasting, churn prediction, and behavioral analytics
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="business_intelligence.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">🧠</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">Business Intelligence</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">Deep insights & analysis</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Customer segmentation, market analysis, and performance insights
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="recommendation_system.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">🎯</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">AI Recommendations</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">Smart suggestions</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Product recommendations, user targeting, and marketing optimization
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="data_mining.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #1f2937 0%, #374151 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">⛏️</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">Data Mining</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">Pattern discovery</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Advanced pattern analysis, anomaly detection, and behavioral insights
+                                    </div>
+                                </div>
+                            </a>
+                            
+                            <a href="integrated_reports.php" style="text-decoration: none; color: inherit;">
+                                <div style="padding: 1.5rem; background: linear-gradient(135deg, #065f46 0%, #10b981 100%); border-radius: 8px; color: white; transition: transform 0.3s ease;" 
+                                     onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 2rem;">📋</div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.1rem;">Business Reports</div>
+                                            <div style="font-size: 0.85rem; opacity: 0.9;">Comprehensive reporting</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">
+                                        Integrated business reports with export capabilities and insights
+                                    </div>
+                                </div>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- UMKM Management Table -->
                 <div class="card">
                     <div class="card-header">
