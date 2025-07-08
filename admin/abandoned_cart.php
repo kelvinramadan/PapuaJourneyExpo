@@ -194,11 +194,30 @@ function getItemTypeLabel($type) {
     <link rel="stylesheet" href="sidebar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Enhanced page styling with modern design */
+        /* Design System Variables */
+        :root {
+            --forest-green: #363c2b;
+            --mustard-yellow: #F9B705;
+            --relaxed-yellow: #FFC82C;
+            --dark-gray: #2E2E2E;
+            --pale-yellow: #FFF6F7;
+            --white: #FFFFFF;
+            --text-primary: var(--dark-gray);
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+            --error-color: #EF4444;
+        }
+
+        /* Enhanced page styling with new design system */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .content-area {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: var(--pale-yellow);
             min-height: 100vh;
             padding: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .page-header {
@@ -209,38 +228,37 @@ function getItemTypeLabel($type) {
 
         .page-header h1 {
             font-size: 2.75rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: bold;
+            color: var(--forest-green);
             margin-bottom: 0.5rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .page-header p {
             color: var(--text-secondary);
             font-size: 1.125rem;
             font-weight: 500;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .filters-card {
-            background: white;
+            background: var(--white);
             border-radius: 1rem;
             padding: 2rem;
             margin-bottom: 2.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(54, 60, 43, 0.1);
+            border: 2px solid var(--relaxed-yellow);
         }
 
         .filters-card h3 {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: bold;
             color: var(--text-primary);
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .filters-card h3::before {
@@ -262,12 +280,13 @@ function getItemTypeLabel($type) {
         }
         
         .filter-group label {
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 0.75rem;
             color: var(--text-primary);
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .filter-group input, .filter-group select {
@@ -276,14 +295,15 @@ function getItemTypeLabel($type) {
             border-radius: 0.75rem;
             font-size: 0.9rem;
             transition: all 0.3s ease;
-            background: white;
+            background: var(--white);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .filter-group input:focus, .filter-group select:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: var(--mustard-yellow);
+            box-shadow: 0 0 0 3px rgba(249, 183, 5, 0.2);
             transform: translateY(-1px);
         }
 
@@ -302,11 +322,11 @@ function getItemTypeLabel($type) {
         }
         
         .stat-card {
-            background: white;
+            background: var(--white);
             padding: 2rem;
             border-radius: 1.25rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(54, 60, 43, 0.1);
+            border: 2px solid var(--relaxed-yellow);
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -319,7 +339,7 @@ function getItemTypeLabel($type) {
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            background: var(--mustard-yellow);
         }
 
         .stat-card:hover {
@@ -328,15 +348,15 @@ function getItemTypeLabel($type) {
         }
         
         .stat-card.danger::before {
-            background: linear-gradient(90deg, var(--danger-color), #ff7675);
+            background: var(--error-color);
         }
         
         .stat-card.warning::before {
-            background: linear-gradient(90deg, var(--warning-color), #fdcb6e);
+            background: var(--relaxed-yellow);
         }
         
         .stat-card.success::before {
-            background: linear-gradient(90deg, var(--secondary-color), #00b894);
+            background: var(--forest-green);
         }
 
         .stat-icon {
@@ -348,31 +368,34 @@ function getItemTypeLabel($type) {
             justify-content: center;
             font-size: 1.5rem;
             margin-bottom: 1rem;
-            color: white;
+            color: var(--white);
         }
 
         .stat-card.danger .stat-icon {
-            background: linear-gradient(135deg, var(--danger-color), #ff7675);
+            background: var(--error-color);
         }
 
         .stat-card.warning .stat-icon {
-            background: linear-gradient(135deg, var(--warning-color), #fdcb6e);
+            background: var(--relaxed-yellow);
+            color: var(--dark-gray);
         }
 
         .stat-card.success .stat-icon {
-            background: linear-gradient(135deg, var(--secondary-color), #00b894);
+            background: var(--forest-green);
         }
 
         .stat-card .stat-icon {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--mustard-yellow);
+            color: var(--dark-gray);
         }
         
         .stat-value {
             font-size: 2.5rem;
-            font-weight: 800;
+            font-weight: bold;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
             line-height: 1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .stat-label {
@@ -380,31 +403,33 @@ function getItemTypeLabel($type) {
             font-size: 0.9rem;
             font-weight: 500;
             line-height: 1.4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .abandoned-carts-table {
-            background: white;
+            background: var(--white);
             border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(54, 60, 43, 0.1);
             margin-bottom: 3rem;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--relaxed-yellow);
         }
         
         .table-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--forest-green);
             padding: 1.5rem 2rem;
             border-bottom: none;
         }
         
         .table-header h3 {
             margin: 0;
-            color: white;
+            color: var(--white);
             font-size: 1.375rem;
-            font-weight: 700;
+            font-weight: bold;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .table-header h3::before {
@@ -426,13 +451,13 @@ function getItemTypeLabel($type) {
             top: 0;
             bottom: 0;
             width: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--mustard-yellow);
             transform: scaleY(0);
             transition: transform 0.3s ease;
         }
         
         .cart-item:hover {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: var(--pale-yellow);
             transform: translateX(5px);
         }
 
@@ -455,15 +480,16 @@ function getItemTypeLabel($type) {
             width: 60px;
             height: 60px;
             border-radius: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            background: var(--mustard-yellow);
+            color: var(--dark-gray);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
+            font-weight: bold;
             font-size: 1.25rem;
-            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 8px rgba(249, 183, 5, 0.3);
             position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .user-avatar::after {
@@ -473,7 +499,7 @@ function getItemTypeLabel($type) {
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--relaxed-yellow);
             border-radius: 1.125rem;
             z-index: -1;
             opacity: 0.5;
@@ -483,7 +509,8 @@ function getItemTypeLabel($type) {
             margin: 0 0 0.25rem 0;
             color: var(--text-primary);
             font-size: 1.125rem;
-            font-weight: 700;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .user-info p {
@@ -493,10 +520,11 @@ function getItemTypeLabel($type) {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .user-info p i {
-            color: var(--primary-color);
+            color: var(--mustard-yellow);
             width: 16px;
         }
         
@@ -505,10 +533,10 @@ function getItemTypeLabel($type) {
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 1.5rem;
-            background: #f8fafc;
+            background: var(--pale-yellow);
             padding: 1.5rem;
             border-radius: 1rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
         }
 
         .cart-details > div {
@@ -519,29 +547,32 @@ function getItemTypeLabel($type) {
             display: block;
             margin-bottom: 0.75rem;
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: bold;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .cart-items-list {
             font-size: 0.95rem;
             color: var(--text-secondary);
             line-height: 1.6;
-            background: white;
+            background: var(--white);
             padding: 1rem;
             border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .cart-category {
             font-size: 0.95rem;
             color: var(--text-secondary);
-            background: white;
+            background: var(--white);
             padding: 1rem;
             border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .cart-meta {
@@ -550,10 +581,10 @@ function getItemTypeLabel($type) {
             align-items: center;
             gap: 1.5rem;
             flex-wrap: wrap;
-            background: white;
+            background: var(--white);
             padding: 1.5rem;
             border-radius: 1rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
         }
         
         .cart-stats {
@@ -567,14 +598,15 @@ function getItemTypeLabel($type) {
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: #f8fafc;
+            background: var(--pale-yellow);
             border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
             font-weight: 500;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .stat-item i {
-            color: var(--primary-color);
+            color: var(--mustard-yellow);
             font-size: 1rem;
         }
         
@@ -582,41 +614,43 @@ function getItemTypeLabel($type) {
             padding: 0.75rem 1.25rem;
             border-radius: 2rem;
             font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .duration-badge.recent {
-            background: linear-gradient(135deg, #fef3c7, #fcd34d);
-            color: #92400e;
-            border: 1px solid #f59e0b;
+            background: var(--relaxed-yellow);
+            color: var(--dark-gray);
+            border: 1px solid var(--mustard-yellow);
         }
         
         .duration-badge.old {
-            background: linear-gradient(135deg, #fee2e2, #fca5a5);
-            color: #991b1b;
-            border: 1px solid #ef4444;
+            background: var(--error-color);
+            color: var(--white);
+            border: 1px solid var(--error-color);
         }
         
         .products-analytics {
-            background: white;
+            background: var(--white);
             border-radius: 1.25rem;
             padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(54, 60, 43, 0.1);
+            border: 2px solid var(--relaxed-yellow);
             margin-bottom: 2rem;
         }
 
         .products-analytics h3 {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: bold;
             color: var(--text-primary);
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .products-analytics h3::before {
@@ -635,7 +669,7 @@ function getItemTypeLabel($type) {
 
         .product-item:hover {
             transform: translateX(5px);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: var(--pale-yellow);
             padding-left: 1rem;
             padding-right: 1rem;
             border-radius: 0.75rem;
@@ -654,8 +688,9 @@ function getItemTypeLabel($type) {
         .product-info h4 {
             margin: 0 0 0.25rem 0;
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: bold;
             font-size: 1.1rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .product-info p {
@@ -663,6 +698,7 @@ function getItemTypeLabel($type) {
             color: var(--text-secondary);
             font-size: 0.9rem;
             font-weight: 500;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .product-stats {
@@ -673,48 +709,58 @@ function getItemTypeLabel($type) {
         }
 
         .product-stats span {
-            background: #f8fafc;
+            background: var(--pale-yellow);
             padding: 0.5rem 1rem;
             border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--relaxed-yellow);
             font-weight: 600;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .btn-filter {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-            color: white;
-            border: none;
+            background: var(--mustard-yellow);
+            color: var(--dark-gray);
+            border: 2px solid var(--mustard-yellow);
             padding: 0.875rem 1.5rem;
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 2px 4px rgba(249, 183, 5, 0.2);
             text-decoration: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+            background: transparent;
+            color: var(--mustard-yellow);
+            border-color: var(--mustard-yellow);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(249, 183, 5, 0.3);
         }
 
         .btn-filter.secondary {
-            background: linear-gradient(135deg, var(--text-secondary), #4b5563);
-            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+            background: var(--dark-gray);
+            color: var(--white);
+            border: 2px solid var(--dark-gray);
+            box-shadow: 0 2px 4px rgba(46, 46, 46, 0.2);
         }
 
         .btn-filter.secondary:hover {
-            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+            background: transparent;
+            color: var(--dark-gray);
+            border-color: var(--dark-gray);
+            box-shadow: 0 4px 8px rgba(46, 46, 46, 0.3);
         }
         
         .btn-export {
-            background: linear-gradient(135deg, var(--secondary-color), #059669);
-            color: white;
-            border: none;
+            background: var(--forest-green);
+            color: var(--white);
+            border: 2px solid var(--forest-green);
             padding: 0.875rem 1.5rem;
             border-radius: 0.75rem;
             cursor: pointer;
@@ -723,14 +769,18 @@ function getItemTypeLabel($type) {
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 4px rgba(54, 60, 43, 0.2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .btn-export:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            background: transparent;
+            color: var(--forest-green);
+            border-color: var(--forest-green);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(54, 60, 43, 0.3);
         }
         
         .empty-state {
@@ -743,14 +793,15 @@ function getItemTypeLabel($type) {
             font-size: 4rem;
             margin-bottom: 1.5rem;
             opacity: 0.6;
-            color: var(--primary-color);
+            color: var(--mustard-yellow);
         }
 
         .empty-state h3 {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: bold;
             color: var(--text-primary);
             margin-bottom: 0.75rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .empty-state p {
@@ -758,6 +809,7 @@ function getItemTypeLabel($type) {
             line-height: 1.6;
             max-width: 400px;
             margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         /* Enhanced responsive design */
@@ -903,17 +955,17 @@ function getItemTypeLabel($type) {
         }
 
         .content-area::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: var(--pale-yellow);
             border-radius: 4px;
         }
 
         .content-area::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--mustard-yellow);
             border-radius: 4px;
         }
 
         .content-area::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--primary-hover), var(--secondary-color));
+            background: var(--relaxed-yellow);
         }
     </style>
 </head>
