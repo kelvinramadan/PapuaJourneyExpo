@@ -280,7 +280,7 @@ function truncateText($text, $length) {
                         <h1 class="article-title"><?php echo htmlspecialchars($article['judul']); ?></h1>
                         
                         <div class="article-meta">
-                            <div class="article-price"><?php echo formatPrice($article['harga']); ?> / tiket</div>
+                            <div class="article-price"><?php echo formatPrice($article['harga']); ?> / item</div>
                             <div class="article-date">
                                 📅 <?php echo formatDate($article['created_at']); ?>
                             </div>
@@ -292,7 +292,7 @@ function truncateText($text, $length) {
                         
                         <!-- Booking Form -->
                         <div class="booking-form">
-                            <h3>🎫 Pesan Tiket</h3>
+                            <h3>🎫 Pesan Item</h3>
                             <div id="cart-message" style="display: none;"></div>
                             <form id="add-to-cart-form">
                                 <input type="hidden" name="item_type" value="artikel">
@@ -312,7 +312,7 @@ function truncateText($text, $length) {
                                 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="jumlah_tiket">Jumlah Tiket *</label>
+                                        <label for="jumlah_tiket">Jumlah Pesanan *</label>
                                         <input type="number" name="quantity" id="jumlah_tiket" min="1" max="10" value="1" required>
                                     </div>
                                     
@@ -1121,7 +1121,7 @@ function truncateText($text, $length) {
                                 
                                 <div class="card-actions">
                                     <a href="?view=detail&id=<?php echo $artikel['id']; ?>" class="btn-detail">
-                                        🎫 Pesan Tiket
+                                        🎫 Pesan 
                                     </a>
                                     <span class="card-date">
                                         <?php echo formatDate($artikel['created_at']); ?>

@@ -147,7 +147,7 @@ $revenue_data_js = json_encode($revenue_data);
             padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%);
             min-height: 100vh;
         }
 
@@ -356,10 +356,6 @@ $revenue_data_js = json_encode($revenue_data);
 <body>
     <div class="analytics-container">
         <!-- Header -->
-        <a href="umkm_dashboard.php" class="back-button">
-            ⬅️ Kembali ke Dashboard
-        </a>
-
         <div class="header-section">
             <h1>📊 Analytics Dashboard</h1>
             <p>Analisis mendalam tentang performa bisnis Anda</p>

@@ -222,7 +222,7 @@ $database->closeConnection();
                 </div>
                 
                 <div class="types-grid fade-in">
-                    <div class="type-card hotel" onclick="filterByType('hotel')">
+                    <div class="type-card hotel" >
                         <div class="type-overlay"></div>
                         <div class="type-content">
                             <i class="fas fa-building"></i>
@@ -232,7 +232,7 @@ $database->closeConnection();
                         </div>
                     </div>
                     
-                    <div class="type-card villa" onclick="filterByType('villa')">
+                    <div class="type-card villa" >
                         <div class="type-overlay"></div>
                         <div class="type-content">
                             <i class="fas fa-home"></i>
@@ -242,7 +242,7 @@ $database->closeConnection();
                         </div>
                     </div>
                     
-                    <div class="type-card resort" onclick="filterByType('resort')">
+                    <div class="type-card resort" >
                         <div class="type-overlay"></div>
                         <div class="type-content">
                             <i class="fas fa-umbrella-beach"></i>
