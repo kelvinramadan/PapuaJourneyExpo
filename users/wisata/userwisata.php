@@ -208,7 +208,7 @@ mysqli_close($db);
                 </div>
                 
                 <div class="categories-grid fade-in">
-                    <div class="category-card culture" onclick="filterByCategory('budaya')">
+                    <div class="category-card culture">
                         <div class="category-overlay"></div>
                         <div class="category-content">
                             <i class="fas fa-theater-masks"></i>
@@ -218,17 +218,19 @@ mysqli_close($db);
                         </div>
                     </div>
                     
-                    <div class="category-card nature" onclick="filterByCategory('alam')">
+                    <div class="category-card nature">
                         <div class="category-overlay"></div>
                         <div class="category-content">
                             <i class="fas fa-leaf"></i>
                             <h3>Natural Wonders</h3>
                             <p>Pristine forests and stunning landscapes</p>
-                            <span class="category-count"><?php echo count(array_filter($wisata_data, function($w) { return $w['kategori'] == 'alam'; })); ?> Destinations</span>
+                            <span class="category-count">
+                                <?php echo count(array_filter($wisata_data, function($w) { return $w['kategori'] == 'alam'; })); ?> Destinations
+                            </span>
                         </div>
                     </div>
                     
-                    <div class="category-card adventure" onclick="filterByCategory('')">
+                    <div class="category-card adventure">
                         <div class="category-overlay"></div>
                         <div class="category-content">
                             <i class="fas fa-mountain"></i>
