@@ -60,7 +60,7 @@ $articles = [];
 $total_articles = 0;
 $total_pages = 1;
 
-if ($view_mode === 'dashboard') {
+if ($view_mode === 'dashboard' || $view_mode === 'umkm') {
     $db = getDbConnection();
     // Build WHERE clause for filtering
     $where_conditions = ["a.status = 'active'"];
