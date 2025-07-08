@@ -202,7 +202,7 @@ function truncateText($text, $length) {
         overflow-x: hidden;
     }
 
-    /* Header and Navigation Styles */
+    /* Scroll Progress Bar */
     .scroll-progress-bar {
         position: fixed;
         top: 0;
@@ -212,193 +212,6 @@ function truncateText($text, $length) {
         background: linear-gradient(to right, var(--button-color), var(--button-hover-color));
         z-index: 10000;
         transition: width 0.2s ease-out;
-    }
-
-    .header {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0);
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-        padding: 1rem 2rem;
-        z-index: 1000;
-        transition: all 0.3s ease;
-    }
-
-    .header.scrolled {
-        background-color: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .header.header-hidden {
-        transform: translateY(-100%);
-    }
-
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-        transform: scale(1.05);
-    }
-
-    .logo img {
-        height: 45px;
-        width: auto;
-    }
-
-    .logo p {
-        font-size: 1.5rem;
-        color: var(--button-color);
-        font-weight: 600;
-    }
-
-    /* Mobile Menu Toggle */
-    .mobile-menu-toggle {
-        display: none;
-        flex-direction: column;
-        gap: 4px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .mobile-menu-toggle span {
-        width: 25px;
-        height: 3px;
-        background: var(--text-color);
-        border-radius: 2px;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .mobile-menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .mobile-menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
-    }
-
-    /* Navigation Links */
-    .nav-links {
-        display: flex;
-        list-style: none;
-        gap: 2rem;
-    }
-
-    .nav-links a {
-        text-decoration: none;
-        color: var(--text-color);
-        font-weight: 500;
-        transition: var(--transition);
-        position: relative;
-        padding: 5px 0;
-    }
-
-    .header.scrolled .nav-links a {
-        color: var(--text-color-secondary);
-    }
-
-    .nav-links a:hover {
-        color: var(--button-color);
-    }
-
-    .nav-links a::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        background: var(--button-color);
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        transition: width 0.3s ease;
-    }
-
-    .nav-links a:hover::after,
-    .nav-links a.active::after {
-        width: 100%;
-    }
-
-    /* Search Box */
-    .search-container {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .search-box {
-        position: relative;
-        width: 250px;
-    }
-
-    .search-box input {
-        width: 100%;
-        padding: 0.6rem 1rem 0.6rem 2.5rem;
-        border: 2px solid var(--secondary-color);
-        border-radius: 25px;
-        background-color: rgba(255, 255, 255, 0.9);
-        transition: var(--transition);
-        font-size: 0.9rem;
-    }
-
-    .search-box input:focus {
-        border-color: var(--button-color);
-        outline: none;
-        box-shadow: 0 0 15px rgba(220, 155, 17, 0.2);
-        background-color: white;
-    }
-
-    .search-box i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--secondary-color);
-        transition: color 0.3s ease;
-    }
-
-    .search-box input:focus + i {
-        color: var(--button-color);
-    }
-
-    /* Login Button */
-    .login-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0.6rem 1.5rem;
-        background-color: var(--button-color);
-        color: var(--text-color);
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: var(--transition);
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    .login-btn:hover {
-        background-color: var(--button-hover-color);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(220, 155, 17, 0.3);
     }
 
     /* UMKM Section Styles - PRIORITY */
@@ -1092,83 +905,6 @@ function truncateText($text, $length) {
         border-bottom: none;
     }
 
-    /* User Menu */
-    .user-menu {
-        position: relative;
-    }
-
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        background: var(--button-color);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .user-avatar:hover {
-        transform: scale(1.1);
-        box-shadow: 0 5px 15px rgba(220, 155, 17, 0.3);
-    }
-
-    .user-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        min-width: 200px;
-        margin-top: 10px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-    }
-
-    .user-menu:hover .user-dropdown {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
-
-    .user-greeting {
-        display: block;
-        padding: 15px 20px;
-        font-weight: 600;
-        color: var(--text-color-secondary);
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .user-dropdown a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 20px;
-        color: var(--text-color-secondary);
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .user-dropdown a:hover {
-        background: #f8f8f8;
-        color: var(--button-color);
-    }
-
-    .user-dropdown hr {
-        margin: 0;
-        border: none;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .logout-link {
-        color: var(--error-color) !important;
-    }
 
     /* Hero Section */
     .hero {
@@ -1933,114 +1669,6 @@ function truncateText($text, $length) {
         background: url('assets/wildlife.jpg') center/cover;
     }
 
-    /* Mobile Navigation */
-    .mobile-nav-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-nav-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .mobile-nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 300px;
-        max-width: 100%;
-        height: 100vh;
-        background: white;
-        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
-        transition: right 0.3s ease;
-        z-index: 1002;
-        overflow-y: auto;
-    }
-
-    .mobile-nav.active {
-        right: 0;
-    }
-
-    .mobile-nav-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--secondary-color);
-    }
-
-    .mobile-nav-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--text-color-secondary);
-        transition: color 0.3s ease;
-    }
-
-    .mobile-nav-close:hover {
-        color: var(--button-color);
-    }
-
-    .mobile-nav-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .mobile-nav-links li {
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .mobile-nav-links a {
-        display: block;
-        padding: 1rem 1.5rem;
-        color: var(--text-color-secondary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-nav-links a:hover {
-        background: var(--background-color);
-        color: var(--button-color);
-        padding-left: 2rem;
-    }
-
-    .mobile-login-btn {
-        width: calc(100% - 40px);
-        margin: 20px;
-        padding: 12px;
-        background: var(--button-color);
-        color: white;
-        border: none;
-        border-radius: 25px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-    }
-
-    .mobile-user-info {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #f0f0f0;
-        text-align: center;
-    }
-
-    .mobile-logout {
-        display: inline-block;
-        margin-top: 0.5rem;
-        color: var(--error-color);
-        text-decoration: none;
-        font-weight: 500;
-    }
 
     /* Scroll to Top Button */
     .scroll-to-top {
@@ -2257,15 +1885,6 @@ function truncateText($text, $length) {
     }
 
     @media (max-width: 768px) {
-        .mobile-menu-toggle {
-            display: flex;
-        }
-        
-        .nav-links,
-        .search-container {
-            display: none;
-        }
-        
         .hero-title {
             font-size: 2.5rem;
         }
@@ -2393,39 +2012,6 @@ function truncateText($text, $length) {
     <?php include 'navbar.php'; ?>
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress-bar"></div>
-
-    <header class="header">
-        <!-- Mobile Navigation -->
-        <div class="mobile-nav">
-            <div class="mobile-nav-header">
-                <div class="logo">
-                    <img src="assets/logo.png" alt="Papua Journey Logo"> 
-                    <p>Journey</p>
-                </div>
-                <button class="mobile-nav-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <ul class="mobile-nav-links">
-                <li><a href="#destinations">Destinations</a></li>
-                <li><a href="#experiences">Experiences</a></li>
-                <li><a href="#plan">Plan your trip</a></li>
-                <li><a href="#book">Book your trip</a></li>
-                <li><a href="#umkm">UMKM</a></li>
-                <li><a href="#testimonials">Reviews</a></li>
-            </ul>
-            <?php if(!isset($_SESSION['username'])): ?>
-                <button class="mobile-login-btn" onclick="window.location.href='login.php'">
-                    <i class="fas fa-user"></i> Sign In
-                </button>
-            <?php else: ?>
-                <div class="mobile-user-info">
-                    <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                    <a href="logout.php" class="mobile-logout">Logout</a>
-                </div>
-            <?php endif; ?>
-        </div>
-    </header>
 
     <?php if ($view_mode === 'detail' && $article): ?>
         <!-- Article Detail View -->
@@ -3333,16 +2919,7 @@ function truncateText($text, $length) {
             }
         }
         
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', function() {
-            this.classList.toggle('active');
-            document.querySelector('.mobile-nav')?.classList.toggle('active');
-        });
-        
-        document.querySelector('.mobile-nav-close')?.addEventListener('click', function() {
-            document.querySelector('.mobile-menu-toggle')?.classList.remove('active');
-            document.querySelector('.mobile-nav')?.classList.remove('active');
-        });
+        // Mobile menu functionality is handled by navbar.php
         
         // Scroll progress bar
         window.addEventListener('scroll', function() {
@@ -3360,13 +2937,7 @@ function truncateText($text, $length) {
                 scrollBtn.classList.remove('show');
             }
             
-            // Header scroll effect
-            const header = document.querySelector('.header');
-            if (scrollTop > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
+            // Header scroll effect is handled by navbar.php
         });
         
         // Animate stats counter

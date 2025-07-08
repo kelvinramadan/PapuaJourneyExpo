@@ -175,11 +175,15 @@ if ($is_logged_in) {
 
 .pj-navbar-wrapper .nav-links a {
     text-decoration: none;
-    color: var(--text-color-secondary);
+    color: var(--text-color);
     font-weight: 500;
     transition: var(--transition);
     position: relative;
     padding: 5px 0;
+}
+
+.pj-navbar-wrapper .pj-navbar-header.scrolled .nav-links a {
+    color: var(--text-color-secondary);
 }
 
 .pj-navbar-wrapper .nav-links a:hover {
