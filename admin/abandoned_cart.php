@@ -194,105 +194,250 @@ function getItemTypeLabel($type) {
     <link rel="stylesheet" href="sidebar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Enhanced page styling with modern design */
+        .content-area {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
         .filters-card {
             background: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-sm);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .filters-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .filters-card h3::before {
+            content: "🔍";
+            font-size: 1.25rem;
         }
         
         .filters-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
         
         .filter-group {
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         
         .filter-group label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
             color: var(--text-primary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .filter-group input, .filter-group select {
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
         
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--primary-color);
+            padding: 2rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
         
-        .stat-card.danger {
-            border-left-color: var(--danger-color);
+        .stat-card.danger::before {
+            background: linear-gradient(90deg, var(--danger-color), #ff7675);
         }
         
-        .stat-card.warning {
-            border-left-color: var(--warning-color);
+        .stat-card.warning::before {
+            background: linear-gradient(90deg, var(--warning-color), #fdcb6e);
         }
         
-        .stat-card.success {
-            border-left-color: var(--secondary-color);
+        .stat-card.success::before {
+            background: linear-gradient(90deg, var(--secondary-color), #00b894);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .stat-card.danger .stat-icon {
+            background: linear-gradient(135deg, var(--danger-color), #ff7675);
+        }
+
+        .stat-card.warning .stat-icon {
+            background: linear-gradient(135deg, var(--warning-color), #fdcb6e);
+        }
+
+        .stat-card.success .stat-icon {
+            background: linear-gradient(135deg, var(--secondary-color), #00b894);
+        }
+
+        .stat-card .stat-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
         
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
+            line-height: 1;
         }
         
         .stat-label {
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.4;
         }
         
         .abandoned-carts-table {
             background: white;
-            border-radius: 0.5rem;
+            border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
         
         .table-header {
-            background: #F9FAFB;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: none;
         }
         
         .table-header h3 {
             margin: 0;
-            color: var(--text-primary);
+            color: white;
+            font-size: 1.375rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .table-header h3::before {
+            content: "🛒";
+            font-size: 1.25rem;
         }
         
         .cart-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.2s;
+            padding: 2rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cart-item::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
         }
         
         .cart-item:hover {
-            background: #F9FAFB;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transform: translateX(5px);
+        }
+
+        .cart-item:hover::after {
+            transform: scaleY(1);
         }
         
         .cart-item:last-child {
@@ -302,97 +447,200 @@ function getItemTypeLabel($type) {
         .cart-user {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
+            gap: 1.5rem;
+            margin-bottom: 1.25rem;
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.25rem;
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+            position: relative;
+        }
+
+        .user-avatar::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 1.125rem;
+            z-index: -1;
+            opacity: 0.5;
         }
         
         .user-info h4 {
-            margin: 0;
+            margin: 0 0 0.25rem 0;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 1.125rem;
+            font-weight: 700;
         }
         
         .user-info p {
-            margin: 0;
+            margin: 0.125rem 0;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info p i {
+            color: var(--primary-color);
+            width: 16px;
         }
         
         .cart-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cart-details > div {
+            position: relative;
+        }
+
+        .cart-details strong {
+            display: block;
             margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .cart-items-list {
-            font-size: 0.875rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            line-height: 1.5;
+            line-height: 1.6;
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cart-category {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
         }
         
         .cart-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
         }
         
         .cart-stats {
             display: flex;
-            gap: 1rem;
-            font-size: 0.875rem;
+            gap: 2rem;
+            font-size: 0.9rem;
         }
         
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        .stat-item i {
+            color: var(--primary-color);
+            font-size: 1rem;
         }
         
         .duration-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .duration-badge.recent {
-            background: #FEF3C7;
-            color: #92400E;
+            background: linear-gradient(135deg, #fef3c7, #fcd34d);
+            color: #92400e;
+            border: 1px solid #f59e0b;
         }
         
         .duration-badge.old {
-            background: #FEE2E2;
-            color: #991B1B;
+            background: linear-gradient(135deg, #fee2e2, #fca5a5);
+            color: #991b1b;
+            border: 1px solid #ef4444;
         }
         
         .products-analytics {
             background: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .products-analytics h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .products-analytics h3::before {
+            content: "📊";
+            font-size: 1.25rem;
         }
         
         .product-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding-left: 1rem;
+            padding-right: 1rem;
+            border-radius: 0.75rem;
+            border-bottom: 1px solid transparent;
+            margin: 0 -1rem;
         }
         
         .product-item:last-child {
@@ -402,75 +650,270 @@ function getItemTypeLabel($type) {
         .product-info {
             flex: 1;
         }
+
+        .product-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .product-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
         
         .product-stats {
             display: flex;
-            gap: 1rem;
-            font-size: 0.875rem;
+            gap: 1.5rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
+        }
+
+        .product-stats span {
+            background: #f8fafc;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            font-weight: 600;
         }
         
         .btn-filter {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            text-decoration: none;
         }
         
         .btn-filter:hover {
-            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-filter.secondary {
+            background: linear-gradient(135deg, var(--text-secondary), #4b5563);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-filter.secondary:hover {
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
         }
         
         .btn-export {
-            background: var(--secondary-color);
+            background: linear-gradient(135deg, var(--secondary-color), #059669);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         
         .btn-export:hover {
-            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
         }
         
         .empty-state {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 2rem;
             color: var(--text-secondary);
         }
         
         .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.6;
+            color: var(--primary-color);
         }
-        
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Enhanced responsive design */
+        @media (max-width: 1024px) {
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.1rem;
+            }
+        }
+
         @media (max-width: 768px) {
+            .content-area {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 1rem 0;
+                margin-bottom: 2rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
             .filters-grid {
                 grid-template-columns: 1fr;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
             }
             
             .cart-details {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .cart-meta {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 1rem;
             }
+
+            .cart-stats {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .btn-filter, .btn-export {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .cart-item {
+                padding: 1.5rem;
+            }
+
+            .product-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .filters-card, .products-analytics {
+                padding: 1.5rem;
+            }
+
+            .cart-item {
+                padding: 1rem;
+            }
+
+            .cart-user {
+                gap: 1rem;
+            }
+
+            .user-info h4 {
+                font-size: 1rem;
+            }
+
+            .user-info p {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Loading animation for enhanced UX */
+        @keyframes shimmer {
+            0% {
+                background-position: -468px 0;
+            }
+            100% {
+                background-position: 468px 0;
+            }
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-size: 800px 104px;
+            animation: shimmer 1s linear infinite;
+        }
+
+        /* Custom scrollbar */
+        .content-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--secondary-color));
         }
     </style>
 </head>
@@ -482,9 +925,14 @@ function getItemTypeLabel($type) {
             <?php include 'components/header.php'; ?>
             
             <div class="content-area">
+                <div class="page-header">
+                    <h1><?php echo $page_title; ?></h1>
+                    <p>Kelola dan analisis keranjang yang ditinggalkan pengguna</p>
+                </div>
+
                 <!-- Filters -->
                 <div class="filters-card">
-                    <h3 style="margin-bottom: 1rem;">Filter Keranjang Ditinggalkan</h3>
+                    <h3>Filter Keranjang Ditinggalkan</h3>
                     <form method="GET" style="margin: 0;">
                         <div class="filters-grid">
                             <div class="filter-group">
@@ -517,11 +965,11 @@ function getItemTypeLabel($type) {
                                 <input type="number" name="max_value" value="<?php echo $max_value; ?>" min="0">
                             </div>
                         </div>
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <div class="filter-actions">
                             <button type="submit" class="btn-filter">
                                 <i class="fas fa-search"></i> Filter
                             </button>
-                            <a href="abandoned_cart.php" class="btn-filter" style="background: var(--text-secondary); text-decoration: none;">
+                            <a href="abandoned_cart.php" class="btn-filter secondary">
                                 <i class="fas fa-refresh"></i> Reset
                             </a>
                             <a href="export_abandoned_cart.php?<?php echo http_build_query($_GET); ?>" class="btn-export">
@@ -534,18 +982,30 @@ function getItemTypeLabel($type) {
                 <!-- Statistics -->
                 <div class="stats-grid">
                     <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
                         <div class="stat-value"><?php echo number_format($stats['total_abandoned_users'] ?? 0); ?></div>
                         <div class="stat-label">Pengguna dengan Keranjang Ditinggalkan</div>
                     </div>
                     <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
                         <div class="stat-value"><?php echo number_format($stats['total_abandoned_items'] ?? 0); ?></div>
                         <div class="stat-label">Total Item Ditinggalkan</div>
                     </div>
                     <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
                         <div class="stat-value"><?php echo formatPrice($stats['total_abandoned_value'] ?? 0); ?></div>
                         <div class="stat-label">Nilai Total Keranjang Ditinggalkan</div>
                     </div>
                     <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                         <div class="stat-value"><?php echo formatPrice($stats['avg_item_value'] ?? 0); ?></div>
                         <div class="stat-label">Rata-rata Nilai per Item</div>
                     </div>
@@ -554,16 +1014,17 @@ function getItemTypeLabel($type) {
                 <!-- Category Breakdown -->
                 <?php if (!empty($category_stats)): ?>
                 <div class="products-analytics">
-                    <h3 style="margin-bottom: 1rem;">Breakdown per Kategori</h3>
+                    <h3>Breakdown per Kategori</h3>
                     <?php foreach ($category_stats as $category): ?>
                     <div class="product-item">
                         <div class="product-info">
                             <h4><?php echo getItemTypeLabel($category['item_type']); ?></h4>
+                            <p>Kategori <?php echo strtolower(getItemTypeLabel($category['item_type'])); ?></p>
                         </div>
                         <div class="product-stats">
-                            <span><?php echo $category['users_count']; ?> pengguna</span>
-                            <span><?php echo $category['items_count']; ?> item</span>
-                            <span><?php echo formatPrice($category['total_value']); ?></span>
+                            <span><i class="fas fa-users"></i> <?php echo $category['users_count']; ?> pengguna</span>
+                            <span><i class="fas fa-box"></i> <?php echo $category['items_count']; ?> item</span>
+                            <span><i class="fas fa-money-bill"></i> <?php echo formatPrice($category['total_value']); ?></span>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -600,14 +1061,14 @@ function getItemTypeLabel($type) {
                             
                             <div class="cart-details">
                                 <div>
-                                    <strong>Items dalam keranjang:</strong>
+                                    <strong><i class="fas fa-shopping-bag"></i> Items dalam keranjang:</strong>
                                     <div class="cart-items-list">
                                         <?php echo htmlspecialchars($cart['items_list']); ?>
                                     </div>
                                 </div>
                                 <div>
-                                    <strong>Kategori:</strong>
-                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    <strong><i class="fas fa-tags"></i> Kategori:</strong>
+                                    <div class="cart-category">
                                         <?php 
                                         $types = explode(',', $cart['item_types']);
                                         echo implode(', ', array_map('getItemTypeLabel', $types));
@@ -643,19 +1104,17 @@ function getItemTypeLabel($type) {
                 <!-- Most Abandoned Products -->
                 <?php if (!empty($abandoned_products)): ?>
                 <div class="products-analytics">
-                    <h3 style="margin-bottom: 1rem;">Produk Paling Sering Ditinggalkan</h3>
+                    <h3>Produk Paling Sering Ditinggalkan</h3>
                     <?php foreach ($abandoned_products as $product): ?>
                     <div class="product-item">
                         <div class="product-info">
                             <h4><?php echo htmlspecialchars($product['item_name']); ?></h4>
-                            <p style="margin: 0; color: var(--text-secondary); font-size: 0.875rem;">
-                                <?php echo getItemTypeLabel($product['item_type']); ?>
-                            </p>
+                            <p><?php echo getItemTypeLabel($product['item_type']); ?></p>
                         </div>
                         <div class="product-stats">
-                            <span><?php echo $product['abandon_count']; ?> kali</span>
-                            <span><?php echo $product['total_quantity']; ?> qty</span>
-                            <span><?php echo formatPrice($product['total_value']); ?></span>
+                            <span><i class="fas fa-exclamation-triangle"></i> <?php echo $product['abandon_count']; ?> kali</span>
+                            <span><i class="fas fa-cubes"></i> <?php echo $product['total_quantity']; ?> qty</span>
+                            <span><i class="fas fa-money-bill"></i> <?php echo formatPrice($product['total_value']); ?></span>
                         </div>
                     </div>
                     <?php endforeach; ?>
