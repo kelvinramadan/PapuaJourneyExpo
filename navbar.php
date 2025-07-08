@@ -14,21 +14,21 @@ $in_account = strpos($current_dir, '/users/account') !== false;
 
 // Set up path prefixes based on location
 if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi || $in_account) {
-    // We're in a subfolder within users
-    $base_path = '';
-    $users_path = '';
-    $config_path = 'config/';
-    $uploads_path = 'uploads/';
-    $logout_path = 'logout.php';
-    $login_path = 'login.php';
+    // We're in a subfolder within users, so paths need to go up two levels
+    $base_path = '../../';
+    $users_path = '../';
+    $config_path = '../../config/';
+    $uploads_path = '../../uploads/';
+    $logout_path = '../../logout.php';
+    $login_path = '../../login.php';
 } else {
-    // Default paths if navbar is included from root or users folder
-    $base_path = '';
-    $users_path = '';
+    // We're in the root directory - use absolute paths
+    $base_path = '/PapuaJourneyExpo/';
+    $users_path = '/PapuaJourneyExpo/users/';
     $config_path = 'config/';
-    $uploads_path = 'uploads/';
-    $logout_path = 'logout.php';
-    $login_path = 'login.php';
+    $uploads_path = '/PapuaJourneyExpo/uploads/';
+    $logout_path = '/PapuaJourneyExpo/logout.php';
+    $login_path = '/PapuaJourneyExpo/login.php';
 }
 
 // Check if user is logged in
@@ -610,14 +610,14 @@ if ($is_logged_in) {
     }
 }
 </style>
-<script src="script.js" defer></script>
+<script src="<?php echo $base_path; ?>script.js" defer></script>
 
 <!-- Papua Journey Navbar Component -->
 <div class="pj-navbar-wrapper">
     <header class="pj-navbar-header" id="header">
         <nav class="navbar">
             <div class="logo">
-                <img src="assets/logo.png" alt="Papua Journey Logo"> 
+                <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo"> 
                 <p>Journey</p>
             </div>
             
@@ -684,7 +684,7 @@ if ($is_logged_in) {
         <div class="mobile-nav">
             <div class="mobile-nav-header">
                 <div class="logo">
-                    <img src="assets/logo.png" alt="Papua Journey Logo"> 
+                    <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo"> 
                     <p>Journey</p>
                 </div>
                 <button class="mobile-nav-close">

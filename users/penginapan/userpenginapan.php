@@ -4,31 +4,28 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../../login.php');
-    exit();
-}
-
 require_once '../../config/database.php';
 
 // Initialize database connection
 $database = new Database();
 $db = $database->getConnection();
 
-// Get session data
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
-$user_email = $_SESSION['user_email'];
+// Get session data if user is logged in
+$is_logged_in = isset($_SESSION['user_id']);
+$user_id = $is_logged_in ? $_SESSION['user_id'] : null;
+$user_name = $is_logged_in ? $_SESSION['user_name'] : null;
+$user_email = $is_logged_in ? $_SESSION['user_email'] : null;
 
-// Get cart count for navbar
+// Get cart count for navbar (only if logged in)
 $cart_count = 0;
-$stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$cart_count = $result->fetch_assoc()['count'];
-$stmt->close();
+if ($is_logged_in) {
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $cart_count = $result->fetch_assoc()['count'];
+    $stmt->close();
+}
 
 // Get filter parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -608,10 +605,17 @@ $database->closeConnection();
                                         </div>
                                     </div>
                                     
-                                    <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Add to Cart
-                                    </button>
+                                    <?php if ($is_logged_in): ?>
+                                        <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            Add to Cart
+                                        </button>
+                                    <?php else: ?>
+                                        <a href="../../login.php?redirect=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" class="btn btn-primary btn-book" style="text-decoration: none; display: inline-block; text-align: center;">
+                                            <i class="fas fa-lock"></i>
+                                            Login to Book
+                                        </a>
+                                    <?php endif; ?>
                                 </form>
                             </div>
                         </div>
@@ -860,13 +864,7 @@ $database->closeConnection();
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 console.error('Error:', error);
-                showNotification();
-                
-                const cartBadge = document.querySelector('.cart-badge');
-                if (cartBadge) {
-                    const currentCount = parseInt(cartBadge.textContent) || 0;
-                    cartBadge.textContent = currentCount + 1;
-                }
+                alert('❌ Failed to add item to cart. Please try again.');
             });
         }
         

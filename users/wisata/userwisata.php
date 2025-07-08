@@ -5,29 +5,26 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../../login.php');
-    exit();
-}
-
 require_once '../../config/database.php';
 
 $db = getDbConnection();
 
-// Get session data
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
-$user_email = $_SESSION['user_email'];
+// Get session data if user is logged in
+$is_logged_in = isset($_SESSION['user_id']);
+$user_id = $is_logged_in ? $_SESSION['user_id'] : null;
+$user_name = $is_logged_in ? $_SESSION['user_name'] : null;
+$user_email = $is_logged_in ? $_SESSION['user_email'] : null;
 
-// Get cart count for navbar
+// Get cart count for navbar (only if logged in)
 $cart_count = 0;
-$stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$cart_count = $result->fetch_assoc()['count'];
-$stmt->close();
+if ($is_logged_in) {
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $cart_count = $result->fetch_assoc()['count'];
+    $stmt->close();
+}
 
 // Get filter parameters
 $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : '';
@@ -614,10 +611,17 @@ mysqli_close($db);
                                         </div>
                                     </div>
                                     
-                                    <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Add to Cart
-                                    </button>
+                                    <?php if ($is_logged_in): ?>
+                                        <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            Add to Cart
+                                        </button>
+                                    <?php else: ?>
+                                        <a href="../../login.php?redirect=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" class="btn btn-primary btn-book" style="text-decoration: none; display: inline-block; text-align: center;">
+                                            <i class="fas fa-lock"></i>
+                                            Login to Book
+                                        </a>
+                                    <?php endif; ?>
                                 </form>
                             </div>
                         </div>
@@ -627,9 +631,13 @@ mysqli_close($db);
                             <div class="reviews-card">
                                 <div class="reviews-header">
                                     <h3 class="reviews-title">⭐ Reviews & Ratings</h3>
-                                    <?php if (isset($_SESSION['user_id'])): ?>
+                                    <?php if ($is_logged_in): ?>
                                         <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
                                             ✍️ Write Review
+                                        </a>
+                                    <?php else: ?>
+                                        <a href="../../login.php" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
+                                            🔐 Login to Review
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -861,13 +869,7 @@ mysqli_close($db);
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 console.error('Error:', error);
-                showNotification();
-                
-                const cartBadge = document.querySelector('.cart-badge');
-                if (cartBadge) {
-                    const currentCount = parseInt(cartBadge.textContent) || 0;
-                    cartBadge.textContent = currentCount + 1;
-                }
+                alert('❌ Failed to add item to cart. Please try again.');
             });
         }
         
@@ -1079,13 +1081,13 @@ mysqli_close($db);
                         Was this review helpful?
                         <button class="helpful-btn ${review.user_vote === '1' ? 'voted' : ''}" 
                                 onclick="voteHelpful(${review.id}, true)" 
-                                ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login to vote"' : ''}>
+                                ${!<?php echo $is_logged_in ? 'true' : 'false'; ?> ? 'disabled title="Login to vote"' : ''}>
                             <i class="fas fa-thumbs-up"></i> 
                             <span>${review.helpful_count}</span>
                         </button>
                         <button class="helpful-btn ${review.user_vote === '0' ? 'voted' : ''}" 
                                 onclick="voteHelpful(${review.id}, false)"
-                                ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login to vote"' : ''}>
+                                ${!<?php echo $is_logged_in ? 'true' : 'false'; ?> ? 'disabled title="Login to vote"' : ''}>
                             <i class="fas fa-thumbs-down"></i> 
                             <span>${review.not_helpful_count}</span>
                         </button>
@@ -1098,8 +1100,9 @@ mysqli_close($db);
         }
         
         async function voteHelpful(reviewId, isHelpful) {
-            <?php if (!isset($_SESSION['user_id'])): ?>
+            <?php if (!$is_logged_in): ?>
             alert('Please login to vote');
+            window.location.href = '../../login.php?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
             return;
             <?php endif; ?>
             

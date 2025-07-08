@@ -33,33 +33,29 @@ if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_componen
     $logout_path = '../logout.php';
 }
 
-// Pastikan user sudah login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ' . $base_path . 'login.php');
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
-$user_email = $_SESSION['user_email'];
+// Check if user is logged in
+$is_logged_in = isset($_SESSION['user_id']);
+$user_id = $is_logged_in ? $_SESSION['user_id'] : null;
+$user_name = $is_logged_in ? $_SESSION['user_name'] : 'Guest';
+$user_email = $is_logged_in ? $_SESSION['user_email'] : null;
 
 // Get user data untuk navbar
 require_once $config_path . 'database.php';
 $db = getDbConnection();
 
-// Get cart count
+// Get cart count (only if logged in)
 $cart_count = 0;
-if (isset($_SESSION['user_id'])) {
+if ($is_logged_in) {
     $cart_stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
-    $cart_stmt->bind_param("i", $_SESSION['user_id']);
+    $cart_stmt->bind_param("i", $user_id);
     $cart_stmt->execute();
     $cart_result = $cart_stmt->get_result();
     $cart_count = $cart_result->fetch_assoc()['count'];
     $cart_stmt->close();
 }
 
-// Handle form submissions for profile functions
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Handle form submissions for profile functions (only if logged in)
+if ($is_logged_in && $_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['update_profile'])) {
         // Update profile information
         $new_name = trim($_POST['full_name']);
@@ -208,13 +204,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Get updated user data after any profile operations
-$stmt = $db->prepare("SELECT full_name, email, phone, address, profile_image FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_data = $result->fetch_assoc();
-$stmt->close();
+// Get updated user data after any profile operations (only if logged in)
+$user_data = [];
+if ($is_logged_in) {
+    $stmt = $db->prepare("SELECT full_name, email, phone, address, profile_image FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_data = $result->fetch_assoc();
+    $stmt->close();
+}
 $db->close();
 ?>
 
@@ -864,22 +863,28 @@ $db->close();
         </ul>
         
         <div class="search-container">
-            <div class="user-menu">
-                <div class="user-avatar">
-                    <?php if ($user_data['profile_image'] && file_exists($uploads_path . 'profile_images/' . $user_data['profile_image'])): ?>
-                        <img src="<?php echo $uploads_path; ?>profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
-                    <?php else: ?>
-                        <span><?php echo strtoupper(substr($user_name, 0, 1)); ?></span>
-                    <?php endif; ?>
+            <?php if ($is_logged_in): ?>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <?php if (!empty($user_data['profile_image']) && file_exists($uploads_path . 'profile_images/' . $user_data['profile_image'])): ?>
+                            <img src="<?php echo $uploads_path; ?>profile_images/<?php echo htmlspecialchars($user_data['profile_image']); ?>" alt="Profile">
+                        <?php else: ?>
+                            <span><?php echo strtoupper(substr($user_name, 0, 1)); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="user-dropdown">
+                        <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
+                        <a href="<?php echo $users_path; ?>account/my_account.php"><i class="fas fa-user-circle"></i> Akun Saya</a>
+                        <a href="<?php echo $users_path; ?>account/my_orders.php"><i class="fas fa-box"></i> Pesanan Saya</a>
+                        <hr>
+                        <a href="<?php echo $logout_path; ?>" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
                 </div>
-                <div class="user-dropdown">
-                    <span class="user-greeting">Hi, <?php echo htmlspecialchars($user_name); ?>!</span>
-                    <a href="<?php echo $users_path; ?>account/my_account.php"><i class="fas fa-user-circle"></i> Akun Saya</a>
-                    <a href="<?php echo $users_path; ?>account/my_orders.php"><i class="fas fa-box"></i> Pesanan Saya</a>
-                    <hr>
-                    <a href="<?php echo $logout_path; ?>" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-            </div>
+            <?php else: ?>
+                <a href="<?php echo $base_path; ?>login.php" class="btn btn-primary" style="background: var(--button-color); color: white; padding: 0.5rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            <?php endif; ?>
         </div>
     </nav>
     
@@ -915,16 +920,23 @@ $db->close();
             </a></li>
         </ul>
         <div class="mobile-user-info">
-            <span>Welcome, <?php echo htmlspecialchars($user_name); ?></span>
-            <a href="<?php echo $users_path; ?>account/my_account.php" class="mobile-profile-btn">
-                <i class="fas fa-user-circle"></i> Akun Saya
-            </a>
-            <a href="<?php echo $users_path; ?>account/my_orders.php" class="mobile-profile-btn">
-                <i class="fas fa-box"></i> Pesanan Saya
-            </a>
-            <a href="<?php echo $logout_path; ?>" class="mobile-logout">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
+            <?php if ($is_logged_in): ?>
+                <span>Welcome, <?php echo htmlspecialchars($user_name); ?></span>
+                <a href="<?php echo $users_path; ?>account/my_account.php" class="mobile-profile-btn">
+                    <i class="fas fa-user-circle"></i> Akun Saya
+                </a>
+                <a href="<?php echo $users_path; ?>account/my_orders.php" class="mobile-profile-btn">
+                    <i class="fas fa-box"></i> Pesanan Saya
+                </a>
+                <a href="<?php echo $logout_path; ?>" class="mobile-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            <?php else: ?>
+                <span>Welcome, Guest</span>
+                <a href="<?php echo $base_path; ?>login.php" class="mobile-profile-btn" style="background: var(--button-color); color: white;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 </header>
@@ -948,7 +960,8 @@ $db->close();
     </div>
     <?php endif; ?>
 
-    <!-- Modals -->
+    <!-- Modals (only if logged in) -->
+    <?php if ($is_logged_in): ?>
     <!-- Photo Upload Modal -->
     <div id="photoModal" class="modal">
     <div class="modal-content">
@@ -1018,6 +1031,7 @@ $db->close();
         </form>
     </div>
 </div>
+<?php endif; ?>
 
 <script>
 // Ensure navbar script is properly scoped and doesn't conflict with page scripts
