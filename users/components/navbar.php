@@ -15,6 +15,10 @@ $in_cart = strpos($current_dir, '/users/cart') !== false;
 $in_checkout = strpos($current_dir, '/users/checkout') !== false;
 $in_transaksi = strpos($current_dir, '/users/transaksi') !== false;
 $in_account = strpos($current_dir, '/users/account') !== false;
+$in_users = strpos($current_dir, '/users') !== false && !($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi || $in_account);
+
+// Check if we're in the root directory
+$is_root = ($current_dir === '/' || $current_dir === '/PapuaJourneyExpo' || basename($_SERVER['PHP_SELF']) === 'index.php');
 
 // Set up path prefixes based on location
 if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_components || $in_cart || $in_checkout || $in_transaksi || $in_account) {
@@ -24,13 +28,31 @@ if ($in_dashboard || $in_wisata || $in_penginapan || $in_chatbot || $in_componen
     $config_path = '../../config/';
     $uploads_path = '../../uploads/';
     $logout_path = '../../logout.php';
-} else {
-    // Default paths if navbar is included from root or users folder
+    $login_path = '../../login.php';
+} elseif ($is_root) {
+    // We're in the root directory
+    $base_path = '';
+    $users_path = 'users/';
+    $config_path = 'config/';
+    $uploads_path = 'uploads/';
+    $logout_path = 'logout.php';
+    $login_path = 'login.php';
+} elseif ($in_users) {
+    // We're in the users directory
     $base_path = '../';
     $users_path = '';
     $config_path = '../config/';
     $uploads_path = '../uploads/';
     $logout_path = '../logout.php';
+    $login_path = '../login.php';
+} else {
+    // Default fallback
+    $base_path = '../';
+    $users_path = 'users/';
+    $config_path = '../config/';
+    $uploads_path = '../uploads/';
+    $logout_path = '../logout.php';
+    $login_path = '../login.php';
 }
 
 // Check if user is logged in
@@ -615,6 +637,21 @@ $db->close();
     color: var(--button-color);
 }
 
+.pj-navbar-wrapper .mobile-nav-links a.disabled {
+    color: #999;
+    cursor: not-allowed;
+}
+
+.pj-navbar-wrapper .mobile-nav-links a.disabled:hover {
+    background: none;
+    color: #999;
+    padding-left: 1.5rem;
+}
+
+.pj-navbar-wrapper .mobile-nav-links a.disabled i {
+    color: #999;
+}
+
 .pj-navbar-wrapper .mobile-user-info {
     padding: 1.5rem;
     background: var(--background-color);
@@ -829,6 +866,155 @@ $db->close();
         display: none;
     }
 }
+
+/* Disabled Links */
+.pj-navbar-wrapper .nav-links a.disabled {
+    color: #999;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.pj-navbar-wrapper .nav-links a.disabled:hover {
+    color: #999;
+}
+
+.pj-navbar-wrapper .nav-links a.disabled::after {
+    display: none;
+}
+
+.pj-navbar-wrapper .nav-links a.disabled i {
+    color: #999;
+}
+
+/* Login Required Tooltip */
+.pj-navbar-wrapper .login-required-tooltip {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.pj-navbar-wrapper .login-required-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #333;
+}
+
+.pj-navbar-wrapper .nav-links a.disabled:hover .login-required-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Login Notification Modal */
+.pj-navbar-wrapper .login-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    max-width: 400px;
+    width: 90%;
+    display: none;
+}
+
+.pj-navbar-wrapper .login-notification.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.pj-navbar-wrapper .login-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none;
+}
+
+.pj-navbar-wrapper .login-notification-overlay.show {
+    display: block;
+}
+
+.pj-navbar-wrapper .login-notification h3 {
+    color: var(--text-color-secondary);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.pj-navbar-wrapper .login-notification p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.pj-navbar-wrapper .login-notification .notification-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.pj-navbar-wrapper .login-notification .btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.pj-navbar-wrapper .login-notification .btn-primary {
+    background: var(--button-color);
+    color: white;
+}
+
+.pj-navbar-wrapper .login-notification .btn-primary:hover {
+    background: var(--button-hover-color);
+    transform: translateY(-2px);
+}
+
+.pj-navbar-wrapper .login-notification .btn-secondary {
+    background: #e0e0e0;
+    color: #666;
+}
+
+.pj-navbar-wrapper .login-notification .btn-secondary:hover {
+    background: #d0d0d0;
+}
 </style>
 
 <!-- Papua Journey Navbar Component -->
@@ -848,17 +1034,33 @@ $db->close();
         </button>
         
         <ul class="nav-links">
-            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_dashboard.php' ? 'active' : ''; ?>">Dashboard</a></li>
+            <li><a href="<?php echo $is_root ? '' : $base_path; ?>index.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Dashboard</a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">Wisata</a></li>
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">Penginapan</a></li>
-            <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a></li>
             <li>
-                <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-shopping-cart"></i>
-                    <?php if ($cart_count > 0): ?>
-                        <span class="cart-badge"><?php echo $cart_count; ?></span>
-                    <?php endif; ?>
-                </a>
+                <?php if ($is_logged_in): ?>
+                    <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a>
+                <?php else: ?>
+                    <a href="#" class="disabled" onclick="showLoginNotification('AI Assistant'); return false;">
+                        AI Assistant
+                        <span class="login-required-tooltip">Login required</span>
+                    </a>
+                <?php endif; ?>
+            </li>
+            <li>
+                <?php if ($is_logged_in): ?>
+                    <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
+                        <i class="fas fa-shopping-cart"></i>
+                        <?php if ($cart_count > 0): ?>
+                            <span class="cart-badge"><?php echo $cart_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                <?php else: ?>
+                    <a href="#" class="cart-icon disabled" onclick="showLoginNotification('Cart'); return false;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="login-required-tooltip">Login required</span>
+                    </a>
+                <?php endif; ?>
             </li>
         </ul>
         
@@ -900,7 +1102,7 @@ $db->close();
             </button>
         </div>
         <ul class="mobile-nav-links">
-            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php">
+            <li><a href="<?php echo $is_root ? '' : $base_path; ?>index.php">
                 <i class="fas fa-home"></i> Dashboard
             </a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php">
@@ -909,15 +1111,31 @@ $db->close();
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php">
                 <i class="fas fa-bed"></i> Penginapan
             </a></li>
-            <li><a href="<?php echo $users_path; ?>chatbot/user_chatbot.php">
-                <i class="fas fa-robot"></i> AI Assistant
-            </a></li>
-            <li><a href="<?php echo $users_path; ?>cart/cart.php">
-                <i class="fas fa-shopping-cart"></i> Keranjang
-                <?php if ($cart_count > 0): ?>
-                    <span style="background: var(--button-color); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem; margin-left: 5px;"><?php echo $cart_count; ?></span>
+            <li>
+                <?php if ($is_logged_in): ?>
+                    <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php">
+                        <i class="fas fa-robot"></i> AI Assistant
+                    </a>
+                <?php else: ?>
+                    <a href="#" class="disabled" onclick="showLoginNotification('AI Assistant'); return false;">
+                        <i class="fas fa-robot"></i> AI Assistant
+                    </a>
                 <?php endif; ?>
-            </a></li>
+            </li>
+            <li>
+                <?php if ($is_logged_in): ?>
+                    <a href="<?php echo $users_path; ?>cart/cart.php">
+                        <i class="fas fa-shopping-cart"></i> Keranjang
+                        <?php if ($cart_count > 0): ?>
+                            <span style="background: var(--button-color); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem; margin-left: 5px;"><?php echo $cart_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                <?php else: ?>
+                    <a href="#" class="disabled" onclick="showLoginNotification('Cart'); return false;">
+                        <i class="fas fa-shopping-cart"></i> Keranjang
+                    </a>
+                <?php endif; ?>
+            </li>
         </ul>
         <div class="mobile-user-info">
             <?php if ($is_logged_in): ?>
@@ -940,6 +1158,17 @@ $db->close();
         </div>
     </div>
 </header>
+
+    <!-- Login Notification Modal -->
+    <div class="login-notification-overlay" id="loginNotificationOverlay"></div>
+    <div class="login-notification" id="loginNotification">
+        <h3>🔒 Login Required</h3>
+        <p id="loginNotificationMessage">You need to login first to access this feature.</p>
+        <div class="notification-buttons">
+            <button class="btn btn-secondary" onclick="closeLoginNotification()">Cancel</button>
+            <button class="btn btn-primary" onclick="redirectToLogin()">Login</button>
+        </div>
+    </div>
 
     <!-- Display Messages if any -->
     <?php if (isset($_SESSION['message'])): ?>
@@ -1161,6 +1390,43 @@ $db->close();
         document.addEventListener('DOMContentLoaded', setupNotifications);
     } else {
         setupNotifications();
+    }
+
+    // Login notification functions
+    window.showLoginNotification = function(feature) {
+        const overlay = document.getElementById('loginNotificationOverlay');
+        const notification = document.getElementById('loginNotification');
+        const message = document.getElementById('loginNotificationMessage');
+        
+        if (overlay && notification && message) {
+            message.textContent = `You need to login first to access ${feature}.`;
+            overlay.classList.add('show');
+            notification.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    window.closeLoginNotification = function() {
+        const overlay = document.getElementById('loginNotificationOverlay');
+        const notification = document.getElementById('loginNotification');
+        
+        if (overlay && notification) {
+            overlay.classList.remove('show');
+            notification.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    };
+
+    window.redirectToLogin = function() {
+        const loginPath = '<?php echo $login_path; ?>';
+        const currentUrl = window.location.href;
+        window.location.href = loginPath + '?redirect=' + encodeURIComponent(currentUrl);
+    };
+
+    // Close notification on overlay click
+    const loginOverlay = document.getElementById('loginNotificationOverlay');
+    if (loginOverlay) {
+        loginOverlay.addEventListener('click', closeLoginNotification);
     }
 
 })();

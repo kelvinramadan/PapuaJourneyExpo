@@ -635,10 +635,6 @@ mysqli_close($db);
                                         <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
                                             ✍️ Write Review
                                         </a>
-                                    <?php else: ?>
-                                        <a href="../../login.php" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
-                                            🔐 Login to Review
-                                        </a>
                                     <?php endif; ?>
                                 </div>
                                 
