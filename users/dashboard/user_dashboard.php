@@ -18,6 +18,31 @@ require_once '../../config/database.php';
 $message = '';
 $error_message = '';
 
+// Handle review submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
+    $rating = intval($_POST['rating']);
+    $review_text = trim($_POST['review_text']);
+    $destination = trim($_POST['destination']);
+    $visit_date = $_POST['visit_date'];
+    
+    // Validation
+    if ($rating >= 1 && $rating <= 5 && !empty($review_text) && !empty($destination)) {
+        $db = getDbConnection();
+        $stmt = $db->prepare("INSERT INTO reviewuser (user_id, rating, review_text, destination, visit_date, is_approved) VALUES (?, ?, ?, ?, ?, 1)");
+        $stmt->bind_param("iisss", $user_id, $rating, $review_text, $destination, $visit_date);
+        
+        if ($stmt->execute()) {
+            $message = "Review berhasil ditambahkan!";
+        } else {
+            $error_message = "Gagal menambahkan review.";
+        }
+        $stmt->close();
+        $db->close();
+    } else {
+        $error_message = "Mohon lengkapi semua field dengan benar.";
+    }
+}
+
 // Get user details from database
 $db = getDbConnection();
 $stmt = $db->prepare("SELECT full_name, email, phone, address, profile_image FROM users WHERE id = ?");
@@ -35,6 +60,15 @@ $cart_stmt->execute();
 $cart_result = $cart_stmt->get_result();
 $cart_count = $cart_result->fetch_assoc()['count'];
 $cart_stmt->close();
+
+// Get approved reviews for testimonials
+$reviews_query = "SELECT r.*, u.full_name 
+                  FROM reviewuser r 
+                  JOIN users u ON r.user_id = u.id 
+                  WHERE r.is_approved = 1 
+                  ORDER BY r.created_at DESC";
+$reviews_result = $db->query($reviews_query);
+$reviews = $reviews_result->fetch_all(MYSQLI_ASSOC);
 
 // Get filters and search parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -100,6 +134,14 @@ function truncateText($text, $length) {
     }
     return substr($text, 0, $length) . '...';
 }
+
+function getInitial($name) {
+    $words = explode(' ', $name);
+    if (count($words) >= 2) {
+        return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+    }
+    return strtoupper(substr($name, 0, 2));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,6 +162,420 @@ function truncateText($text, $length) {
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <link rel="stylesheet" href="../../assets/css/reviews.css">
     <link rel="stylesheet" href="userdashboard.css">
+    <style>
+        /* CSS tambahan untuk review functionality */
+        .review-actions {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .testimonials-slider-wrapper {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        .testimonials-slider {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 2rem 0 3rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .testimonials-slider::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .testimonials-slider::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .testimonials-slider::-webkit-scrollbar-thumb {
+            background: var(--button-color);
+            border-radius: 10px;
+        }
+
+        .testimonial-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .testimonial-nav:hover {
+            background: var(--button-color);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .testimonial-nav-prev {
+            left: 10px;
+        }
+
+        .testimonial-nav-next {
+            right: 10px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            min-width: 320px;
+            max-width: 320px;
+            scroll-snap-align: start;
+            flex-shrink: 0;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 155, 17, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .testimonial-card:hover::before {
+            left: 100%;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: var(--button-color);
+        }
+
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        .testimonial-rating i {
+            color: #ddd;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .testimonial-rating i.filled {
+            color: var(--button-color);
+        }
+
+        .testimonial-destination {
+            font-size: 0.85rem;
+            color: var(--button-color);
+            font-weight: 600;
+            background: rgba(220, 155, 17, 0.1);
+            padding: 4px 12px;
+            border-radius: 15px;
+        }
+
+        .testimonial-text {
+            color: #555;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--button-color);
+            opacity: 0.3;
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-family: serif;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonial-author .avatar-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .author-info h4 {
+            margin: 0;
+            color: var(--text-color-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .author-info span {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .no-reviews i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .no-reviews h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .review-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .review-modal.show {
+            opacity: 1;
+        }
+
+        .review-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .review-modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            z-index: 10001;
+        }
+
+        .review-modal.show .review-modal-content {
+            transform: scale(1);
+        }
+
+        .review-modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .review-modal-header h2 {
+            color: var(--text-color-secondary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .review-modal-body {
+            padding: 2rem;
+        }
+
+        .review-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .review-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color-secondary);
+        }
+
+        .review-form input,
+        .review-form textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .review-form input:focus,
+        .review-form textarea:focus {
+            outline: none;
+            border-color: var(--button-color);
+            box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
+        }
+
+        .review-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .rating-input label {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #ddd;
+            transition: all 0.2s ease;
+            margin: 0;
+        }
+
+        .rating-input label:hover,
+        .rating-input label:hover ~ label {
+            color: var(--button-color);
+            transform: scale(1.1);
+        }
+
+        .rating-input input[type="radio"]:checked ~ label {
+            color: var(--button-color);
+        }
+
+        .review-modal-footer {
+            padding: 1rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .review-modal-footer .btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        .review-modal-footer .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .review-modal-footer .btn-secondary:hover {
+            background: #e8e8e8;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .testimonials-slider-wrapper {
+                padding: 0 20px;
+            }
+            
+            .testimonial-nav {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .testimonial-nav-prev {
+                left: 0;
+            }
+            
+            .testimonial-nav-next {
+                right: 0;
+            }
+            
+            .testimonial-card {
+                min-width: 280px;
+                max-width: 280px;
+                padding: 1.5rem;
+            }
+            
+            .review-modal-content {
+                width: 95%;
+                margin: 1rem auto;
+                max-height: 95vh;
+            }
+            
+            .review-modal-footer {
+                flex-direction: column;
+            }
+            
+            .review-modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
     
     <!-- Scripts -->
     <script src="../../script.js" defer></script>
@@ -422,74 +878,119 @@ function truncateText($text, $length) {
             </div>
         </div>
 
-        <!-- Testimonials Section -->
+        <!-- Enhanced Testimonials Section with User Reviews -->
         <section class="testimonials" id="testimonials">
             <div class="testimonials-container">
                 <div class="testimonials-header fade-in">
                     <span class="section-label">What Travelers Say</span>
                     <h2>Real Stories from <b>Real Adventurers</b></h2>
-                </div>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card fade-in">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p>"The AI chatbot helped me plan the perfect diving trip to Raja Ampat. Found hidden spots I would never have discovered on my own!"</p>
-                        <div class="testimonial-author">
-                            <div class="avatar-icon" style="background-color: #4A90E2;">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <h4>Sarah M.</h4>
-                                <span>Adventure Diver</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card fade-in">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p>"Connected with amazing local guides through the platform. The cultural experiences were authentic and unforgettable."</p>
-                        <div class="testimonial-author">
-                            <div class="avatar-icon" style="background-color: #50C878;">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <h4>John D.</h4>
-                                <span>Culture Enthusiast</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card fade-in">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p>"Best platform for exploring Papua! The local business connections made our trip smooth and supported the community."</p>
-                        <div class="testimonial-author">
-                            <div class="avatar-icon" style="background-color: #FF6B6B;">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <h4>Maria L.</h4>
-                                <span>Eco-Tourist</span>
-                            </div>
-                        </div>
+                    <div class="review-actions">
+                        <button class="btn btn-primary" onclick="openReviewModal()">
+                            <i class="fas fa-plus"></i>
+                            Share Your Experience
+                        </button>
                     </div>
                 </div>
+                
+                <?php if (!empty($reviews)): ?>
+                <div class="testimonials-slider-wrapper">
+                    <button class="testimonial-nav testimonial-nav-prev" onclick="slideTestimonials('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="testimonials-slider" id="testimonialsSlider">
+                        <?php foreach ($reviews as $review): ?>
+                        <div class="testimonial-card fade-in">
+                            <div class="testimonial-header">
+                                <div class="testimonial-rating">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="fas fa-star <?php echo $i <= $review['rating'] ? 'filled' : ''; ?>"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="testimonial-destination"><?php echo htmlspecialchars($review['destination']); ?></div>
+                            </div>
+                            <p class="testimonial-text"><?php echo htmlspecialchars($review['review_text']); ?></p>
+                            <div class="testimonial-author">
+                                <div class="avatar-icon" style="background-color: <?php echo '#' . substr(md5($review['user_id']), 0, 6); ?>;">
+                                    <?php echo getInitial($review['full_name']); ?>
+                                </div>
+                                <div class="author-info">
+                                    <h4><?php echo htmlspecialchars($review['full_name']); ?></h4>
+                                    <span>Visited on <?php echo formatDate($review['visit_date']); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button class="testimonial-nav testimonial-nav-next" onclick="slideTestimonials('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <?php else: ?>
+                <div class="no-reviews">
+                    <i class="fas fa-comment-slash"></i>
+                    <h3>No reviews yet</h3>
+                    <p>Be the first to share your Papua adventure experience!</p>
+                </div>
+                <?php endif; ?>
             </div>
         </section>
+
+        <!-- Review Modal -->
+        <div id="reviewModal" class="review-modal">
+            <div class="review-modal-overlay" onclick="closeReviewModal()"></div>
+            <div class="review-modal-content">
+                <div class="review-modal-header">
+                    <h2>Share Your Experience</h2>
+                    <span class="close-modal" onclick="closeReviewModal()">&times;</span>
+                </div>
+                <form method="POST" class="review-form">
+                    <div class="review-modal-body">
+                        <?php if ($message): ?>
+                            <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
+                        <?php endif; ?>
+                        <?php if ($error_message): ?>
+                            <div class="alert alert-error"><?php echo htmlspecialchars($error_message); ?></div>
+                        <?php endif; ?>
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" name="destination" required placeholder="e.g., Raja Ampat, Wamena, Jayapura">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="visit_date">Visit Date</label>
+                            <input type="date" id="visit_date" name="visit_date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rating">Rating</label>
+                            <div class="rating-input">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1"><i class="fas fa-star"></i></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review_text">Your Review</label>
+                            <textarea id="review_text" name="review_text" required placeholder="Share your experience in Papua..." rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="review-modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Cancel</button>
+                        <button type="submit" name="submit_review" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     <?php endif; ?>
 
     <!-- Scroll to Top Button -->
@@ -565,6 +1066,14 @@ function truncateText($text, $length) {
         // Initialize modal when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializePlanModal();
+            initializeReviewModal();
+            
+            // Close modals on successful submission
+            <?php if ($message): ?>
+                setTimeout(() => {
+                    closeReviewModal();
+                }, 2000);
+            <?php endif; ?>
         });
 
         // Initialize Plan Modal functionality
@@ -586,6 +1095,7 @@ function truncateText($text, $length) {
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closePlanModal();
+                    closeReviewModal();
                 }
             });
 
@@ -599,6 +1109,24 @@ function truncateText($text, $length) {
             });
 
             console.log('Plan modal initialized successfully');
+        }
+
+        // Initialize Review Modal functionality
+        function initializeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            if (!modal) {
+                console.error('Review modal not found!');
+                return;
+            }
+
+            // Close modal when clicking outside content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('review-modal-overlay')) {
+                    closeReviewModal();
+                }
+            });
+
+            console.log('Review modal initialized successfully');
         }
 
         // Open Plan Modal
@@ -655,6 +1183,49 @@ function truncateText($text, $length) {
             setTimeout(() => {
                 modal.style.display = 'none';
             }, 300);
+        }
+
+        // Open Review Modal
+        function openReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            if (!modal) return;
+            
+            modal.style.display = 'flex';
+            modal.offsetHeight; // Force reflow
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Review Modal
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            if (!modal) return;
+            
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Testimonials slider functionality
+        function slideTestimonials(direction) {
+            const slider = document.getElementById('testimonialsSlider');
+            const cardWidth = 350; // card width + gap
+            const currentScroll = slider.scrollLeft;
+            
+            if (direction === 'next') {
+                slider.scrollTo({
+                    left: currentScroll + cardWidth,
+                    behavior: 'smooth'
+                });
+            } else {
+                slider.scrollTo({
+                    left: currentScroll - cardWidth,
+                    behavior: 'smooth'
+                });
+            }
         }
 
         // Auto submit search form on Enter
@@ -798,6 +1369,9 @@ function truncateText($text, $length) {
         // Make functions globally available
         window.openPlanModal = openPlanModal;
         window.closePlanModal = closePlanModal;
+        window.openReviewModal = openReviewModal;
+        window.closeReviewModal = closeReviewModal;
+        window.slideTestimonials = slideTestimonials;
     </script>
 </body>
 </html>

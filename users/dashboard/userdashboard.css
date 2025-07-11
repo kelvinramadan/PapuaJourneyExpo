@@ -1456,6 +1456,659 @@ img {
     color: white;
 }
 
+/* Review Actions */
+.review-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* Testimonials Slider */
+.testimonials-slider-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.testimonials-slider {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 2rem 0 3rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.testimonials-slider::-webkit-scrollbar {
+    height: 8px;
+}
+
+.testimonials-slider::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.testimonials-slider::-webkit-scrollbar-thumb {
+    background: var(--button-color);
+    border-radius: 10px;
+}
+
+.testimonial-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.testimonial-nav:hover {
+    background: var(--button-color);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.testimonial-nav-prev {
+    left: 10px;
+}
+
+.testimonial-nav-next {
+    right: 10px;
+}
+
+/* Enhanced Testimonial Cards */
+.testimonial-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    min-width: 320px;
+    max-width: 320px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(220, 155, 17, 0.05), transparent);
+    transition: left 0.5s;
+}
+
+.testimonial-card:hover::before {
+    left: 100%;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: var(--button-color);
+}
+
+.testimonial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.testimonial-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.testimonial-rating i {
+    color: #ddd;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.testimonial-rating i.filled {
+    color: var(--button-color);
+}
+
+.testimonial-destination {
+    font-size: 0.85rem;
+    color: var(--button-color);
+    font-weight: 600;
+    background: rgba(220, 155, 17, 0.1);
+    padding: 4px 12px;
+    border-radius: 15px;
+}
+
+.testimonial-text {
+    color: #555;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 2;
+}
+
+.testimonial-text::before {
+    content: '"';
+    font-size: 3rem;
+    color: var(--button-color);
+    opacity: 0.3;
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-family: serif;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.testimonial-author .avatar-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.author-info h4 {
+    margin: 0;
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.author-info span {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+/* No Reviews State */
+.no-reviews {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+}
+
+.no-reviews i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #ddd;
+}
+
+.no-reviews h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+/* Review Modal Styles */
+.review-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.review-modal.show {
+    opacity: 1;
+}
+
+.review-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.review-modal-content {
+    background: white;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    z-index: 10001;
+}
+
+.review-modal.show .review-modal-content {
+    transform: scale(1);
+}
+
+.review-modal-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    border-radius: 20px 20px 0 0;
+}
+
+.review-modal-header h2 {
+    color: var(--text-color-secondary);
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.review-modal-body {
+    padding: 2rem;
+}
+
+.review-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.review-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+}
+
+.review-form input,
+.review-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.review-form input:focus,
+.review-form textarea:focus {
+    outline: none;
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
+}
+
+.review-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Rating Input Styles */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 5px;
+    justify-content: flex-end;
+}
+
+.rating-input input[type="radio"] {
+    display: none;
+}
+
+.rating-input label {
+    cursor: pointer;
+    font-size: 2rem;
+    color: #ddd;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: var(--button-color);
+    transform: scale(1.1);
+}
+
+.rating-input input[type="radio"]:checked ~ label {
+    color: var(--button-color);
+}
+
+.review-modal-footer {
+    padding: 1rem 2rem 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-radius: 0 0 20px 20px;
+}
+
+.review-modal-footer .btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+.review-modal-footer .btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+}
+
+.review-modal-footer .btn-secondary:hover {
+    background: #e8e8e8;
+    color: #333;
+}
+
+/* Alert Styles for Review Form */
+.alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+}
+
+/* Responsive Design for Reviews */
+@media (max-width: 768px) {
+    .testimonials-slider-wrapper {
+        padding: 0 20px;
+    }
+    
+    .testimonial-nav {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .testimonial-nav-prev {
+        left: 0;
+    }
+    
+    .testimonial-nav-next {
+        right: 0;
+    }
+    
+    .testimonial-card {
+        min-width: 280px;
+        max-width: 280px;
+        padding: 1.5rem;
+    }
+    
+    .review-modal-content {
+        width: 95%;
+        margin: 1rem auto;
+        max-height: 95vh;
+    }
+    
+    .review-modal-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .review-modal-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .review-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .review-modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+        flex-direction: column;
+    }
+    
+    .review-modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .rating-input {
+        justify-content: center;
+    }
+    
+    .rating-input label {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonials-slider-wrapper {
+        padding: 0 10px;
+    }
+    
+    .testimonial-card {
+        min-width: 260px;
+        max-width: 260px;
+        padding: 1rem;
+    }
+    
+    .testimonial-text {
+        font-size: 0.9rem;
+    }
+    
+    .author-info h4 {
+        font-size: 0.9rem;
+    }
+    
+    .author-info span {
+        font-size: 0.8rem;
+    }
+    
+    .review-modal-header {
+        padding: 1rem;
+    }
+    
+    .review-modal-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .review-modal-body {
+        padding: 1rem;
+    }
+    
+    .review-modal-footer {
+        padding: 1rem;
+    }
+    
+    .rating-input label {
+        font-size: 1.5rem;
+    }
+    
+    .review-form input,
+    .review-form textarea {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Animation Classes for Reviews */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.testimonial-card {
+    animation: slideInFromRight 0.6s ease-out;
+}
+
+.testimonial-card:nth-child(1) { animation-delay: 0.1s; }
+.testimonial-card:nth-child(2) { animation-delay: 0.2s; }
+.testimonial-card:nth-child(3) { animation-delay: 0.3s; }
+.testimonial-card:nth-child(4) { animation-delay: 0.4s; }
+.testimonial-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Hover Effects */
+.review-actions .btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.review-actions .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.review-actions .btn:hover::before {
+    left: 100%;
+}
+
+/* Loading State for Review Submission */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Success Animation */
+@keyframes checkmark {
+    0% {
+        stroke-dashoffset: 50;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.checkmark-check {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: checkmark 0.5s ease-in-out 0.2s forwards;
+}
+
+/* Enhanced Focus States */
+.review-form input:focus,
+.review-form textarea:focus,
+.rating-input label:focus {
+    outline: 3px solid rgba(220, 155, 17, 0.3);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .review-modal,
+    .testimonial-nav,
+    .review-actions {
+        display: none !important;
+    }
+    
+    .testimonials-slider {
+        display: block;
+    }
+    
+    .testimonial-card {
+        display: block;
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .testimonial-card {
+        border: 2px solid #000000;
+    }
+    
+    .rating-input label {
+        color: #000000;
+    }
+    
+    .rating-input input[type="radio"]:checked ~ label {
+        color: #000000;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .testimonial-card,
+    .review-modal,
+    .review-modal-content {
+        animation: none;
+        transition: none;
+    }
+    
+    .testimonials-slider {
+        scroll-behavior: auto;
+    }
+    
+    .testimonial-nav {
+        transition: none;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .destination-container {
