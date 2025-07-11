@@ -162,424 +162,9 @@ function getInitial($name) {
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <link rel="stylesheet" href="../../assets/css/reviews.css">
     <link rel="stylesheet" href="userdashboard.css">
-    <style>
-        /* CSS tambahan untuk review functionality */
-        .review-actions {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .testimonials-slider-wrapper {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 60px;
-        }
-
-        .testimonials-slider {
-            display: flex;
-            gap: 2rem;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            padding: 2rem 0 3rem;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .testimonials-slider::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .testimonials-slider::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .testimonials-slider::-webkit-scrollbar-thumb {
-            background: var(--button-color);
-            border-radius: 10px;
-        }
-
-        .testimonial-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .testimonial-nav:hover {
-            background: var(--button-color);
-            color: white;
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .testimonial-nav-prev {
-            left: 10px;
-        }
-
-        .testimonial-nav-next {
-            right: 10px;
-        }
-
-        .testimonial-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            min-width: 320px;
-            max-width: 320px;
-            scroll-snap-align: start;
-            flex-shrink: 0;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .testimonial-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 155, 17, 0.05), transparent);
-            transition: left 0.5s;
-        }
-
-        .testimonial-card:hover::before {
-            left: 100%;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            border-color: var(--button-color);
-        }
-
-        .testimonial-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .testimonial-rating {
-            display: flex;
-            gap: 2px;
-        }
-
-        .testimonial-rating i {
-            color: #ddd;
-            font-size: 1rem;
-            transition: color 0.2s ease;
-        }
-
-        .testimonial-rating i.filled {
-            color: var(--button-color);
-        }
-
-        .testimonial-destination {
-            font-size: 0.85rem;
-            color: var(--button-color);
-            font-weight: 600;
-            background: rgba(220, 155, 17, 0.1);
-            padding: 4px 12px;
-            border-radius: 15px;
-        }
-
-        .testimonial-text {
-            color: #555;
-            font-style: italic;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-            font-size: 0.95rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .testimonial-text::before {
-            content: '"';
-            font-size: 3rem;
-            color: var(--button-color);
-            opacity: 0.3;
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            font-family: serif;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .testimonial-author .avatar-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            flex-shrink: 0;
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .author-info h4 {
-            margin: 0;
-            color: var(--text-color-secondary);
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .author-info span {
-            color: #999;
-            font-size: 0.85rem;
-        }
-
-        .no-reviews {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
-        }
-
-        .no-reviews i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #ddd;
-        }
-
-        .no-reviews h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #666;
-        }
-
-        .review-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .review-modal.show {
-            opacity: 1;
-        }
-
-        .review-modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        .review-modal-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
-            z-index: 10001;
-        }
-
-        .review-modal.show .review-modal-content {
-            transform: scale(1);
-        }
-
-        .review-modal-header {
-            padding: 2rem 2rem 1rem;
-            border-bottom: 2px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .review-modal-header h2 {
-            color: var(--text-color-secondary);
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .review-modal-body {
-            padding: 2rem;
-        }
-
-        .review-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .review-form label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-color-secondary);
-        }
-
-        .review-form input,
-        .review-form textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-
-        .review-form input:focus,
-        .review-form textarea:focus {
-            outline: none;
-            border-color: var(--button-color);
-            box-shadow: 0 0 0 3px rgba(220, 155, 17, 0.1);
-        }
-
-        .review-form textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .rating-input {
-            display: flex;
-            flex-direction: row-reverse;
-            gap: 5px;
-            justify-content: flex-end;
-        }
-
-        .rating-input input[type="radio"] {
-            display: none;
-        }
-
-        .rating-input label {
-            cursor: pointer;
-            font-size: 2rem;
-            color: #ddd;
-            transition: all 0.2s ease;
-            margin: 0;
-        }
-
-        .rating-input label:hover,
-        .rating-input label:hover ~ label {
-            color: var(--button-color);
-            transform: scale(1.1);
-        }
-
-        .rating-input input[type="radio"]:checked ~ label {
-            color: var(--button-color);
-        }
-
-        .review-modal-footer {
-            padding: 1rem 2rem 2rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            position: sticky;
-            bottom: 0;
-            background: white;
-            border-radius: 0 0 20px 20px;
-        }
-
-        .review-modal-footer .btn {
-            padding: 12px 24px;
-            font-size: 1rem;
-        }
-
-        .review-modal-footer .btn-secondary {
-            background: #f5f5f5;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .review-modal-footer .btn-secondary:hover {
-            background: #e8e8e8;
-            color: #333;
-        }
-
-        @media (max-width: 768px) {
-            .testimonials-slider-wrapper {
-                padding: 0 20px;
-            }
-            
-            .testimonial-nav {
-                width: 40px;
-                height: 40px;
-            }
-            
-            .testimonial-nav-prev {
-                left: 0;
-            }
-            
-            .testimonial-nav-next {
-                right: 0;
-            }
-            
-            .testimonial-card {
-                min-width: 280px;
-                max-width: 280px;
-                padding: 1.5rem;
-            }
-            
-            .review-modal-content {
-                width: 95%;
-                margin: 1rem auto;
-                max-height: 95vh;
-            }
-            
-            .review-modal-footer {
-                flex-direction: column;
-            }
-            
-            .review-modal-footer .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
     
     <!-- Scripts -->
     <script src="../../script.js" defer></script>
-    
 </head>
 <body>
     <?php include '../components/navbar.php'; ?>
@@ -732,69 +317,69 @@ function getInitial($name) {
         </section>
 
         <section class="interests" id="interest">
-        <div class="interest-container">
-            <div class="interest-title fade-in">
-                <span class="section-label">Choose Your Adventure</span>
-                <h2>Explore Your <b>Interests</b></h2>
-                <p>Select your preferred activities and we'll create a personalized itinerary just for you</p>
-            </div>
-            <div class="interest-wrapper fade-in">
-                <button class="slider-nav slider-nav-prev" onclick="slideInterests('prev')">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="interest-slider" id="interestSlider">
-                    <div class="interest-card food" data-category="culinary" onclick="navigateToCategory('culinary')">
-                        <div class="interest-overlay"></div>
-                        <div class="interest-content">
-                            <i class="fi fi-rr-hamburger-soda"></i>
-                            <h3>Food & Drink</h3>
-                            <p>Taste authentic Papuan cuisine</p>
-                            <span class="interest-tag">20+ Restaurants</span>
-                        </div>
-                    </div>
-                    <div class="interest-card culture" data-category="cultural" onclick="navigateToCategory('cultural')">
-                        <div class="interest-overlay"></div>
-                        <div class="interest-content">
-                            <i class="fi fi-rr-people"></i>
-                            <h3>Culture & Heritage</h3>
-                            <p>Experience traditional ceremonies</p>
-                            <span class="interest-tag">15+ Villages</span>
-                        </div>
-                    </div>
-                    <div class="interest-card adventures" data-category="marine" onclick="navigateToCategory('marine')">
-                        <div class="interest-overlay"></div>
-                        <div class="interest-content">
-                            <i class="fi fi-rr-dolphin"></i>
-                            <h3>Underwater Adventures</h3>
-                            <p>Dive in pristine coral reefs</p>
-                            <span class="interest-tag">30+ Dive Sites</span>
-                        </div>
-                    </div>
-                    <div class="interest-card tracking" data-category="hiking" onclick="navigateToCategory('hiking')">
-                        <div class="interest-overlay"></div>
-                        <div class="interest-content">
-                            <i class="fi fi-br-mountain"></i>
-                            <h3>Trekking Tours</h3>
-                            <p>Hike through rainforests</p>
-                            <span class="interest-tag">25+ Trails</span>
-                        </div>
-                    </div>
-                    <div class="interest-card wildlife" data-category="wildlife" onclick="navigateToCategory('wildlife')">
-                        <div class="interest-overlay"></div>
-                        <div class="interest-content">
-                            <i class="fi fi-rr-bird"></i>
-                            <h3>Wildlife & Nature</h3>
-                            <p>See exotic birds of paradise</p>
-                            <span class="interest-tag">40+ Species</span>
-                        </div>
-                    </div>
+            <div class="interest-container">
+                <div class="interest-title fade-in">
+                    <span class="section-label">Choose Your Adventure</span>
+                    <h2>Explore Your <b>Interests</b></h2>
+                    <p>Select your preferred activities and we'll create a personalized itinerary just for you</p>
                 </div>
-                <button class="slider-nav slider-nav-next" onclick="slideInterests('next')">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                <div class="interest-wrapper fade-in">
+                    <button class="slider-nav slider-nav-prev" onclick="slideInterests('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="interest-slider" id="interestSlider">
+                        <div class="interest-card food" data-category="culinary" onclick="navigateToCategory('culinary')">
+                            <div class="interest-overlay"></div>
+                            <div class="interest-content">
+                                <i class="fi fi-rr-hamburger-soda"></i>
+                                <h3>Food & Drink</h3>
+                                <p>Taste authentic Papuan cuisine</p>
+                                <span class="interest-tag">20+ Restaurants</span>
+                            </div>
+                        </div>
+                        <div class="interest-card culture" data-category="cultural" onclick="navigateToCategory('cultural')">
+                            <div class="interest-overlay"></div>
+                            <div class="interest-content">
+                                <i class="fi fi-rr-people"></i>
+                                <h3>Culture & Heritage</h3>
+                                <p>Experience traditional ceremonies</p>
+                                <span class="interest-tag">15+ Villages</span>
+                            </div>
+                        </div>
+                        <div class="interest-card adventures" data-category="marine" onclick="navigateToCategory('marine')">
+                            <div class="interest-overlay"></div>
+                            <div class="interest-content">
+                                <i class="fi fi-rr-dolphin"></i>
+                                <h3>Underwater Adventures</h3>
+                                <p>Dive in pristine coral reefs</p>
+                                <span class="interest-tag">30+ Dive Sites</span>
+                            </div>
+                        </div>
+                        <div class="interest-card tracking" data-category="hiking" onclick="navigateToCategory('hiking')">
+                            <div class="interest-overlay"></div>
+                            <div class="interest-content">
+                                <i class="fi fi-br-mountain"></i>
+                                <h3>Trekking Tours</h3>
+                                <p>Hike through rainforests</p>
+                                <span class="interest-tag">25+ Trails</span>
+                            </div>
+                        </div>
+                        <div class="interest-card wildlife" data-category="wildlife" onclick="navigateToCategory('wildlife')">
+                            <div class="interest-overlay"></div>
+                            <div class="interest-content">
+                                <i class="fi fi-rr-bird"></i>
+                                <h3>Wildlife & Nature</h3>
+                                <p>See exotic birds of paradise</p>
+                                <span class="interest-tag">40+ Species</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="slider-nav slider-nav-next" onclick="slideInterests('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
         <!-- Modified Plan Trip Section with Interactive Cards -->
         <section class="plan-trip" id="plan">
@@ -874,6 +459,99 @@ function getInitial($name) {
                         <i class="fas fa-check"></i>
                         Understood
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destination Modal -->
+        <div id="destinationModal" class="destination-modal">
+            <div class="destination-modal-overlay" onclick="closeDestinationModal()"></div>
+            <div class="destination-modal-content">
+                <div class="destination-modal-header">
+                    <span class="close-destination-modal" onclick="closeDestinationModal()">&times;</span>
+                    <div class="welcome-badge">🎉 Selamat Datang di Papua Journey!</div>
+                    <h2 class="destination-modal-title">Jelajahi Papua dengan cara yang aman, autentik, dan tak terlupakan</h2>
+                    <p class="destination-modal-subtitle">Temukan Papua dari Perspektif Baru - Kisahmu dimulai di sini.</p>
+                </div>
+                
+                <div class="destination-modal-body">
+                    <!-- Features Section -->
+                    <div class="features-section">
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">🔒</div>
+                                <h3 class="feature-title">Aman & Nyaman</h3>
+                                <p class="feature-description">Kami pastikan perjalananmu bebas khawatir, dengan dukungan lokal dan sistem keamanan terpercaya.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🧭</div>
+                                <h3 class="feature-title">Pemandu Lokal Asli</h3>
+                                <p class="feature-description">Dipandu oleh warga lokal yang tahu seluk-beluk budaya, tradisi, dan tempat tersembunyi terbaik Papua.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">⭐</div>
+                                <h3 class="feature-title">Paling Direkomendasikan</h3>
+                                <p class="feature-description">Dipercaya wisatawan dari seluruh dunia – pengalaman terbaik, rating tertinggi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photos Section -->
+                    <div class="photos-section">
+                        <h3 class="section-title">🌍 Temukan Keajaiban Papua</h3>
+                        <div class="photos-grid">
+                            <div class="photo-card">
+                                <div class="photo-card-image">
+                                    📸
+                                </div>
+                                <div class="photo-card-content">
+                                    <h4 class="photo-card-title">Raja Ampat</h4>
+                                    <p class="photo-card-description">Surga bawah laut dengan keanekaragaman hayati terkaya di dunia. Saksikan keindahan terumbu karang yang memukau.</p>
+                                </div>
+                            </div>
+                            <div class="photo-card">
+                                <div class="photo-card-image">
+                                    🏔️
+                                </div>
+                                <div class="photo-card-content">
+                                    <h4 class="photo-card-title">Lembah Baliem</h4>
+                                    <p class="photo-card-description">Bertemu dengan suku Dani dan saksikan kehidupan tradisional yang masih terjaga hingga kini.</p>
+                                </div>
+                            </div>
+                            <div class="photo-card">
+                                <div class="photo-card-image">
+                                    🦅
+                                </div>
+                                <div class="photo-card-content">
+                                    <h4 class="photo-card-title">Cendrawasih</h4>
+                                    <p class="photo-card-description">Lihat langsung burung cendrawasih, burung surga yang menjadi kebanggaan Papua di habitat aslinya.</p>
+                                </div>
+                            </div>
+                            <div class="photo-card">
+                                <div class="photo-card-image">
+                                    🦅
+                                </div>
+                                <div class="photo-card-content">
+                                    <h4 class="photo-card-title">Cendrawasih</h4>
+                                    <p class="photo-card-description">Lihat langsung burung cendrawasih, burung surga yang menjadi kebanggaan Papua di habitat aslinya.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call to Action -->
+                    <div class="cta-section">
+                        <h3 class="cta-title">Siap Memulai Petualangan?</h3>
+                        <p class="cta-description">Bergabunglah dengan ribuan traveler yang telah merasakan keajaiban Papua bersama kami.</p>
+                        <div class="cta-buttons">
+                            <a href="#destinations" class="btn btn-primary" onclick="closeDestinationModal()">
+                                🟡 Mulai Eksplorasi
+                            </a>
+                            <button class="btn btn-secondary" onclick="closeDestinationModal()">
+                                ⚪ Tutup
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1067,6 +745,7 @@ function getInitial($name) {
         document.addEventListener('DOMContentLoaded', function() {
             initializePlanModal();
             initializeReviewModal();
+            initializeDestinationModal();
             
             // Close modals on successful submission
             <?php if ($message): ?>
@@ -1076,7 +755,54 @@ function getInitial($name) {
             <?php endif; ?>
         });
 
-        // Initialize Plan Modal functionality
+        // ===== DESTINATION MODAL FUNCTIONS =====
+        function initializeDestinationModal() {
+            const modal = document.getElementById('destinationModal');
+            if (!modal) {
+                console.error('Destination modal not found!');
+                return;
+            }
+
+            // Close modal when clicking outside content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('destination-modal-overlay')) {
+                    closeDestinationModal();
+                }
+            });
+
+            console.log('Destination modal initialized successfully');
+        }
+
+        function showDestinationModal() {
+            console.log('Opening destination modal');
+            const modal = document.getElementById('destinationModal');
+            if (!modal) {
+                console.error('Destination modal not found!');
+                return;
+            }
+            
+            modal.style.display = 'flex';
+            modal.offsetHeight; // Force reflow
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            console.log('Destination modal opened successfully');
+        }
+
+        function closeDestinationModal() {
+            console.log('Closing destination modal');
+            const modal = document.getElementById('destinationModal');
+            if (!modal) return;
+            
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // ===== PLAN MODAL FUNCTIONS =====
         function initializePlanModal() {
             const modal = document.getElementById('planModal');
             if (!modal) {
@@ -1096,40 +822,13 @@ function getInitial($name) {
                 if (e.key === 'Escape') {
                     closePlanModal();
                     closeReviewModal();
-                }
-            });
-
-            // Prevent body scroll when modal is open
-            modal.addEventListener('transitionend', function() {
-                if (modal.classList.contains('show')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = 'auto';
+                    closeDestinationModal();
                 }
             });
 
             console.log('Plan modal initialized successfully');
         }
 
-        // Initialize Review Modal functionality
-        function initializeReviewModal() {
-            const modal = document.getElementById('reviewModal');
-            if (!modal) {
-                console.error('Review modal not found!');
-                return;
-            }
-
-            // Close modal when clicking outside content
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal || e.target.classList.contains('review-modal-overlay')) {
-                    closeReviewModal();
-                }
-            });
-
-            console.log('Review modal initialized successfully');
-        }
-
-        // Open Plan Modal
         function openPlanModal(planType) {
             console.log('Opening modal for:', planType);
             
@@ -1169,23 +868,37 @@ function getInitial($name) {
             console.log('Modal opened successfully');
         }
 
-        // Close Plan Modal
         function closePlanModal() {
             console.log('Closing modal');
-            
             const modal = document.getElementById('planModal');
             if (!modal) return;
             
             modal.classList.remove('show');
             document.body.style.overflow = 'auto';
             
-            // Hide modal after animation
             setTimeout(() => {
                 modal.style.display = 'none';
             }, 300);
         }
 
-        // Open Review Modal
+        // ===== REVIEW MODAL FUNCTIONS =====
+        function initializeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            if (!modal) {
+                console.error('Review modal not found!');
+                return;
+            }
+
+            // Close modal when clicking outside content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('review-modal-overlay')) {
+                    closeReviewModal();
+                }
+            });
+
+            console.log('Review modal initialized successfully');
+        }
+
         function openReviewModal() {
             const modal = document.getElementById('reviewModal');
             if (!modal) return;
@@ -1196,7 +909,6 @@ function getInitial($name) {
             document.body.style.overflow = 'hidden';
         }
 
-        // Close Review Modal
         function closeReviewModal() {
             const modal = document.getElementById('reviewModal');
             if (!modal) return;
@@ -1209,7 +921,7 @@ function getInitial($name) {
             }, 300);
         }
 
-        // Testimonials slider functionality
+        // ===== OTHER FUNCTIONS =====
         function slideTestimonials(direction) {
             const slider = document.getElementById('testimonialsSlider');
             const cardWidth = 350; // card width + gap
@@ -1225,6 +937,52 @@ function getInitial($name) {
                     left: currentScroll - cardWidth,
                     behavior: 'smooth'
                 });
+            }
+        }
+
+        function slideInterests(direction) {
+            const slider = document.getElementById('interestSlider');
+            const cardWidth = 320; // card width + gap
+            const currentScroll = slider.scrollLeft;
+            
+            if (direction === 'next') {
+                slider.scrollTo({
+                    left: currentScroll + cardWidth,
+                    behavior: 'smooth'
+                });
+            } else {
+                slider.scrollTo({
+                    left: currentScroll - cardWidth,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function navigateToCategory(category) {
+            const categoryUrls = {
+                'culinary': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kuliner',
+                'cultural': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=event',
+                'marine': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
+                'hiking': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
+                'wildlife': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kerajinan'
+            };
+            
+            const targetUrl = categoryUrls[category];
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        }
+
+        function toggleVideoSound(button) {
+            const video = button.parentElement.querySelector('video');
+            const icon = button.querySelector('i');
+            
+            if (video.muted) {
+                video.muted = false;
+                icon.className = 'fas fa-volume-up';
+            } else {
+                video.muted = true;
+                icon.className = 'fas fa-volume-mute';
             }
         }
 
@@ -1312,66 +1070,18 @@ function getInitial($name) {
         document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
         });
-        
-        // Interest slider functionality
-        function slideInterests(direction) {
-            const slider = document.getElementById('interestSlider');
-            const cardWidth = 320; // card width + gap
-            const currentScroll = slider.scrollLeft;
-            
-            if (direction === 'next') {
-                slider.scrollTo({
-                    left: currentScroll + cardWidth,
-                    behavior: 'smooth'
-                });
-            } else {
-                slider.scrollTo({
-                    left: currentScroll - cardWidth,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        function navigateToCategory(category) {
-            const categoryUrls = {
-                'culinary': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kuliner',
-                'cultural': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=event',
-                'marine': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
-                'hiking': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=wisata',
-                'wildlife': 'http://localhost/PapuaJourneyExpo/users/dashboard/allumkm.php?kategori=kerajinan'
-            };
-            
-            const targetUrl = categoryUrls[category];
-            if (targetUrl) {
-                window.location.href = targetUrl;
-            }
-        }
-
-        // Video sound toggle function
-        function toggleVideoSound(button) {
-            const video = button.parentElement.querySelector('video');
-            const icon = button.querySelector('i');
-            
-            if (video.muted) {
-                video.muted = false;
-                icon.className = 'fas fa-volume-up';
-            } else {
-                video.muted = true;
-                icon.className = 'fas fa-volume-mute';
-            }
-        }
-
-        // Show destination modal function (placeholder)
-        function showDestinationModal() {
-            alert('Learn More modal would open here. This is a placeholder function.');
-        }
 
         // Make functions globally available
+        window.showDestinationModal = showDestinationModal;
+        window.closeDestinationModal = closeDestinationModal;
         window.openPlanModal = openPlanModal;
         window.closePlanModal = closePlanModal;
         window.openReviewModal = openReviewModal;
         window.closeReviewModal = closeReviewModal;
         window.slideTestimonials = slideTestimonials;
+        window.slideInterests = slideInterests;
+        window.navigateToCategory = navigateToCategory;
+        window.toggleVideoSound = toggleVideoSound;
     </script>
 </body>
 </html>
