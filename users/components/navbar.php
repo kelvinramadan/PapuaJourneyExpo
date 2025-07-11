@@ -237,6 +237,13 @@ if ($is_logged_in) {
     $stmt->close();
 }
 $db->close();
+
+// Helper function to determine active menu
+function isActiveMenu($current_page, $menu_pages) {
+    return in_array($current_page, $menu_pages);
+}
+
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!-- Include Font Awesome -->
@@ -296,7 +303,7 @@ $db->close();
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -364,7 +371,7 @@ $db->close();
 .pj-navbar-wrapper .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
 }
@@ -376,6 +383,7 @@ $db->close();
     transition: var(--transition);
     position: relative;
     padding: 5px 0;
+    font-size: 0.95rem;
 }
 
 .pj-navbar-wrapper .pj-navbar-header.scrolled .nav-links a {
@@ -557,7 +565,7 @@ $db->close();
     top: 0;
     right: -100%;
     width: 80%;
-    max-width: 300px;
+    max-width: 350px;
     height: 100vh;
     background: white;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
@@ -1034,12 +1042,13 @@ $db->close();
         </button>
         
         <ul class="nav-links">
-            <li><a href="<?php echo $is_root ? '' : $base_path; ?>index.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Dashboard</a></li>
-            <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userwisata.php' ? 'active' : ''; ?>">Wisata</a></li>
-            <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'userpenginapan.php' ? 'active' : ''; ?>">Penginapan</a></li>
+            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo isActiveMenu($current_page, ['user_dashboard.php']) ? 'active' : ''; ?>">Dashboard</a></li>
+            <li><a href="<?php echo $users_path; ?>dashboard/allumkm.php" class="<?php echo isActiveMenu($current_page, ['allumkm.php']) ? 'active' : ''; ?>">UMKM</a></li>
+            <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo isActiveMenu($current_page, ['userwisata.php']) ? 'active' : ''; ?>">Wisata</a></li>
+            <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo isActiveMenu($current_page, ['userpenginapan.php']) ? 'active' : ''; ?>">Penginapan</a></li>
             <li>
                 <?php if ($is_logged_in): ?>
-                    <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'user_chatbot.php' || (basename($_SERVER['PHP_SELF']) == 'index.php' && $in_chatbot) ? 'active' : ''; ?>">AI Assistant</a>
+                    <a href="<?php echo $users_path; ?>chatbot/user_chatbot.php" class="<?php echo isActiveMenu($current_page, ['user_chatbot.php']) ? 'active' : ''; ?>">AI Assistant</a>
                 <?php else: ?>
                     <a href="#" class="disabled" onclick="showLoginNotification('AI Assistant'); return false;">
                         AI Assistant
@@ -1049,7 +1058,7 @@ $db->close();
             </li>
             <li>
                 <?php if ($is_logged_in): ?>
-                    <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo $users_path; ?>cart/cart.php" class="cart-icon <?php echo isActiveMenu($current_page, ['cart.php']) ? 'active' : ''; ?>">
                         <i class="fas fa-shopping-cart"></i>
                         <?php if ($cart_count > 0): ?>
                             <span class="cart-badge"><?php echo $cart_count; ?></span>
@@ -1102,8 +1111,11 @@ $db->close();
             </button>
         </div>
         <ul class="mobile-nav-links">
-            <li><a href="<?php echo $is_root ? '' : $base_path; ?>index.php">
-                <i class="fas fa-home"></i> Dashboard
+            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a></li>
+            <li><a href="<?php echo $users_path; ?>dashboard/allumkm.php">
+                <i class="fas fa-store"></i> UMKM
             </a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php">
                 <i class="fas fa-map-marked-alt"></i> Wisata
