@@ -707,7 +707,7 @@ body {
     color: white;
 }
 
-/* Plan Modal Styles */
+/* Enhanced Plan Modal Styles */
 .plan-modal {
     position: fixed;
     top: 0;
@@ -725,24 +725,35 @@ body {
     box-sizing: border-box;
 }
 
-.plan-modal.modal-show {
+.plan-modal.show {
     opacity: 1;
+}
+
+.plan-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
 }
 
 .plan-modal-content {
     background: white;
     border-radius: 20px;
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
     transform: scale(0.8);
     transition: transform 0.3s ease;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    z-index: 10001;
 }
 
-.plan-modal.modal-show .plan-modal-content {
+.plan-modal.show .plan-modal-content {
     transform: scale(1);
 }
 
@@ -801,13 +812,19 @@ body {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .modal-image-container img {
     width: 100%;
-    height: 300px;
+    height: 350px;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+}
+
+.modal-image-container:hover img {
+    transform: scale(1.05);
 }
 
 .modal-description {
@@ -829,6 +846,43 @@ body {
 .plan-modal-footer .btn {
     padding: 12px 30px;
     font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(220, 155, 17, 0.3);
+}
+
+.plan-modal-footer .btn:hover {
+    box-shadow: 0 6px 20px rgba(220, 155, 17, 0.4);
+}
+
+/* Loading State for Modal Images */
+.modal-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    z-index: 1;
+}
+
+.modal-image-container img {
+    position: relative;
+    z-index: 2;
+}
+
+.modal-image-container img[src] + ::before {
+    display: none;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* Testimonials Section */
@@ -1092,15 +1146,6 @@ body {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
 }
 
 /* Success Notification Modal */
@@ -1434,7 +1479,7 @@ img {
     }
 
     .modal-image-container img {
-        height: 250px;
+        height: 300px;
     }
 }
 
@@ -1520,7 +1565,7 @@ img {
     }
 
     .modal-image-container img {
-        height: 200px;
+        height: 250px;
     }
 
     .modal-description {
@@ -1581,7 +1626,7 @@ img {
     }
 
     .modal-image-container img {
-        height: 150px;
+        height: 200px;
     }
 
     .modal-description {

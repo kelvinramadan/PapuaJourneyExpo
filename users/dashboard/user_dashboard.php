@@ -345,7 +345,7 @@ function truncateText($text, $length) {
             <div class="plan-container">
                 <h2>Plan Your <b>Trip</b></h2>
                 <div class="plan-content fade-in">
-                    <div class="plan-card" onclick="openPlanModal('before-go')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('before-go')">
                         <i class="fas fa-suitcase-rolling"></i>
                         <h3>Before you go</h3>
                         <p>Get ready for your adventure with essential tips and information.</p>
@@ -353,7 +353,7 @@ function truncateText($text, $length) {
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="plan-card" onclick="openPlanModal('transportation')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('transportation')">
                         <i class="fas fa-car"></i>
                         <h3>Transportation</h3>
                         <p>Navigate Papua with ease using our transportation guides.</p>
@@ -361,7 +361,7 @@ function truncateText($text, $length) {
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="plan-card" onclick="openPlanModal('accommodation')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('accommodation')">
                         <i class="fas fa-hotel"></i>
                         <h3>Accommodation</h3>
                         <p>Find the perfect place to stay during your journey.</p>
@@ -369,7 +369,7 @@ function truncateText($text, $length) {
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="plan-card" onclick="openPlanModal('itinerary')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('itinerary')">
                         <i class="fas fa-map-marked-alt"></i>
                         <h3>Itinerary Ideas</h3>
                         <p>Explore suggested itineraries for a memorable trip.</p>
@@ -377,7 +377,7 @@ function truncateText($text, $length) {
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="plan-card" onclick="openPlanModal('tour-guide')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('tour-guide')">
                         <i class="fas fa-user-tie"></i>
                         <h3>Tour guide</h3>
                         <p>Connect with local guides for an authentic experience.</p>
@@ -385,7 +385,7 @@ function truncateText($text, $length) {
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-                    <div class="plan-card" onclick="openPlanModal('etiquette')" style="cursor: pointer;">
+                    <div class="plan-card" onclick="openPlanModal('etiquette')">
                         <i class="fas fa-hands-helping"></i>
                         <h3>Etiquette</h3>
                         <p>Learn about local customs and etiquette for a respectful visit.</p>
@@ -399,17 +399,18 @@ function truncateText($text, $length) {
 
         <!-- Plan Modal -->
         <div id="planModal" class="plan-modal">
+            <div class="plan-modal-overlay" onclick="closePlanModal()"></div>
             <div class="plan-modal-content">
                 <div class="plan-modal-header">
-                    <h2 id="modalTitle"></h2>
+                    <h2 id="modalTitle">Plan Title</h2>
                     <span class="close-modal" onclick="closePlanModal()">&times;</span>
                 </div>
                 <div class="plan-modal-body">
                     <div class="modal-image-container">
-                        <img id="modalImage" src="" alt="" />
+                        <img id="modalImage" src="" alt="" loading="lazy" />
                     </div>
                     <div class="modal-description">
-                        <p id="modalDescription"></p>
+                        <p id="modalDescription">Description will be loaded here...</p>
                     </div>
                 </div>
                 <div class="plan-modal-footer">
@@ -527,53 +528,88 @@ function truncateText($text, $length) {
     </footer>
 
     <script>
-        // Plan Modal Data
+        // Plan Modal Data with Real Images
         const planData = {
             'before-go': {
                 title: '🧳 Before You Go (Sebelum Berangkat)',
-                description: 'Sebelum memulai petualangan Anda ke Papua, pastikan Anda telah mempersiapkan segala kebutuhan dengan baik. Temukan tips penting seputar perlengkapan, cuaca, kondisi wilayah, dan hal-hal yang wajib diketahui untuk perjalanan yang aman dan nyaman.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Before+You+Go'
+                description: 'Sebelum memulai petualangan Anda ke Papua, pastikan Anda telah mempersiapkan segala kebutuhan dengan baik. Bawa pakaian yang sesuai dengan iklim tropis, obat-obatan pribadi, dan perlengkapan untuk aktivitas outdoor. Jangan lupa membawa sunscreen, topi, dan kacamata hitam. Pastikan juga dokumen perjalanan lengkap seperti KTP, tiket pesawat, dan booking hotel. Untuk kegiatan khusus seperti diving atau trekking, persiapkan peralatan yang sesuai atau konfirmasi penyewaan equipment di lokasi.',
+                image: '../../assets/before-go.jpg'
             },
             'transportation': {
                 title: '🚗 Transportation',
-                description: 'Papua memiliki medan yang unik dan menantang. Di sini, kami menyediakan panduan lengkap transportasi—mulai dari pesawat kecil antardaerah, transportasi darat, hingga transportasi air—agar Anda bisa menjelajahi Papua dengan lancar.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Transportation'
+                description: 'Papua memiliki medan yang unik dan menantang. Transportasi utama antar kota adalah pesawat kecil yang menghubungkan berbagai bandara di Papua. Untuk perjalanan darat, tersedia angkutan umum, ojek, dan rental mobil. Di beberapa daerah, transportasi air seperti speedboat dan kapal tradisional menjadi pilihan utama. Pastikan untuk merencanakan transportasi dengan baik karena cuaca dapat mempengaruhi jadwal penerbangan. Disarankan untuk memiliki rencana alternatif dan buffer waktu yang cukup.',
+                image: '../../assets/transportation.jpg'
             },
             'accommodation': {
                 title: '🏨 Accommodation',
-                description: 'Temukan berbagai pilihan tempat menginap yang sesuai dengan gaya perjalanan Anda, mulai dari homestay tradisional, hotel modern, hingga eco-lodge ramah lingkungan. Kami bantu Anda memilih akomodasi terbaik untuk pengalaman menginap yang berkesan.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Accommodation'
+                description: 'Papua menawarkan berbagai pilihan akomodasi yang sesuai dengan berbagai budget dan preferensi. Mulai dari resort mewah di Raja Ampat, hotel bisnis di Jayapura, hingga homestay tradisional di pedalaman. Untuk pengalaman yang lebih autentik, Anda bisa menginap di rumah-rumah tradisional masyarakat lokal. Pastikan untuk memesan akomodasi jauh-jauh hari, terutama pada musim peak atau saat ada event khusus. Beberapa daerah terpencil mungkin memiliki fasilitas terbatas, jadi sesuaikan ekspektasi dengan kondisi lokal.',
+                image: '../../assets/accommodation.jpg'
             },
             'itinerary': {
                 title: '🗺️ Itinerary Ideas',
-                description: 'Butuh inspirasi perjalanan? Lihat berbagai contoh rencana perjalanan seru di Papua—mulai dari petualangan alam, wisata budaya, hingga ekspedisi ke pedalaman. Semua disusun untuk membantu Anda mendapatkan pengalaman tak terlupakan.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Itinerary+Ideas'
+                description: 'Rencanakan perjalanan Anda berdasarkan minat dan durasi kunjungan. Untuk wisata bahari, alokasikan 4-5 hari di Raja Ampat untuk diving dan snorkeling. Wisata budaya bisa dimulai dari Jayapura kemudian ke Wamena untuk bertemu suku Dani. Untuk petualangan alam, jelajahi Taman Nasional Lorentz atau pendakian ke Puncak Jaya Wijaya. Kombinasikan aktivitas sesuai lokasi untuk efisiensi waktu dan biaya. Selalu sertakan waktu istirahat dan fleksibilitas untuk perubahan cuaca atau kondisi tak terduga.',
+                image: '../../assets/itinerary.jpg'
             },
             'tour-guide': {
                 title: '🎟️ Tour Guide',
-                description: 'Rasakan pengalaman yang lebih dalam dengan pendampingan pemandu lokal. Jelajahi destinasi tersembunyi, kenali budaya asli, dan dengarkan kisah dari warga setempat yang akan membuat perjalanan Anda semakin bermakna.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Tour+Guide'
+                description: 'Pemandu wisata lokal akan memberikan pengalaman yang lebih mendalam dan otentik. Mereka menguasai bahasa daerah, mengetahui jalur terbaik, dan memahami budaya setempat. Pilih guide yang berpengalaman dan memiliki sertifikat resmi. Untuk aktivitas khusus seperti diving, pastikan guide memiliki lisensi yang sesuai. Guide lokal juga dapat membantu komunikasi dengan masyarakat setempat dan memberikan insight tentang kehidupan sehari-hari. Diskusikan itinerary dan ekspektasi sebelum perjalanan dimulai.',
+                image: '../../assets/tour-guide.jpg'
             },
             'etiquette': {
                 title: '📜 Etiquette',
-                description: 'Papua kaya akan keberagaman budaya dan adat istiadat. Pelajari tata krama dan kebiasaan masyarakat setempat agar Anda bisa berinteraksi dengan penuh rasa hormat serta menciptakan pengalaman wisata yang harmonis.',
-                image: 'https://via.placeholder.com/800x300/DC9B11/FFFFFF?text=Etiquette'
+                description: 'Papua memiliki keberagaman budaya yang sangat kaya dengan adat istiadat yang harus dihormati. Berpakaianlah dengan sopan, terutama saat mengunjungi desa-desa tradisional. Selalu minta izin sebelum mengambil foto orang atau tempat suci. Hormati tradisi dan kepercayaan lokal, jangan sentuh atau ambil benda-benda yang dianggap sakral. Belajarlah beberapa kata dalam bahasa daerah sebagai bentuk penghargaan. Bawa oleh-oleh atau sumbangan kecil saat berkunjung ke desa. Selalu bersikap ramah, sabar, dan terbuka terhadap cara hidup yang berbeda.',
+                image: '../../assets/etiquette.jpg'
             }
         };
 
-        // Open Plan Modal
-        function openPlanModal(planType) {
-            console.log('Opening modal for:', planType); // Debug log
-            
+        // Initialize modal when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePlanModal();
+        });
+
+        // Initialize Plan Modal functionality
+        function initializePlanModal() {
             const modal = document.getElementById('planModal');
             if (!modal) {
-                console.error('Modal element not found!');
+                console.error('Plan modal not found!');
                 return;
             }
+
+            // Close modal when clicking outside content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('plan-modal-overlay')) {
+                    closePlanModal();
+                }
+            });
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closePlanModal();
+                }
+            });
+
+            // Prevent body scroll when modal is open
+            modal.addEventListener('transitionend', function() {
+                if (modal.classList.contains('show')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            console.log('Plan modal initialized successfully');
+        }
+
+        // Open Plan Modal
+        function openPlanModal(planType) {
+            console.log('Opening modal for:', planType);
             
+            const modal = document.getElementById('planModal');
             const data = planData[planType];
-            if (!data) {
-                console.error('Plan data not found for:', planType);
+            
+            if (!modal || !data) {
+                console.error('Modal or data not found:', { modal: !!modal, data: !!data });
                 return;
             }
             
@@ -587,87 +623,39 @@ function truncateText($text, $length) {
             if (imageElement) {
                 imageElement.src = data.image;
                 imageElement.alt = data.title;
+                
+                // Add error handling for images
+                imageElement.onerror = function() {
+                    console.warn('Image failed to load:', data.image);
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+                    this.alt = 'Image not available';
+                };
             }
             
-            // Show modal
+            // Show modal with animation
             modal.style.display = 'flex';
-            modal.style.opacity = '0';
+            modal.offsetHeight; // Force reflow
+            modal.classList.add('show');
             document.body.style.overflow = 'hidden';
             
-            // Force reflow then add animation
-            modal.offsetHeight;
-            modal.style.opacity = '1';
-            modal.classList.add('modal-show');
-            
-            console.log('Modal should be visible now'); // Debug log
+            console.log('Modal opened successfully');
         }
 
         // Close Plan Modal
         function closePlanModal() {
-            console.log('Closing modal'); // Debug log
+            console.log('Closing modal');
             
             const modal = document.getElementById('planModal');
             if (!modal) return;
             
-            modal.classList.remove('modal-show');
-            modal.style.opacity = '0';
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
             
+            // Hide modal after animation
             setTimeout(() => {
                 modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
             }, 300);
         }
-
-        // Initialize modal event listeners when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing modal events'); // Debug log
-            
-            // Initialize modal events
-            initializeModalEvents();
-            
-            // Test if plan cards exist
-            const planCards = document.querySelectorAll('.plan-card');
-            console.log('Found plan cards:', planCards.length);
-        });
-
-        function initializeModalEvents() {
-            const modal = document.getElementById('planModal');
-            if (modal) {
-                // Close modal when clicking outside
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closePlanModal();
-                    }
-                });
-            }
-
-            // Close modal with ESC key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closePlanModal();
-                }
-            });
-
-            // Add click handlers to plan cards as backup
-            const planCards = document.querySelectorAll('.plan-card');
-            planCards.forEach((card, index) => {
-                const planTypes = ['before-go', 'transportation', 'accommodation', 'itinerary', 'tour-guide', 'etiquette'];
-                card.addEventListener('click', function() {
-                    openPlanModal(planTypes[index]);
-                });
-            });
-        }
-
-        // Test function to check if modal works
-        function testModal() {
-            console.log('Testing modal...');
-            openPlanModal('before-go');
-        }
-
-        // Make functions globally available
-        window.openPlanModal = openPlanModal;
-        window.closePlanModal = closePlanModal;
-        window.testModal = testModal;
 
         // Auto submit search form on Enter
         document.querySelector('input[name="search"]')?.addEventListener('keypress', function(e) {
@@ -806,6 +794,10 @@ function truncateText($text, $length) {
         function showDestinationModal() {
             alert('Learn More modal would open here. This is a placeholder function.');
         }
+
+        // Make functions globally available
+        window.openPlanModal = openPlanModal;
+        window.closePlanModal = closePlanModal;
     </script>
 </body>
 </html>
