@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 06, 2025 at 08:35 AM
+-- Generation Time: Jul 12, 2025 at 01:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -288,7 +288,27 @@ INSERT INTO `penginapan` (`id`, `judul`, `deskripsi`, `harga`, `lokasi`, `tipe`,
 (1, 'Hotel Aston Jayapura', 'Hotel mewah di pusat kota Jayapura dengan pemandangan teluk yang menakjubkan. Terletak strategis dekat dengan pusat bisnis dan objek wisata.', 850000.00, 'Jayapura, Papua', 'hotel', 'WiFi Gratis, AC, Restaurant, Gym, Swimming Pool, Room Service', 'hotel_aston.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
 (2, 'Villa Hamadi Beach', 'Villa eksklusif di tepi pantai Hamadi dengan suasana tradisional Papua yang autentik. Cocok untuk liburan keluarga yang berkesan.', 1200000.00, 'Hamadi, Jayapura', 'villa', 'Private Beach, WiFi, Kitchen, BBQ Area, Traditional Decor', 'villa_hamadi.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
 (3, 'Resort Sentani Lake', 'Resort premium di tepi Danau Sentani dengan arsitektur modern yang memadukan unsur budaya Papua. Pengalaman menginap yang tak terlupakan.', 1500000.00, 'Sentani, Jayapura', 'resort', 'Lake View, Spa, Restaurant, Boat Rental, Cultural Show, WiFi', 'resort_sentani.jpg', '2025-06-15 04:36:21', '2025-06-15 04:36:21'),
-(4, 'Papua Paradise Eco Resort', 'Terletak di pulau tak berpenghuni di Raja Ampat, resort ini menyajikan bungalow di atas laut yang dibangun dari kayu lokal. Suasana tenang dipadu alam: hutan tropis, laguna, dan terumbu karang langsung di halaman. Ada spa eksklusif dengan pemandangan laut, satu-satunya di wilayah ini .', 3500000.00, 'Birie Island, Arefi, Selat Sagawin, Kabupaten Raja Ampat, Papua Barat, Pulau Birie', 'resort', 'bungalow terapung , Restoran “Seaview” , Spa over‑water , Shuttle bandara Sorong , Bar  ', '1750058523_429742622.jpg', '2025-06-16 07:22:03', '2025-06-16 07:22:03');
+(4, 'Papua Paradise Eco Resort', 'Terletak di pulau tak berpenghuni di Raja Ampat, resort ini menyajikan bungalow di atas laut yang dibangun dari kayu lokal. Suasana tenang dipadu alam: hutan tropis, laguna, dan terumbu karang langsung di halaman. Ada spa eksklusif dengan pemandangan laut, satu-satunya di wilayah ini .', 3500000.00, 'Birie Island, Arefi, Selat Sagawin, Kabupaten Raja Ampat, Papua Barat, Pulau Birie', 'resort', 'bungalow terapung , Restoran “Seaview” , Spa over‑water , Shuttle bandara Sorong , Bar  ', '1750058523_429742622.jpg', '2025-06-16 07:22:03', '2025-06-16 07:22:03'),
+(6, 'Grand Papua Hotel', 'Hotel mewah bintang 5 di pusat kota Jayapura dengan pemandangan teluk yang memukau. Dilengkapi dengan fasilitas modern dan pelayanan premium untuk wisatawan bisnis dan leisure.', 950000.00, 'Jayapura, Papua', 'hotel', 'WiFi Gratis, AC, Restaurant, Gym, Swimming Pool, Room Service, Spa, Conference Room, Airport Shuttle', 'grandpapua.jpg', '2025-07-08 14:34:19', '2025-07-09 02:31:35'),
+(7, 'Sentani Lake Resort', 'Resort eksklusif di tepi Danau Sentani dengan arsitektur tradisional Papua yang memukau. Nikmati keindahan alam Papua dengan fasilitas modern yang lengkap.', 1200000.00, 'Sentani, Jayapura', 'resort', 'Lake View, Spa, Restaurant, Boat Rental, Cultural Tours, WiFi, AC, Private Beach, Traditional Dance Show', 'sentanilakeresort.jpg', '2025-07-08 14:34:19', '2025-07-09 02:31:20'),
+(8, 'Villa Hamadi Executive', 'Villa eksklusif dengan desain modern minimalis di kawasan elit Hamadi. Cocok untuk keluarga atau grup yang menginginkan privasi dan kenyamanan maksimal.', 1500000.00, 'Hamadi, Jayapura', 'villa', 'Private Pool, WiFi, Kitchen, BBQ Area, Garden, Parking, AC, Living Room, 3 Bedrooms', 'villahamadeexecutive.jpg', '2025-07-08 14:34:19', '2025-07-09 02:33:04'),
+(9, 'Raja Ampat Paradise Resort', 'Resort ramah lingkungan di Raja Ampat dengan pemandangan laut yang spektakuler. Surga bagi pecinta diving dan snorkeling dengan keanekaragaman hayati laut yang luar biasa.', 2500000.00, 'Raja Ampat, Papua Barat', 'resort', 'Diving Center, Snorkeling, Restaurant, Bar, Spa, WiFi, Eco-friendly, Boat Tours, Marine Conservation', 'rajaampatparadiseresort.jpg', '2025-07-08 14:34:19', '2025-07-09 02:32:04'),
+(10, 'Arfai Cultural Homestay', 'Homestay tradisional di Kampung Arfai yang menawarkan pengalaman budaya Papua yang autentik. Tinggal bersama keluarga lokal dan rasakan kehidupan sehari-hari masyarakat Papua.', 350000.00, 'Arfai, Manokwari', '', 'Traditional House, Local Food, Cultural Tours, Bird Watching, Trekking Guide, WiFi, Shared Bathroom', 'arfaihomestay.jpg', '2025-07-08 14:34:19', '2025-07-09 02:30:48'),
+(11, 'Marina Bay Hotel Sorong', 'Hotel bisnis modern di pusat kota Sorong dengan akses mudah ke pelabuhan dan bandara. Fasilitas lengkap untuk wisatawan bisnis dan transit ke Raja Ampat.', 750000.00, 'Sorong, Papua Barat', 'hotel', 'WiFi Gratis, AC, Restaurant, Business Center, Airport Shuttle, Laundry, 24h Reception, Parking', 'marinabayhotelsorong.jpg', '2025-07-08 14:34:19', '2025-07-09 02:29:27'),
+(12, 'Mansinam Beach Bungalow', 'Bungalow tepi pantai di Pulau Mansinam dengan suasana tenang dan pemandangan laut yang indah. Tempat ideal untuk bulan madu atau liburan romantis.', 650000.00, 'Pulau Mansinam, Manokwari', '', 'Beach Front, Restaurant, Snorkeling, Kayak, WiFi, AC, Private Terrace, Sunset View', 'https://images.unsplash.com/photo-1520637836862-4d197d17c43a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1486&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(13, 'Wamena Highland Guesthouse', 'Guesthouse sederhana di dataran tinggi Wamena dengan pemandangan pegunungan yang spektakuler. Basis ideal untuk eksplorasi Lembah Baliem dan budaya Dani.', 450000.00, 'Wamena, Papua', '', 'Mountain View, Trekking Guide, Local Tours, WiFi, Heater, Traditional Food, Cultural Experience', 'https://images.unsplash.com/photo-1586375300773-8384e3e4916f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(14, 'Cenderawasih Bay Resort', 'Resort eksklusif di Teluk Cenderawasih dengan fasilitas diving world-class. Nikmati keindahan whale shark dan terumbu karang yang menakjubkan.', 1800000.00, 'Nabire, Papua', 'resort', 'Diving Center, Whale Shark Tours, Restaurant, Bar, Spa, WiFi, Boat Rental, Marine Life Tours', 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(15, 'Asmat Cultural Lodge', 'Penginapan unik di tengah hutan Asmat dengan pengalaman budaya yang mendalam. Saksikan langsung seni ukir kayu dan kehidupan tradisional suku Asmat.', 550000.00, 'Agats, Papua', '', 'Cultural Tours, Wood Carving Workshop, Traditional Food, River Tours, WiFi, Mosquito Net, Local Guide', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(16, 'Biak Oceanview Villa', 'Villa mewah dengan pemandangan laut lepas di Pulau Biak. Fasilitas lengkap dengan private pool dan akses langsung ke pantai berpasir putih.', 1100000.00, 'Biak, Papua', 'villa', 'Ocean View, Private Pool, Beach Access, WiFi, AC, Kitchen, BBQ Area, Snorkeling Equipment', 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(17, 'Timika Grand Hotel', 'Hotel bisnis terdepan di Timika dengan fasilitas modern dan pelayanan profesional. Lokasi strategis dekat dengan area pertambangan dan perkantoran.', 850000.00, 'Timika, Papua', 'hotel', 'WiFi Gratis, AC, Restaurant, Business Center, Conference Room, Gym, Laundry, Airport Transfer', 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(18, 'Mamberamo River Lodge', 'Eco lodge di tepi Sungai Mamberamo yang menawarkan petualangan jungle trekking dan river rafting. Pengalaman nature yang tidak terlupakan.', 700000.00, 'Mamberamo, Papua', '', 'River View, Jungle Trekking, River Rafting, Bird Watching, WiFi, Eco-friendly, Local Guide, Traditional Meals', 'https://images.unsplash.com/photo-1501436513145-30f24e19fcc4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1548&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(19, 'Paniai Lake Resort', 'Resort tenang di tepi Danau Paniai dengan pemandangan danau yang memesona. Cocok untuk retreat dan aktivitas air yang menyenangkan.', 950000.00, 'Danau Paniai, Papua', 'resort', 'Lake View, Boat Rental, Fishing, Restaurant, Spa, WiFi, AC, Water Sports, Mountain Trekking', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(20, 'Merauke Frontier Guesthouse', 'Guesthouse sederhana di kota paling timur Indonesia dengan nuansa frontier yang unik. Basis ideal untuk eksplorasi perbatasan dan Taman Nasional Wasur.', 400000.00, 'Merauke, Papua', '', 'WiFi, AC, Restaurant, Tour Guide, National Park Tours, Bird Watching, Traditional Food, Bicycle Rental', 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1449&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(21, 'Kaimana Floating Resort', 'Resort terapung unik di perairan Kaimana dengan akses langsung ke spot diving terbaik. Pengalaman menginap yang tak terlupakan di atas laut.', 1600000.00, 'Kaimana, Papua Barat', 'resort', 'Floating Platform, Diving Center, Snorkeling, Restaurant, Bar, Sunset View, Marine Tours, WiFi', 'https://images.unsplash.com/photo-1540541338287-41700207dee6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(22, 'Sawinggrai Village Homestay', 'Homestay di kampung nelayan Sawinggrai dengan pengalaman bird watching yang luar biasa. Saksikan langsung burung Cendrawasih di habitat aslinya.', 300000.00, 'Sawinggrai, Raja Ampat', '', 'Bird Watching, Local Family, Traditional Food, Snorkeling, Village Tours, WiFi, Shared Facilities', 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1465&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(23, 'Jayawijaya Mountain Hotel', 'Hotel pegunungan dengan pemandangan Puncak Jaya Wijaya yang menakjubkan. Fasilitas lengkap untuk pendaki dan petualang yang ingin menaklukkan puncak tertinggi Indonesia.', 1000000.00, 'Jayawijaya, Papua', 'hotel', 'Mountain View, Climbing Guide, Equipment Rental, Restaurant, WiFi, Heater, Trekking Tours, Medical Facility', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(24, 'Bosnik Beach Bungalow', 'Bungalow tepi pantai di Pantai Bosnik Biak dengan pasir putih dan air laut yang jernih. Tempat ideal untuk surfing dan aktivitas pantai lainnya.', 500000.00, 'Bosnik, Biak', '', 'Beach Front, Surfing, Restaurant, WiFi, AC, Water Sports, Sunset View, Beach Volleyball', 'https://images.unsplash.com/photo-1587061949468-3d06cce5f6b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19'),
+(25, 'Arfak Treehouse Lodge', 'Lodge pohon unik di Pegunungan Arfak dengan pengalaman menginap yang tidak biasa. Nikmati keindahan hutan hujan tropis Papua dari ketinggian.', 800000.00, 'Pegunungan Arfak, Manokwari', '', 'Treehouse, Forest View, Bird Watching, Jungle Trekking, Traditional Food, WiFi, Eco-friendly, Nature Guide', 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80', '2025-07-08 14:34:19', '2025-07-08 14:34:19');
 
 -- --------------------------------------------------------
 
@@ -560,6 +580,49 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `reviewss`
+--
+
+CREATE TABLE `reviewss` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL CHECK (`rating` >= 1 and `rating` <= 5),
+  `review_text` text NOT NULL,
+  `is_approved` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reviewuser`
+--
+
+CREATE TABLE `reviewuser` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL CHECK (`rating` >= 1 and `rating` <= 5),
+  `review_text` text NOT NULL,
+  `destination` varchar(255) NOT NULL,
+  `visit_date` date DEFAULT NULL,
+  `is_approved` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reviewuser`
+--
+
+INSERT INTO `reviewuser` (`id`, `user_id`, `rating`, `review_text`, `destination`, `visit_date`, `is_approved`, `created_at`, `updated_at`) VALUES
+(1, 1, 5, 'Emang bener bener menakjubkan sih raja ampat ini, suatu saat semoga bisa kesini lagii', 'Raja Ampat', '2025-07-12', 1, '2025-07-11 23:08:52', '2025-07-11 23:08:52'),
+(2, 3, 5, 'Honeymoon sama suami bener bener ga mengecewakan tempatnya', 'Raja Ampat', '2025-07-10', 1, '2025-07-11 23:10:03', '2025-07-11 23:10:03'),
+(3, 10, 5, 'Ikut kesini dari paket tour seruuuu', 'Wamena', '2025-07-12', 1, '2025-07-11 23:13:24', '2025-07-11 23:13:24');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `review_helpfulness`
 --
 
@@ -812,7 +875,8 @@ INSERT INTO `users` (`id`, `email`, `password`, `full_name`, `phone`, `address`,
 (1, 'brian@gmail.com', '$2y$10$b6zQG9GgQaVK7JhYiPoY1eW6tkIo6kc5J5tSMhj8MKZUAPj/Kvk4O', 'Brian Domani', '082133871850', 'Banjarsari Surakarta Jawa Tengah', 'user_1_1751782135.jpg', '2025-05-31 15:34:52', '2025-07-06 06:09:18'),
 (3, 'naura@gmail.com', '$2y$10$gc6vW85ACp4YDdg8aHSqY.rN51jbEdWSwZLivNI/.P8eAZIwHAYY2', 'Naura Tsani Maya', '082324096996', 'Sragen Jawa Tengah', 'user_3_1748709699.jpg', '2025-05-31 15:59:00', '2025-05-31 16:42:05'),
 (8, 'slemandanpapua@gmail.com', '$2y$10$8J8g9PhSbxSBwf6bplaYY.GeWgq.7x1NtxKboIsWwJpUNpkgtf0z2', 'Trendo', '081357426645', 'furia puskopad block a', 'user_8_1750800567.jpg', '2025-06-23 13:29:50', '2025-06-24 21:29:27'),
-(9, 'samuelrobail@gmail.com', '$2y$10$.Q72hHPSWfvri1e9281fw.RCSfsJ83c8BXQRwA1oStWz3Mytibw6G', 'Ibnu', '081357427945', 'furia puskopad block a', 'default-user.jpg', '2025-06-24 20:46:37', '2025-06-26 19:59:19');
+(9, 'samuelrobail@gmail.com', '$2y$10$.Q72hHPSWfvri1e9281fw.RCSfsJ83c8BXQRwA1oStWz3Mytibw6G', 'Ibnu', '081357427945', 'furia puskopad block a', 'default-user.jpg', '2025-06-24 20:46:37', '2025-06-26 19:59:19'),
+(10, 'aliya@gmail.com', '$2y$10$.pZdM0lxHINYqorwA.bLyO8B6hKUB2OOKihjGxxtG93BNrm14FwZ.', 'Aliya Hanifa Windi', '08237828212', 'Jl. Sorong No.1 Gatu, Muara Rapak, Kec. Balikpapan Utara, Kota Balikpapan Prov. Kalimantan Timur', 'default-user.jpg', '2025-07-11 23:12:40', '2025-07-11 23:12:40');
 
 -- --------------------------------------------------------
 
@@ -1073,6 +1137,20 @@ ALTER TABLE `reviews`
   ADD KEY `idx_reviews_item_visible` (`item_type`,`item_id`,`is_visible`,`created_at`);
 
 --
+-- Indexes for table `reviewss`
+--
+ALTER TABLE `reviewss`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `reviewuser`
+--
+ALTER TABLE `reviewuser`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `review_helpfulness`
 --
 ALTER TABLE `review_helpfulness`
@@ -1224,7 +1302,7 @@ ALTER TABLE `pemesanan_tiket`
 -- AUTO_INCREMENT for table `penginapan`
 --
 ALTER TABLE `penginapan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `penginapan_statistics`
@@ -1255,6 +1333,18 @@ ALTER TABLE `platform_financial_statistics`
 --
 ALTER TABLE `reviews`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `reviewss`
+--
+ALTER TABLE `reviewss`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reviewuser`
+--
+ALTER TABLE `reviewuser`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `review_helpfulness`
@@ -1308,7 +1398,7 @@ ALTER TABLE `umkm_notifications`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `wisata`
@@ -1383,6 +1473,18 @@ ALTER TABLE `penginapan_views`
 ALTER TABLE `reviews`
   ADD CONSTRAINT `fk_reviews_transaksi` FOREIGN KEY (`transaksi_id`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `reviewss`
+--
+ALTER TABLE `reviewss`
+  ADD CONSTRAINT `reviewss_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `reviewuser`
+--
+ALTER TABLE `reviewuser`
+  ADD CONSTRAINT `reviewuser_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `review_helpfulness`
