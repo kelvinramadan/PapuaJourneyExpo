@@ -533,7 +533,7 @@ function truncateText($text, $length) {
             'before-go': {
                 title: '🧳 Before You Go (Sebelum Berangkat)',
                 description: 'Sebelum memulai petualangan Anda ke Papua, pastikan Anda telah mempersiapkan segala kebutuhan dengan baik. Bawa pakaian yang sesuai dengan iklim tropis, obat-obatan pribadi, dan perlengkapan untuk aktivitas outdoor. Jangan lupa membawa sunscreen, topi, dan kacamata hitam. Pastikan juga dokumen perjalanan lengkap seperti KTP, tiket pesawat, dan booking hotel. Untuk kegiatan khusus seperti diving atau trekking, persiapkan peralatan yang sesuai atau konfirmasi penyewaan equipment di lokasi.',
-                image: '../../assets/before-go.jpg'
+                image: '../../assets/before-go.jpeg'
             },
             'transportation': {
                 title: '🚗 Transportation',
