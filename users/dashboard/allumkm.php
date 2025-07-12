@@ -432,10 +432,6 @@ function truncateText($text, $length) {
         <!-- Article Detail View -->
         <div class="detail-container">
             <div class="container">
-                <a href="allumkm.php" class="back-button">
-                    <i class="fas fa-arrow-left"></i>
-                    Kembali ke Semua UMKM
-                </a>
                 
                 <!-- Success Notification Modal -->
                 <div id="notification-overlay" class="notification-overlay">
@@ -481,7 +477,7 @@ function truncateText($text, $length) {
                         <h1 class="article-title"><?php echo htmlspecialchars($article['judul']); ?></h1>
                         
                         <div class="article-meta">
-                            <div class="article-price"><?php echo formatPrice($article['harga']); ?> / tiket</div>
+                            <div class="article-price"><?php echo formatPrice($article['harga']); ?> / item</div>
                             <div class="article-date">
                                 <i class="fas fa-calendar-alt"></i>
                                 <?php echo formatDate($article['created_at']); ?>
@@ -549,24 +545,6 @@ function truncateText($text, $length) {
                                     
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="nama_pemesan">
-                                                <i class="fas fa-user"></i>
-                                                Nama Pemesan
-                                            </label>
-                                            <input type="text" id="nama_pemesan" value="<?php echo htmlspecialchars($user_data['full_name']); ?>" readonly>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="email_pemesan">
-                                                <i class="fas fa-envelope"></i>
-                                                Email
-                                            </label>
-                                            <input type="email" id="email_pemesan" value="<?php echo htmlspecialchars($user_data['email']); ?>" readonly>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
                                             <label for="jumlah_tiket">
                                                 <i class="fas fa-ticket-alt"></i>
                                                 Jumlah Tiket *
@@ -593,12 +571,12 @@ function truncateText($text, $length) {
                                     
                                     <div class="booking-summary">
                                         <div class="summary-row">
-                                            <span>Harga per Tiket:</span>
+                                            <span>Harga per Item:</span>
                                             <strong><?php echo formatPrice($article['harga']); ?></strong>
                                         </div>
                                         <div class="summary-row">
-                                            <span>Jumlah Tiket:</span>
-                                            <strong><span id="jumlah-tiket">1</span> tiket</strong>
+                                            <span>Jumlah Item:</span>
+                                            <strong><span id="jumlah-tiket">1</span> item</strong>
                                         </div>
                                         <div class="summary-row total-row">
                                             <span>Total:</span>

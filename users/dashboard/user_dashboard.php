@@ -532,8 +532,8 @@ function getInitial($name) {
                                     🦅
                                 </div>
                                 <div class="photo-card-content">
-                                    <h4 class="photo-card-title">Cendrawasih</h4>
-                                    <p class="photo-card-description">Lihat langsung burung cendrawasih, burung surga yang menjadi kebanggaan Papua di habitat aslinya.</p>
+                                    <h4 class="photo-card-title">Ukiran Asmat</h4>
+                                    <p class="photo-card-description">Telusuri kekayaan seni ukir khas Suku Asmat yang penuh makna spiritual dan diwariskan secara turun-temurun.</p>
                                 </div>
                             </div>
                         </div>
