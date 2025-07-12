@@ -1,40 +1,42 @@
 <?php
-//allumkm.php
-session_start();
-
-// Check if user is logged in and is a regular user
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'user') {
-    header('Location: ../../login.php');
-    exit();
+//allumkm.php - Modified for Guest Mode Support
+if (!isset($_SESSION)) {
+    session_start();
 }
 
-// Get user information from session
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name'];
-$user_email = $_SESSION['user_email'];
+// Check if user is logged in - MODIFIED FOR GUEST MODE
+$is_logged_in = isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'user';
+$user_id = $is_logged_in ? $_SESSION['user_id'] : null;
+$user_name = $is_logged_in ? $_SESSION['user_name'] : 'Guest';
+$user_email = $is_logged_in ? $_SESSION['user_email'] : null;
 
 require_once '../../config/database.php';
 
 $message = '';
 $error_message = '';
 
-// Get user details from database
-$db = getDbConnection();
-$stmt = $db->prepare("SELECT full_name, email, phone, address, profile_image FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_data = $result->fetch_assoc();
-$stmt->close();
-
-// Get cart count for navbar
+// Get user details from database (only if logged in)
+$user_data = [];
 $cart_count = 0;
-$cart_stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
-$cart_stmt->bind_param("i", $user_id);
-$cart_stmt->execute();
-$cart_result = $cart_stmt->get_result();
-$cart_count = $cart_result->fetch_assoc()['count'];
-$cart_stmt->close();
+
+$db = getDbConnection();
+
+if ($is_logged_in) {
+    $stmt = $db->prepare("SELECT full_name, email, phone, address, profile_image FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_data = $result->fetch_assoc();
+    $stmt->close();
+
+    // Get cart count for navbar
+    $cart_stmt = $db->prepare("SELECT COUNT(*) as count FROM cart_items WHERE user_id = ?");
+    $cart_stmt->bind_param("i", $user_id);
+    $cart_stmt->execute();
+    $cart_result = $cart_stmt->get_result();
+    $cart_count = $cart_result->fetch_assoc()['count'];
+    $cart_stmt->close();
+}
 
 // Get filters and search parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -194,7 +196,7 @@ function truncateText($text, $length) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +219,17 @@ function truncateText($text, $length) {
     <script src="../../script.js" defer></script>
     
     <style>
+        /* Body styling to account for navbar */
+        body {
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            background-color: #EBE7E4;
+            color: #FFFCF7;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 80px; /* Add padding for fixed navbar */
+        }
+        
         /* Enhanced Categories Grid Styles */
         .categories-grid {
             display: grid;
@@ -420,6 +433,27 @@ function truncateText($text, $length) {
             z-index: 10000;
             transition: width 0.2s ease-out;
         }
+
+        /* Back button for detail view */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #DC9B11;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #DC9B11;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #DC9B11;
+            color: white;
+            transform: translateX(-5px);
+        }
     </style>
 </head>
 <body>
@@ -432,6 +466,10 @@ function truncateText($text, $length) {
         <!-- Article Detail View -->
         <div class="detail-container">
             <div class="container">
+                <a href="?" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali ke UMKM
+                </a>
                 
                 <!-- Success Notification Modal -->
                 <div id="notification-overlay" class="notification-overlay">
@@ -443,8 +481,20 @@ function truncateText($text, $length) {
                                 </svg>
                             </div>
                         </div>
-                        <div class="notification-message">Berhasil ditambahkan!</div>
-                        <div class="notification-submessage">Item telah ditambahkan ke keranjang</div>
+                        <div class="notification-message">
+                            <?php if ($is_logged_in): ?>
+                                Berhasil ditambahkan!
+                            <?php else: ?>
+                                Silakan login terlebih dahulu!
+                            <?php endif; ?>
+                        </div>
+                        <div class="notification-submessage">
+                            <?php if ($is_logged_in): ?>
+                                Item telah ditambahkan ke keranjang
+                            <?php else: ?>
+                                Anda perlu login untuk menambahkan item ke keranjang
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 
@@ -535,9 +585,9 @@ function truncateText($text, $length) {
                                 <?php endif; ?>
                             </div>
                             
-                            <!-- Booking Form -->
+                            <!-- Enhanced Booking Form -->
                             <div class="booking-section">
-                                <h3><i class="fas fa-ticket-alt"></i> Pesan Tiket</h3>
+                                <h3><i class="fas fa-ticket-alt"></i> Pesan Produk</h3>
                                 <div id="cart-message" style="display: none;"></div>
                                 <form id="add-to-cart-form" class="booking-form">
                                     <input type="hidden" name="item_type" value="artikel">
@@ -546,8 +596,8 @@ function truncateText($text, $length) {
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="jumlah_tiket">
-                                                <i class="fas fa-ticket-alt"></i>
-                                                Jumlah Tiket *
+                                                <i class="fas fa-shopping-bag"></i>
+                                                Jumlah Item *
                                             </label>
                                             <input type="number" name="quantity" id="jumlah_tiket" min="1" max="10" value="1" required>
                                         </div>
@@ -555,18 +605,48 @@ function truncateText($text, $length) {
                                         <div class="form-group">
                                             <label for="tanggal_kunjungan">
                                                 <i class="fas fa-calendar-alt"></i>
-                                                Tanggal Kunjungan *
+                                                Tanggal Pemesanan *
                                             </label>
-                                            <input type="date" name="booking_date" id="tanggal_kunjungan" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                                            <input type="date" name="booking_date" id="tanggal_kunjungan" 
+                                                   min="<?php echo date('Y-m-d'); ?>" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="visitors">
+                                                <i class="fas fa-users"></i>
+                                                Untuk Berapa Orang:
+                                            </label>
+                                            <select id="visitors" name="visitors">
+                                                <option value="1">1 Orang</option>
+                                                <option value="2">2 Orang</option>
+                                                <option value="3">3 Orang</option>
+                                                <option value="4">4 Orang</option>
+                                                <option value="5+">5+ Orang</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="visit_time">
+                                                <i class="fas fa-clock"></i>
+                                                Waktu Pengambilan:
+                                            </label>
+                                            <select id="visit_time" name="visit_time">
+                                                <option value="morning">Pagi (08:00 - 12:00)</option>
+                                                <option value="afternoon">Siang (12:00 - 16:00)</option>
+                                                <option value="evening">Sore (16:00 - 18:00)</option>
+                                            </select>
                                         </div>
                                     </div>
                                     
                                     <div class="form-group">
                                         <label for="catatan">
                                             <i class="fas fa-comment"></i>
-                                            Catatan Tambahan
+                                            Catatan Khusus (Opsional):
                                         </label>
-                                        <textarea name="notes" id="catatan" rows="3" placeholder="Catatan khusus untuk pemesanan Anda..."></textarea>
+                                        <textarea name="notes" id="catatan" rows="3" 
+                                                  placeholder="Catatan khusus untuk pesanan Anda..."></textarea>
                                     </div>
                                     
                                     <div class="booking-summary">
@@ -579,15 +659,22 @@ function truncateText($text, $length) {
                                             <strong><span id="jumlah-tiket">1</span> item</strong>
                                         </div>
                                         <div class="summary-row total-row">
-                                            <span>Total:</span>
+                                            <span>Total Estimasi:</span>
                                             <strong id="total-amount"><?php echo formatPrice($article['harga']); ?></strong>
                                         </div>
                                     </div>
                                     
-                                    <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        Tambahkan ke Keranjang
-                                    </button>
+                                    <?php if ($is_logged_in): ?>
+                                        <button type="button" onclick="addToCart()" class="btn btn-primary btn-book">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            Tambahkan ke Keranjang
+                                        </button>
+                                    <?php else: ?>
+                                        <a href="../../login.php?redirect=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" class="btn btn-primary btn-book" style="text-decoration: none; display: inline-block; text-align: center;">
+                                            <i class="fas fa-lock"></i>
+                                            Login untuk Memesan
+                                        </a>
+                                    <?php endif; ?>
                                 </form>
                             </div>
                         </div>
@@ -596,11 +683,10 @@ function truncateText($text, $length) {
                         <div class="reviews-section" id="reviews-section">
                             <div class="reviews-card">
                                 <div class="reviews-header">
-                                    <h3 class="reviews-title"><i class="fas fa-star"></i> Ulasan & Rating</h3>
-                                    <?php if (isset($_SESSION['user_id'])): ?>
-                                        <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none;">
-                                            <i class="fas fa-edit"></i>
-                                            Tulis Review
+                                    <h3 class="reviews-title">⭐ Ulasan & Rating</h3>
+                                    <?php if ($is_logged_in): ?>
+                                        <a href="../account/my_orders.php?tab=paid" class="btn btn-primary" style="text-decoration: none; background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px;">
+                                            ✍️ Tulis Review
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -627,9 +713,9 @@ function truncateText($text, $length) {
                                 </div>
                                 
                                 <!-- Sort and Filter -->
-                                <div class="reviews-controls">
-                                    <label for="sortReviews">Urutkan:</label>
-                                    <select id="sortReviews" onchange="loadReviews(1)">
+                                <div class="reviews-controls" style="margin: 20px 0; display: flex; gap: 10px; align-items: center;">
+                                    <label for="sortReviews" style="font-weight: 600;">Urutkan:</label>
+                                    <select id="sortReviews" onchange="loadReviews(1)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
                                         <option value="newest">Terbaru</option>
                                         <option value="oldest">Terlama</option>
                                         <option value="highest">Rating Tertinggi</option>
@@ -1054,7 +1140,7 @@ function truncateText($text, $length) {
                     <li><a href="#home">Beranda</a></li>
                     <li><a href="#umkm-categories">Kategori</a></li>
                     <li><a href="#umkm-list">UMKM</a></li>
-                    <li><a href="../users/user_dashboard.php">Dashboard</a></li>
+                    <li><a href="../dashboard/user_dashboard.php">Dashboard</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -1206,13 +1292,13 @@ function truncateText($text, $length) {
                         Apakah review ini membantu?
                         <button class="helpful-btn ${review.user_vote === '1' ? 'voted' : ''}" 
                                 onclick="voteHelpful(${review.id}, true)" 
-                                ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                ${!<?php echo $is_logged_in ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
                             <i class="fas fa-thumbs-up"></i> 
                             <span>${review.helpful_count}</span>
                         </button>
                         <button class="helpful-btn ${review.user_vote === '0' ? 'voted' : ''}" 
                                 onclick="voteHelpful(${review.id}, false)"
-                                ${!<?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
+                                ${!<?php echo $is_logged_in ? 'true' : 'false'; ?> ? 'disabled title="Login untuk vote"' : ''}>
                             <i class="fas fa-thumbs-down"></i> 
                             <span>${review.not_helpful_count}</span>
                         </button>
@@ -1225,8 +1311,9 @@ function truncateText($text, $length) {
         }
         
         async function voteHelpful(reviewId, isHelpful) {
-            <?php if (!isset($_SESSION['user_id'])): ?>
+            <?php if (!$is_logged_in): ?>
             alert('Silakan login untuk memberikan vote');
+            window.location.href = '../../login.php?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
             return;
             <?php endif; ?>
             
@@ -1255,6 +1342,12 @@ function truncateText($text, $length) {
         
         // Add to cart function
         function addToCart() {
+            <?php if (!$is_logged_in): ?>
+            // Show guest notification
+            showNotification();
+            return;
+            <?php endif; ?>
+            
             const form = document.getElementById('add-to-cart-form');
             const formData = new FormData(form);
             
