@@ -725,7 +725,7 @@ $database->closeConnection();
                 <ul>
                     <li><a href="#accommodations">Accommodations</a></li>
                     <li><a href="#types">Types</a></li>
-                    <li><a href="../dashboard/user_dashboard.php">Dashboard</a></li>
+                    
                     <li><a href="../wisata/userwisata.php">Tourism</a></li>
                 </ul>
             </div>

@@ -1048,7 +1048,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </button>
         
         <ul class="nav-links">
-            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php" class="<?php echo isActiveMenu($current_page, ['user_dashboard.php']) ? 'active' : ''; ?>">Dashboard</a></li>
             <li><a href="<?php echo $users_path; ?>dashboard/allumkm.php" class="<?php echo isActiveMenu($current_page, ['allumkm.php']) ? 'active' : ''; ?>">UMKM</a></li>
             <li><a href="<?php echo $users_path; ?>wisata/userwisata.php" class="<?php echo isActiveMenu($current_page, ['userwisata.php']) ? 'active' : ''; ?>">Wisata</a></li>
             <li><a href="<?php echo $users_path; ?>penginapan/userpenginapan.php" class="<?php echo isActiveMenu($current_page, ['userpenginapan.php']) ? 'active' : ''; ?>">Penginapan</a></li>
@@ -1117,9 +1116,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </button>
         </div>
         <ul class="mobile-nav-links">
-            <li><a href="<?php echo $users_path; ?>dashboard/user_dashboard.php">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a></li>
             <li><a href="<?php echo $users_path; ?>dashboard/allumkm.php">
                 <i class="fas fa-store"></i> UMKM
             </a></li>

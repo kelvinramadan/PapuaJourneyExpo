@@ -1140,7 +1140,7 @@ function truncateText($text, $length) {
                     <li><a href="#home">Beranda</a></li>
                     <li><a href="#umkm-categories">Kategori</a></li>
                     <li><a href="#umkm-list">UMKM</a></li>
-                    <li><a href="../dashboard/user_dashboard.php">Dashboard</a></li>
+                    
                 </ul>
             </div>
             <div class="footer-contact">

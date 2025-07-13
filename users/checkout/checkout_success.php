@@ -284,7 +284,7 @@ function getPaymentMethodName($method) {
                 <a href="../account/my_orders.php" class="btn btn-primary">
                     <i class="fas fa-receipt"></i> Lihat Transaksi
                 </a>
-                <a href="../dashboard/user_dashboard.php" class="btn btn-secondary">
+                <a href="../../index.php" class="btn btn-secondary">
                     <i class="fas fa-home"></i> Kembali ke Dashboard
                 </a>
             </div>

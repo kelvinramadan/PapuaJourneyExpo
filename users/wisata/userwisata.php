@@ -770,7 +770,7 @@ mysqli_close($db);
                 <ul>
                     <li><a href="#tourism">Destinations</a></li>
                     <li><a href="#categories">Categories</a></li>
-                    <li><a href="../dashboard/user_dashboard.php">Dashboard</a></li>
+                    
                     <li><a href="../penginapan/userpenginapan.php">Accommodation</a></li>
                 </ul>
             </div>
