@@ -4,7 +4,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!-- Font Awesome Icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+      rel="stylesheet" 
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer">
 
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -14,7 +18,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
     
-    <nav class="nav-menu">
+    <nav class="nav-menu" role="navigation" aria-label="Main navigation">
         <a href="index.php" class="btn <?php echo $current_page == 'index.php' ? 'active' : ''; ?>" data-tooltip="Dashboard">
             <span class="btn-icon"><i class="fas fa-home"></i></span>
             <span class="btn-text">Dashboard</span>

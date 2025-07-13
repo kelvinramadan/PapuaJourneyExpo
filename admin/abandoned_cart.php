@@ -192,7 +192,11 @@ function getItemTypeLabel($type) {
     <title><?php echo $page_title; ?> - Papua Journey Admin</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="sidebar.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+          rel="stylesheet" 
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
     <style>
         /* Design System Variables */
         :root {

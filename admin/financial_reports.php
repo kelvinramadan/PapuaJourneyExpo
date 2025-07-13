@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once 'helpers/FinancialReportsHelper.php';
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -10,189 +11,36 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 $db = new Database();
 $conn = $db->getConnection();
+$helper = new FinancialReportsHelper($conn);
 
 // Get date range from query parameters or default to last 30 days
 $end_date = date('Y-m-d');
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d', strtotime('-30 days'));
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : $end_date;
 
-// Fetch overview statistics
-$overview_query = "
-    SELECT 
-        COUNT(DISTINCT t.id) as total_transactions,
-        SUM(CASE WHEN t.payment_status = 'paid' THEN t.total_amount ELSE 0 END) as total_revenue,
-        SUM(CASE WHEN t.payment_status = 'paid' THEN 1 ELSE 0 END) as successful_transactions,
-        SUM(CASE WHEN t.payment_status IN ('rejected', 'cancelled') THEN 1 ELSE 0 END) as failed_transactions,
-        AVG(CASE WHEN t.payment_status = 'paid' THEN t.total_amount ELSE NULL END) as avg_order_value
-    FROM transaksi t
-    WHERE DATE(t.created_at) BETWEEN ? AND ?
-";
-
-$stmt = $conn->prepare($overview_query);
-if (!$stmt) {
-    error_log("Overview Query Error: " . $conn->error);
-    $overview = [
-        'total_transactions' => 0,
-        'total_revenue' => 0,
-        'successful_transactions' => 0,
-        'failed_transactions' => 0,
-        'avg_order_value' => 0
-    ];
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $overview = $stmt->get_result()->fetch_assoc();
-}
+// Fetch overview statistics using helper
+$overview = $helper->getFinancialOverview($start_date, $end_date);
 
 // Calculate growth rate (compare with previous period)
 $prev_end_date = date('Y-m-d', strtotime($start_date . ' -1 day'));
 $prev_start_date = date('Y-m-d', strtotime($start_date . ' -' . (strtotime($end_date) - strtotime($start_date)) / 86400 . ' days'));
 
-$growth_query = "
-    SELECT SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as prev_revenue
-    FROM transaksi
-    WHERE DATE(created_at) BETWEEN ? AND ?
-";
+$prev_data = $helper->getPreviousPeriodRevenue($prev_start_date, $prev_end_date);
+$growth_rate = $helper->calculateGrowthRate($overview['total_revenue'], $prev_data['prev_revenue']);
 
-$stmt = $conn->prepare($growth_query);
-if (!$stmt) {
-    error_log("Growth Query Error: " . $conn->error);
-    $prev_data = ['prev_revenue' => 0];
-} else {
-    $stmt->bind_param("ss", $prev_start_date, $prev_end_date);
-    $stmt->execute();
-    $prev_data = $stmt->get_result()->fetch_assoc();
-}
+// Fetch consolidated analytics data (product types, top products, daily revenue)
+$analytics = $helper->getAnalyticsData($start_date, $end_date);
+$product_types = $analytics['product_types'];
+$top_products = $analytics['top_products'];
+$daily_revenue = $analytics['daily_revenue'];
 
-$growth_rate = 0;
-if ($prev_data['prev_revenue'] > 0) {
-    $growth_rate = (($overview['total_revenue'] - $prev_data['prev_revenue']) / $prev_data['prev_revenue']) * 100;
-}
+// Fetch UMKM revenue using optimized helper method
+$umkm_revenue = $helper->getUMKMRevenue($start_date, $end_date);
 
-// Fetch revenue by product type
-$product_type_query = "
-    SELECT 
-        ti.item_type,
-        COUNT(DISTINCT ti.id) as item_count,
-        SUM(ti.subtotal) as revenue
-    FROM transaksi_items ti
-    JOIN transaksi t ON ti.transaksi_id = t.id
-    WHERE t.payment_status = 'paid' 
-    AND DATE(t.created_at) BETWEEN ? AND ?
-    GROUP BY ti.item_type
-";
+// Fetch payment method distribution using helper
+$payment_methods = $helper->getPaymentMethodsDistribution($start_date, $end_date);
 
-$stmt = $conn->prepare($product_type_query);
-if (!$stmt) {
-    error_log("Product Type Query Error: " . $conn->error);
-    $product_types = [];
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $product_types = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
-
-// Fetch top revenue products
-$top_products_query = "
-    SELECT 
-        ti.item_name,
-        ti.item_type,
-        COUNT(ti.id) as sales_count,
-        SUM(ti.quantity) as total_quantity,
-        SUM(ti.subtotal) as total_revenue,
-        AVG(ti.price_per_unit) as avg_price
-    FROM transaksi_items ti
-    JOIN transaksi t ON ti.transaksi_id = t.id
-    WHERE t.payment_status = 'paid'
-    AND DATE(t.created_at) BETWEEN ? AND ?
-    GROUP BY ti.item_name, ti.item_type
-    ORDER BY total_revenue DESC
-    LIMIT 10
-";
-
-$stmt = $conn->prepare($top_products_query);
-if (!$stmt) {
-    error_log("Top Products Query Error: " . $conn->error);
-    $top_products = [];
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $top_products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
-
-// Fetch UMKM revenue - fixed column name
-$umkm_revenue_query = "
-    SELECT 
-        u.business_name as nama_umkm,
-        u.id as umkm_id,
-        COUNT(DISTINCT t.id) as transaction_count,
-        SUM(ti.subtotal) as total_revenue
-    FROM umkm u
-    LEFT JOIN artikel a ON u.id = a.umkm_id
-    LEFT JOIN transaksi_items ti ON ti.item_id = a.id AND ti.item_type = 'artikel'
-    LEFT JOIN transaksi t ON ti.transaksi_id = t.id AND t.payment_status = 'paid'
-    WHERE (t.created_at IS NULL OR DATE(t.created_at) BETWEEN ? AND ?)
-    GROUP BY u.id, u.business_name
-    HAVING total_revenue > 0
-    ORDER BY total_revenue DESC
-    LIMIT 10
-";
-
-$stmt = $conn->prepare($umkm_revenue_query);
-if (!$stmt) {
-    // If prepare fails, log the error
-    error_log("UMKM Revenue Query Error: " . $conn->error);
-    $umkm_revenue = []; // Set empty array as fallback
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $umkm_revenue = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
-
-// Fetch payment method distribution
-$payment_methods_query = "
-    SELECT 
-        payment_method,
-        COUNT(*) as count,
-        SUM(total_amount) as total_amount
-    FROM transaksi
-    WHERE payment_status = 'paid'
-    AND DATE(created_at) BETWEEN ? AND ?
-    GROUP BY payment_method
-";
-
-$stmt = $conn->prepare($payment_methods_query);
-if (!$stmt) {
-    error_log("Payment Methods Query Error: " . $conn->error);
-    $payment_methods = [];
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $payment_methods = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
-
-// Fetch daily revenue for chart
-$daily_revenue_query = "
-    SELECT 
-        DATE(created_at) as date,
-        SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as revenue,
-        COUNT(CASE WHEN payment_status = 'paid' THEN 1 ELSE NULL END) as paid_count,
-        COUNT(*) as total_count
-    FROM transaksi
-    WHERE DATE(created_at) BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY date ASC
-";
-
-$stmt = $conn->prepare($daily_revenue_query);
-if (!$stmt) {
-    error_log("Daily Revenue Query Error: " . $conn->error);
-    $daily_revenue = [];
-} else {
-    $stmt->bind_param("ss", $start_date, $end_date);
-    $stmt->execute();
-    $daily_revenue = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-}
+// Daily revenue already fetched in analytics consolidation above
 
 $conn->close();
 
@@ -208,8 +56,17 @@ $page_title = 'Financial Reports';
     <title>Financial Reports - Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="sidebar.css">
-    <link rel="stylesheet" href="financial_reports.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Modular CSS Architecture -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/summary.css">
+    <link rel="stylesheet" href="css/recommendations.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+          rel="stylesheet" 
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -270,10 +127,11 @@ $page_title = 'Financial Reports';
             </div>
 
             <?php
-            // Calculate success rate before using it
-            $success_rate = $overview['total_transactions'] > 0 
-                ? round(($overview['successful_transactions'] / $overview['total_transactions']) * 100, 1)
-                : 0;
+            // Calculate success rate using helper with validation
+            $success_rate = $helper->calculateSuccessRate(
+                $overview['successful_transactions'], 
+                $overview['total_transactions']
+            );
             ?>
 
             <!-- Enhanced KPI Cards -->
@@ -336,6 +194,145 @@ $page_title = 'Financial Reports';
                             </div>
                             <div class="kpi-icon">
                                 <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2 class="section-title">Financial Summary</h2>
+                <div class="summary-content">
+                    <div class="summary-cards">
+                        <div class="summary-card primary">
+                            <div class="summary-header">
+                                <h3>Overall Performance</h3>
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="summary-body">
+                                <?php
+                                $performance_status = 'excellent';
+                                $performance_message = '';
+                                
+                                if ($success_rate >= 90) {
+                                    $performance_status = 'excellent';
+                                    $performance_message = 'Outstanding performance with high success rate and steady revenue growth.';
+                                } elseif ($success_rate >= 75) {
+                                    $performance_status = 'good';
+                                    $performance_message = 'Good performance with room for improvement in transaction success rates.';
+                                } elseif ($success_rate >= 60) {
+                                    $performance_status = 'fair';
+                                    $performance_message = 'Fair performance. Focus needed on reducing failed transactions.';
+                                } else {
+                                    $performance_status = 'needs-attention';
+                                    $performance_message = 'Performance needs immediate attention. High failure rate detected.';
+                                }
+                                ?>
+                                <div class="performance-indicator <?php echo $performance_status; ?>">
+                                    <span class="indicator-dot"></span>
+                                    <?php echo ucfirst(str_replace('-', ' ', $performance_status)); ?>
+                                </div>
+                                <p><?php echo $performance_message; ?></p>
+                                <div class="quick-stats">
+                                    <div class="stat">
+                                        <span class="stat-label">Success Rate:</span>
+                                        <span class="stat-value"><?php echo $success_rate; ?>%</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="stat-label">Growth:</span>
+                                        <span class="stat-value <?php echo $growth_rate >= 0 ? 'positive' : 'negative'; ?>">
+                                            <?php echo ($growth_rate >= 0 ? '+' : '') . round($growth_rate, 1); ?>%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card info">
+                            <div class="summary-header">
+                                <h3>Revenue Insights</h3>
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="summary-body">
+                                <?php
+                                $total_revenue = $overview['total_revenue'] ?? 0;
+                                $avg_daily_revenue = count($daily_revenue) > 0 ? $total_revenue / count($daily_revenue) : 0;
+                                $best_product_type = '';
+                                $max_revenue = 0;
+                                
+                                // Safe iteration with validation
+                                if (is_array($product_types) && !empty($product_types)) {
+                                    foreach ($product_types as $type) {
+                                        if (isset($type['revenue']) && is_numeric($type['revenue']) && $type['revenue'] > $max_revenue) {
+                                            $max_revenue = $type['revenue'];
+                                            $best_product_type = $type['item_type'] ?? 'unknown';
+                                        }
+                                    }
+                                }
+                                ?>
+                                <div class="insight-item">
+                                    <strong>Average Daily Revenue:</strong>
+                                    <span>Rp <?php echo number_format($avg_daily_revenue, 0, ',', '.'); ?></span>
+                                </div>
+                                <div class="insight-item">
+                                    <strong>Top Performing Category:</strong>
+                                    <span class="badge badge-<?php echo $best_product_type; ?>">
+                                        <?php echo ucfirst($best_product_type); ?>
+                                    </span>
+                                </div>
+                                <div class="insight-item">
+                                    <strong>Revenue Distribution:</strong>
+                                    <span><?php echo count($product_types); ?> active product categories</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card warning">
+                            <div class="summary-header">
+                                <h3>Key Highlights</h3>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="summary-body">
+                                <ul class="highlights-list">
+                                    <?php if ($growth_rate > 10): ?>
+                                    <li class="highlight-positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        Strong revenue growth of <?php echo round($growth_rate, 1); ?>%
+                                    </li>
+                                    <?php elseif ($growth_rate < -10): ?>
+                                    <li class="highlight-negative">
+                                        <i class="fas fa-arrow-down"></i>
+                                        Revenue decline of <?php echo abs(round($growth_rate, 1)); ?>% needs attention
+                                    </li>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($success_rate >= 90): ?>
+                                    <li class="highlight-positive">
+                                        <i class="fas fa-check-circle"></i>
+                                        Excellent transaction success rate
+                                    </li>
+                                    <?php elseif ($success_rate < 70): ?>
+                                    <li class="highlight-negative">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        High transaction failure rate detected
+                                    </li>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (!empty($top_products)): ?>
+                                    <li class="highlight-neutral">
+                                        <i class="fas fa-trophy"></i>
+                                        Top product: <?php echo htmlspecialchars($top_products[0]['item_name']); ?>
+                                    </li>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (count($umkm_revenue) > 0): ?>
+                                    <li class="highlight-neutral">
+                                        <i class="fas fa-store"></i>
+                                        <?php echo count($umkm_revenue); ?> active UMKM partners contributing revenue
+                                    </li>
+                                    <?php endif; ?>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -447,7 +444,7 @@ $page_title = 'Financial Reports';
                             </thead>
                             <tbody>
                                 <?php 
-                                $total_umkm_revenue = array_sum(array_column($umkm_revenue, 'total_revenue'));
+                                $total_umkm_revenue = $helper->safeArraySum($umkm_revenue, 'total_revenue');
                                 foreach ($umkm_revenue as $umkm): 
                                     $share = $total_umkm_revenue > 0 ? ($umkm['total_revenue'] / $total_umkm_revenue) * 100 : 0;
                                 ?>
@@ -488,6 +485,239 @@ $page_title = 'Financial Reports';
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations Section -->
+            <div class="recommendations-section">
+                <h2 class="section-title">Strategic Recommendations</h2>
+                <div class="recommendations-content">
+                    <div class="recommendations-grid">
+                        
+                        <!-- Performance Recommendations -->
+                        <div class="recommendation-card priority-high">
+                            <div class="recommendation-header">
+                                <div class="priority-indicator high">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>High Priority</span>
+                                </div>
+                                <h3>Performance Optimization</h3>
+                            </div>
+                            <div class="recommendation-body">
+                                <?php if ($success_rate < 80): ?>
+                                <div class="recommendation-item urgent">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div>
+                                        <strong>Improve Transaction Success Rate</strong>
+                                        <p>Current success rate of <?php echo $success_rate; ?>% is below optimal. Consider reviewing payment processes and user experience.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Action Steps:</span>
+                                            <ul>
+                                                <li>Analyze failed transaction patterns</li>
+                                                <li>Optimize payment gateway integration</li>
+                                                <li>Improve checkout flow user experience</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($growth_rate < 0): ?>
+                                <div class="recommendation-item urgent">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <div>
+                                        <strong>Address Revenue Decline</strong>
+                                        <p>Revenue has decreased by <?php echo abs(round($growth_rate, 1)); ?>% compared to the previous period.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Action Steps:</span>
+                                            <ul>
+                                                <li>Analyze market trends and customer behavior</li>
+                                                <li>Review pricing strategy</li>
+                                                <li>Enhance marketing and promotional efforts</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($success_rate >= 80 && $growth_rate >= 0): ?>
+                                <div class="recommendation-item positive">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <div>
+                                        <strong>Maintain Current Performance</strong>
+                                        <p>Your financial performance is on track. Continue current strategies while exploring growth opportunities.</p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Revenue Growth Recommendations -->
+                        <div class="recommendation-card priority-medium">
+                            <div class="recommendation-header">
+                                <div class="priority-indicator medium">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Medium Priority</span>
+                                </div>
+                                <h3>Revenue Growth</h3>
+                            </div>
+                            <div class="recommendation-body">
+                                <?php if (!empty($product_types)): ?>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-rocket"></i>
+                                    <div>
+                                        <strong>Expand High-Performing Categories</strong>
+                                        <p>Focus on promoting and expanding your top-performing product category: <strong><?php echo ucfirst($best_product_type); ?></strong></p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Suggestions:</span>
+                                            <ul>
+                                                <li>Increase inventory for popular products</li>
+                                                <li>Create targeted marketing campaigns</li>
+                                                <li>Partner with more UMKM in successful categories</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <?php 
+                                $avg_order_value = $overview['avg_order_value'] ?? 0;
+                                if ($avg_order_value < 100000): // Less than 100k IDR
+                                ?>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <div>
+                                        <strong>Increase Average Order Value</strong>
+                                        <p>Current AOV is Rp <?php echo number_format($avg_order_value, 0, ',', '.'); ?>. Consider upselling strategies.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Strategies:</span>
+                                            <ul>
+                                                <li>Implement bundle offers</li>
+                                                <li>Add "Frequently Bought Together" suggestions</li>
+                                                <li>Offer volume discounts</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- UMKM & Partnership Recommendations -->
+                        <div class="recommendation-card priority-low">
+                            <div class="recommendation-header">
+                                <div class="priority-indicator low">
+                                    <i class="fas fa-handshake"></i>
+                                    <span>Strategic</span>
+                                </div>
+                                <h3>UMKM & Partnerships</h3>
+                            </div>
+                            <div class="recommendation-body">
+                                <?php if (count($umkm_revenue) < 5): ?>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-users"></i>
+                                    <div>
+                                        <strong>Expand UMKM Network</strong>
+                                        <p>Currently working with <?php echo count($umkm_revenue); ?> active UMKM partners. Consider expanding the network.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Growth Ideas:</span>
+                                            <ul>
+                                                <li>Recruit more local UMKM partners</li>
+                                                <li>Provide better onboarding and support</li>
+                                                <li>Create incentive programs for top performers</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($umkm_revenue)): ?>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-award"></i>
+                                    <div>
+                                        <strong>Support Top Performers</strong>
+                                        <p>Top UMKM: <strong><?php echo htmlspecialchars($umkm_revenue[0]['nama_umkm']); ?></strong> with <?php echo $umkm_revenue[0]['transaction_count']; ?> transactions.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Support Actions:</span>
+                                            <ul>
+                                                <li>Provide marketing assistance to top performers</li>
+                                                <li>Create case studies for successful partnerships</li>
+                                                <li>Offer exclusive promotional opportunities</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Operational Recommendations -->
+                        <div class="recommendation-card priority-medium">
+                            <div class="recommendation-header">
+                                <div class="priority-indicator medium">
+                                    <i class="fas fa-cogs"></i>
+                                    <span>Operational</span>
+                                </div>
+                                <h3>Operational Excellence</h3>
+                            </div>
+                            <div class="recommendation-body">
+                                <div class="recommendation-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <strong>Monitor Key Metrics</strong>
+                                        <p>Set up regular monitoring and alerts for critical performance indicators.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Implementation:</span>
+                                            <ul>
+                                                <li>Weekly revenue and transaction reviews</li>
+                                                <li>Monthly UMKM performance assessments</li>
+                                                <li>Quarterly strategic planning sessions</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="recommendation-item">
+                                    <i class="fas fa-database"></i>
+                                    <div>
+                                        <strong>Data-Driven Decisions</strong>
+                                        <p>Leverage the financial reports data for strategic planning and operational improvements.</p>
+                                        <div class="action-steps">
+                                            <span class="action-title">Best Practices:</span>
+                                            <ul>
+                                                <li>Regular export and analysis of financial data</li>
+                                                <li>Trend analysis for seasonal planning</li>
+                                                <li>Customer behavior pattern identification</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Action Panel -->
+                    <div class="quick-actions-panel">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions-grid">
+                            <a href="payment_confirmation.php" class="quick-action-btn">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Review Payments</span>
+                            </a>
+                            <a href="export_financial_report.php?type=csv&start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>" class="quick-action-btn">
+                                <i class="fas fa-download"></i>
+                                <span>Export Data</span>
+                            </a>
+                            <a href="wisata_analytics.php" class="quick-action-btn">
+                                <i class="fas fa-chart-area"></i>
+                                <span>View Analytics</span>
+                            </a>
+                            <a href="#" onclick="window.print()" class="quick-action-btn">
+                                <i class="fas fa-print"></i>
+                                <span>Print Report</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

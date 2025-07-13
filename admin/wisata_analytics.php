@@ -123,13 +123,23 @@ if ($tables_exist) {
     }
 }
 
-// Get today's stats
+// Get today's stats and comparative metrics
 $today_views = 0;
 $today_visitors = 0;
 $today_acc_views = 0;
 $today_acc_visitors = 0;
+$yesterday_views = 0;
+$yesterday_visitors = 0;
+$yesterday_acc_views = 0;
+$yesterday_acc_visitors = 0;
+
+// Summary metrics
+$summary_metrics = [];
+$wisata_recommendations = [];
+$penginapan_recommendations = [];
 
 if ($tables_exist) {
+    // Today's wisata stats
     $today_query = "
         SELECT 
             COUNT(*) as views,
@@ -142,6 +152,21 @@ if ($tables_exist) {
         $today_stats = $result->fetch_assoc();
         $today_views = $today_stats['views'] ?? 0;
         $today_visitors = $today_stats['visitors'] ?? 0;
+    }
+    
+    // Yesterday's wisata stats for comparison
+    $yesterday_query = "
+        SELECT 
+            COUNT(*) as views,
+            COUNT(DISTINCT session_id) as visitors
+        FROM wisata_views
+        WHERE DATE(view_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+    ";
+    $result = $conn->query($yesterday_query);
+    if ($result) {
+        $yesterday_stats = $result->fetch_assoc();
+        $yesterday_views = $yesterday_stats['views'] ?? 0;
+        $yesterday_visitors = $yesterday_stats['visitors'] ?? 0;
     }
     
     // Get accommodation stats for today
@@ -159,7 +184,234 @@ if ($tables_exist) {
             $today_acc_views = $today_acc_stats['views'] ?? 0;
             $today_acc_visitors = $today_acc_stats['visitors'] ?? 0;
         }
+        
+        // Yesterday's accommodation stats
+        $yesterday_acc_query = "
+            SELECT 
+                COUNT(*) as views,
+                COUNT(DISTINCT session_id) as visitors
+            FROM penginapan_views
+            WHERE DATE(view_date) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+        ";
+        $result = $conn->query($yesterday_acc_query);
+        if ($result) {
+            $yesterday_acc_stats = $result->fetch_assoc();
+            $yesterday_acc_views = $yesterday_acc_stats['views'] ?? 0;
+            $yesterday_acc_visitors = $yesterday_acc_stats['visitors'] ?? 0;
+        }
     }
+    
+    // Calculate summary metrics for wisata
+    $wisata_7day_query = "
+        SELECT 
+            COUNT(*) as total_views,
+            COUNT(DISTINCT session_id) as unique_visitors,
+            COUNT(DISTINCT wisata_id) as active_destinations
+        FROM wisata_views 
+        WHERE view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    ";
+    $result = $conn->query($wisata_7day_query);
+    if ($result) {
+        $wisata_7day = $result->fetch_assoc();
+        $summary_metrics['wisata_7day_views'] = $wisata_7day['total_views'] ?? 0;
+        $summary_metrics['wisata_7day_visitors'] = $wisata_7day['unique_visitors'] ?? 0;
+        $summary_metrics['wisata_active_destinations'] = $wisata_7day['active_destinations'] ?? 0;
+    }
+    
+    // Calculate wisata recommendations
+    // 1. Low performing destinations (high views but no recent bookings)
+    $low_conversion_query = "
+        SELECT w.id, w.judul, COUNT(wv.id) as views,
+               COALESCE(booking_count.bookings, 0) as bookings
+        FROM wisata w
+        LEFT JOIN wisata_views wv ON w.id = wv.wisata_id AND wv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        LEFT JOIN (
+            SELECT ti.item_id, COUNT(*) as bookings
+            FROM transaksi_items ti
+            JOIN transaksi t ON ti.transaksi_id = t.id
+            WHERE ti.item_type = 'wisata' 
+            AND t.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            AND t.payment_status IN ('paid', 'awaiting_confirmation')
+            GROUP BY ti.item_id
+        ) booking_count ON w.id = booking_count.item_id
+        GROUP BY w.id, w.judul
+        HAVING views > 5 AND bookings = 0
+        ORDER BY views DESC
+        LIMIT 3
+    ";
+    $result = $conn->query($low_conversion_query);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $wisata_recommendations[] = [
+                'type' => 'low_conversion',
+                'title' => $row['judul'],
+                'message' => "Destinasi ini mendapat {$row['views']} views namun belum ada booking. Pertimbangkan untuk memperbaiki deskripsi atau harga.",
+                'priority' => 'high',
+                'action' => 'Optimasi Konten'
+            ];
+        }
+    }
+    
+    // 2. Top performers to promote
+    $top_performers_query = "
+        SELECT w.id, w.judul, COUNT(wv.id) as views
+        FROM wisata w
+        JOIN wisata_views wv ON w.id = wv.wisata_id
+        WHERE wv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY w.id, w.judul
+        ORDER BY views DESC
+        LIMIT 2
+    ";
+    $result = $conn->query($top_performers_query);
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $wisata_recommendations[] = [
+                'type' => 'promote',
+                'title' => $row['judul'],
+                'message' => "Destinasi trending dengan {$row['views']} views minggu ini. Pertimbangkan untuk meningkatkan promosi.",
+                'priority' => 'medium',
+                'action' => 'Tingkatkan Promosi'
+            ];
+        }
+    }
+    
+    // 3. No views destinations
+    $no_views_query = "
+        SELECT w.id, w.judul
+        FROM wisata w
+        LEFT JOIN wisata_views wv ON w.id = wv.wisata_id AND wv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        WHERE wv.id IS NULL
+        LIMIT 2
+    ";
+    $result = $conn->query($no_views_query);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $wisata_recommendations[] = [
+                'type' => 'no_visibility',
+                'title' => $row['judul'],
+                'message' => "Destinasi ini tidak memiliki views dalam 30 hari terakhir. Periksa visibilitas dan konten.",
+                'priority' => 'high',
+                'action' => 'Periksa Visibilitas'
+            ];
+        }
+    }
+    
+    // Calculate penginapan recommendations (similar logic)
+    if (isset($acc_tables_exist) && $acc_tables_exist) {
+        // Summary metrics for accommodations
+        $acc_7day_query = "
+            SELECT 
+                COUNT(*) as total_views,
+                COUNT(DISTINCT session_id) as unique_visitors,
+                COUNT(DISTINCT penginapan_id) as active_accommodations
+            FROM penginapan_views 
+            WHERE view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ";
+        $result = $conn->query($acc_7day_query);
+        if ($result) {
+            $acc_7day = $result->fetch_assoc();
+            $summary_metrics['acc_7day_views'] = $acc_7day['total_views'] ?? 0;
+            $summary_metrics['acc_7day_visitors'] = $acc_7day['unique_visitors'] ?? 0;
+            $summary_metrics['acc_active_accommodations'] = $acc_7day['active_accommodations'] ?? 0;
+        }
+        
+        // Low conversion penginapan
+        $acc_low_conversion_query = "
+            SELECT p.id, p.judul, COUNT(pv.id) as views,
+                   COALESCE(booking_count.bookings, 0) as bookings
+            FROM penginapan p
+            LEFT JOIN penginapan_views pv ON p.id = pv.penginapan_id AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            LEFT JOIN (
+                SELECT ti.item_id, COUNT(*) as bookings
+                FROM transaksi_items ti
+                JOIN transaksi t ON ti.transaksi_id = t.id
+                WHERE ti.item_type = 'penginapan' 
+                AND t.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                AND t.payment_status IN ('paid', 'awaiting_confirmation')
+                GROUP BY ti.item_id
+            ) booking_count ON p.id = booking_count.item_id
+            GROUP BY p.id, p.judul
+            HAVING views > 5 AND bookings = 0
+            ORDER BY views DESC
+            LIMIT 3
+        ";
+        $result = $conn->query($acc_low_conversion_query);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $penginapan_recommendations[] = [
+                    'type' => 'low_conversion',
+                    'title' => $row['judul'],
+                    'message' => "Penginapan ini mendapat {$row['views']} views namun belum ada booking. Periksa harga dan fasilitas.",
+                    'priority' => 'high',
+                    'action' => 'Review Harga & Fasilitas'
+                ];
+            }
+        }
+        
+        // Top performing accommodations
+        $acc_top_performers_query = "
+            SELECT p.id, p.judul, COUNT(pv.id) as views
+            FROM penginapan p
+            JOIN penginapan_views pv ON p.id = pv.penginapan_id
+            WHERE pv.view_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            GROUP BY p.id, p.judul
+            ORDER BY views DESC
+            LIMIT 2
+        ";
+        $result = $conn->query($acc_top_performers_query);
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $penginapan_recommendations[] = [
+                    'type' => 'promote',
+                    'title' => $row['judul'],
+                    'message' => "Penginapan populer dengan {$row['views']} views minggu ini. Pertimbangkan untuk featured listing.",
+                    'priority' => 'medium',
+                    'action' => 'Featured Listing'
+                ];
+            }
+        }
+        
+        // No views accommodations
+        $acc_no_views_query = "
+            SELECT p.id, p.judul
+            FROM penginapan p
+            LEFT JOIN penginapan_views pv ON p.id = pv.penginapan_id AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            WHERE pv.id IS NULL
+            LIMIT 2
+        ";
+        $result = $conn->query($acc_no_views_query);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $penginapan_recommendations[] = [
+                    'type' => 'no_visibility',
+                    'title' => $row['judul'],
+                    'message' => "Penginapan ini tidak terlihat dalam 30 hari terakhir. Periksa status dan promosi.",
+                    'priority' => 'high',
+                    'action' => 'Periksa Status'
+                ];
+            }
+        }
+    }
+}
+
+// Helper functions for percentage calculations
+function calculatePercentageChange($current, $previous) {
+    if ($previous == 0) {
+        return $current > 0 ? 100 : 0;
+    }
+    return round((($current - $previous) / $previous) * 100, 1);
+}
+
+function getChangeIcon($percentage) {
+    if ($percentage > 0) return '📈';
+    if ($percentage < 0) return '📉';
+    return '➖';
+}
+
+function getChangeColor($percentage) {
+    if ($percentage > 0) return '#10B981';
+    if ($percentage < 0) return '#EF4444';
+    return '#6B7280';
 }
 ?>
 
@@ -337,6 +589,158 @@ if ($tables_exist) {
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Summary Section Styles */
+        .summary-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .summary-card h4 {
+            font-size: 0.875rem;
+            margin: 0 0 8px 0;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .summary-change {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.9;
+        }
+        
+        /* Recommendation Section Styles */
+        .recommendations-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #F59E0B;
+        }
+        
+        .recommendations-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.2s ease;
+        }
+        
+        .recommendation-item:hover {
+            border-color: #D1D5DB;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .recommendation-item.high-priority {
+            border-left: 4px solid #EF4444;
+            background: #FEF2F2;
+        }
+        
+        .recommendation-item.medium-priority {
+            border-left: 4px solid #F59E0B;
+            background: #FFFBEB;
+        }
+        
+        .recommendation-item.low-priority {
+            border-left: 4px solid #10B981;
+            background: #F0FDF4;
+        }
+        
+        .recommendation-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .recommendation-content {
+            flex: 1;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .recommendation-message {
+            color: #6B7280;
+            font-size: 0.825rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .recommendation-action {
+            background: #F3F4F6;
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .no-recommendations {
+            text-align: center;
+            padding: 30px;
+            color: #6B7280;
+            font-style: italic;
+        }
+        
+        .no-recommendations .emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -404,6 +808,102 @@ if ($tables_exist) {
                 
                 <!-- Tourism Section -->
                 <div id="tourism-section" class="section-container active">
+                    <!-- Summary Section for Tourism -->
+                    <div class="summary-section">
+                        <div class="summary-title">
+                            <span>📊</span>
+                            Ringkasan Performa Wisata (7 Hari Terakhir)
+                        </div>
+                        <div class="summary-grid">
+                            <div class="summary-card">
+                                <h4>Total Views</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['wisata_7day_views'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    <?php 
+                                    $views_change = calculatePercentageChange($today_views, $yesterday_views);
+                                    echo getChangeIcon($views_change);
+                                    ?>
+                                    <span style="color: <?php echo getChangeColor($views_change); ?>">
+                                        <?php echo abs($views_change); ?>% vs kemarin
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Pengunjung Unik</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['wisata_7day_visitors'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    <?php 
+                                    $visitors_change = calculatePercentageChange($today_visitors, $yesterday_visitors);
+                                    echo getChangeIcon($visitors_change);
+                                    ?>
+                                    <span style="color: <?php echo getChangeColor($visitors_change); ?>">
+                                        <?php echo abs($visitors_change); ?>% vs kemarin
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Destinasi Aktif</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['wisata_active_destinations'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    📍 Destinasi dengan views minggu ini
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Rata-rata Views/Hari</h4>
+                                <div class="summary-value">
+                                    <?php 
+                                    $avg_views = ($summary_metrics['wisata_7day_views'] ?? 0) / 7;
+                                    echo number_format($avg_views, 1); 
+                                    ?>
+                                </div>
+                                <div class="summary-change">
+                                    📈 Tren mingguan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations Section for Tourism -->
+                    <div class="recommendations-section">
+                        <div class="recommendations-title">
+                            <span>💡</span>
+                            Rekomendasi Aksi untuk Wisata
+                        </div>
+                        <?php if (empty($wisata_recommendations)): ?>
+                            <div class="no-recommendations">
+                                <span class="emoji">✅</span>
+                                <p>Tidak ada rekomendasi khusus saat ini. Semua destinasi wisata berkinerja baik!</p>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($wisata_recommendations as $recommendation): ?>
+                                <div class="recommendation-item <?php echo $recommendation['priority']; ?>-priority">
+                                    <div class="recommendation-icon">
+                                        <?php 
+                                        switch($recommendation['type']) {
+                                            case 'low_conversion':
+                                                echo '⚠️';
+                                                break;
+                                            case 'promote':
+                                                echo '🚀';
+                                                break;
+                                            case 'no_visibility':
+                                                echo '👁️';
+                                                break;
+                                            default:
+                                                echo '💡';
+                                        }
+                                        ?>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <div class="recommendation-title"><?php echo htmlspecialchars($recommendation['title']); ?></div>
+                                        <div class="recommendation-message"><?php echo htmlspecialchars($recommendation['message']); ?></div>
+                                        <span class="recommendation-action"><?php echo htmlspecialchars($recommendation['action']); ?></span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    
                     <!-- Tourism Stats -->
                     <div class="stats-row">
                         <div class="stat-box">
@@ -459,6 +959,102 @@ if ($tables_exist) {
                 <!-- Accommodation Section -->
                 <?php if (isset($acc_tables_exist) && $acc_tables_exist): ?>
                 <div id="accommodation-section" class="section-container">
+                    <!-- Summary Section for Accommodation -->
+                    <div class="summary-section">
+                        <div class="summary-title">
+                            <span>🏨</span>
+                            Ringkasan Performa Penginapan (7 Hari Terakhir)
+                        </div>
+                        <div class="summary-grid">
+                            <div class="summary-card">
+                                <h4>Total Views</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['acc_7day_views'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    <?php 
+                                    $acc_views_change = calculatePercentageChange($today_acc_views, $yesterday_acc_views);
+                                    echo getChangeIcon($acc_views_change);
+                                    ?>
+                                    <span style="color: <?php echo getChangeColor($acc_views_change); ?>">
+                                        <?php echo abs($acc_views_change); ?>% vs kemarin
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Pengunjung Unik</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['acc_7day_visitors'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    <?php 
+                                    $acc_visitors_change = calculatePercentageChange($today_acc_visitors, $yesterday_acc_visitors);
+                                    echo getChangeIcon($acc_visitors_change);
+                                    ?>
+                                    <span style="color: <?php echo getChangeColor($acc_visitors_change); ?>">
+                                        <?php echo abs($acc_visitors_change); ?>% vs kemarin
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Penginapan Aktif</h4>
+                                <div class="summary-value"><?php echo number_format($summary_metrics['acc_active_accommodations'] ?? 0); ?></div>
+                                <div class="summary-change">
+                                    🏠 Penginapan dengan views minggu ini
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <h4>Rata-rata Views/Hari</h4>
+                                <div class="summary-value">
+                                    <?php 
+                                    $acc_avg_views = ($summary_metrics['acc_7day_views'] ?? 0) / 7;
+                                    echo number_format($acc_avg_views, 1); 
+                                    ?>
+                                </div>
+                                <div class="summary-change">
+                                    📈 Tren mingguan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations Section for Accommodation -->
+                    <div class="recommendations-section">
+                        <div class="recommendations-title">
+                            <span>💡</span>
+                            Rekomendasi Aksi untuk Penginapan
+                        </div>
+                        <?php if (empty($penginapan_recommendations)): ?>
+                            <div class="no-recommendations">
+                                <span class="emoji">✅</span>
+                                <p>Tidak ada rekomendasi khusus saat ini. Semua penginapan berkinerja baik!</p>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($penginapan_recommendations as $recommendation): ?>
+                                <div class="recommendation-item <?php echo $recommendation['priority']; ?>-priority">
+                                    <div class="recommendation-icon">
+                                        <?php 
+                                        switch($recommendation['type']) {
+                                            case 'low_conversion':
+                                                echo '⚠️';
+                                                break;
+                                            case 'promote':
+                                                echo '🚀';
+                                                break;
+                                            case 'no_visibility':
+                                                echo '👁️';
+                                                break;
+                                            default:
+                                                echo '💡';
+                                        }
+                                        ?>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <div class="recommendation-title"><?php echo htmlspecialchars($recommendation['title']); ?></div>
+                                        <div class="recommendation-message"><?php echo htmlspecialchars($recommendation['message']); ?></div>
+                                        <span class="recommendation-action"><?php echo htmlspecialchars($recommendation['action']); ?></span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    
                     <!-- Accommodation Stats -->
                     <div class="stats-row">
                         <div class="stat-box">

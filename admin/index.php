@@ -96,7 +96,11 @@ if (!isset($_SESSION['admin_logged_in'])) {
         <title>Admin Login - Papua Journey</title>
         
         <!-- Stylesheets -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+              rel="stylesheet" 
+              integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+              crossorigin="anonymous"
+              referrerpolicy="no-referrer">
         
         <style>
             :root {
@@ -494,6 +498,8 @@ $page_title = 'Dashboard';
     <title>Admin Dashboard - Papua Journey</title>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="css/summary.css">
+    <link rel="stylesheet" href="css/recommendations.css">
     <style>
         /* Prevent auto-scrolling issues */
         html, body {
@@ -522,13 +528,47 @@ $page_title = 'Dashboard';
             max-width: 300px !important;
             margin: 0 auto;
         }
+        
+        /* Responsive styles for combined card */
+        .combined-tops-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .combined-tops-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        /* Ensure equal card heights in grid rows */
+        .grid.grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+        
+        .grid.grid-2 .card {
+            height: fit-content;
+            min-height: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .grid.grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="admin-wrapper">
         <?php include 'components/sidebar.php'; ?>
         
-        <div class="main-content" id="mainContent">
+        <div class="main-content" id="main-content">
             <?php include 'components/header.php'; ?>
             
             <div class="content-wrapper">
@@ -547,7 +587,8 @@ $page_title = 'Dashboard';
                 <?php endif; ?>
                 
                 <!-- Dashboard Stats -->
-                <div class="stats-grid">
+                <section class="stats-grid" aria-labelledby="stats-heading">
+                    <h2 id="stats-heading" class="sr-only">Dashboard Statistics</h2>
                     <div class="stat-card">
                         <div class="stat-header">
                             <div>
@@ -557,7 +598,7 @@ $page_title = 'Dashboard';
                                     <span>↑</span> 12% dari bulan lalu
                                 </div>
                             </div>
-                            <div class="stat-icon primary">👥</div>
+                            <div class="stat-icon primary"><i class="fas fa-users"></i></div>
                         </div>
                     </div>
                     
@@ -570,7 +611,7 @@ $page_title = 'Dashboard';
                                     <span>↑</span> 8 destinasi baru
                                 </div>
                             </div>
-                            <div class="stat-icon success">🏖️</div>
+                            <div class="stat-icon success"><i class="fas fa-map-marked-alt"></i></div>
                         </div>
                     </div>
                     
@@ -583,7 +624,7 @@ $page_title = 'Dashboard';
                                     <span>↑</span> 5 penginapan baru
                                 </div>
                             </div>
-                            <div class="stat-icon warning">🏨</div>
+                            <div class="stat-icon warning"><i class="fas fa-bed"></i></div>
                         </div>
                     </div>
                     
@@ -596,128 +637,19 @@ $page_title = 'Dashboard';
                                     <span>↑</span> <?php echo $umkm_stats['pending'] ?? 0; ?> pending
                                 </div>
                             </div>
-                            <div class="stat-icon info">🏪</div>
+                            <div class="stat-icon info"><i class="fas fa-store"></i></div>
                         </div>
                     </div>
-                </div>
+                </section>
                 
-                <!-- Tourism Analytics Summary -->
+                
+                <!-- Analytics Summary -->
                 <div class="grid grid-2" style="margin-bottom: 2rem;">
                     <!-- Today's Analytics -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📊 Analytics Hari Ini</h3>
+                            <h3 class="card-title"><i class="fas fa-chart-line"></i> Analytics Hari Ini</h3>
                             <a href="wisata_analytics.php#tourism" class="btn btn-sm btn-primary">Lihat Detail</a>
-                        </div>
-                        <div class="card-body">
-                            <h4 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">🏖️ Tourism</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div style="text-align: center; padding: 0.75rem; background: #F0F9FF; border-radius: 0.5rem;">
-                                    <div style="font-size: 1.5rem; font-weight: bold; color: #0369A1;">
-                                        <?php echo number_format($analytics_today['total_views_today'] ?? 0); ?>
-                                    </div>
-                                    <div style="color: #64748B; font-size: 0.75rem;">Tampilan</div>
-                                </div>
-                                <div style="text-align: center; padding: 0.75rem; background: #F0FDF4; border-radius: 0.5rem;">
-                                    <div style="font-size: 1.5rem; font-weight: bold; color: #16A34A;">
-                                        <?php echo number_format($analytics_today['unique_visitors_today'] ?? 0); ?>
-                                    </div>
-                                    <div style="color: #64748B; font-size: 0.75rem;">Pengunjung</div>
-                                </div>
-                            </div>
-                            <h4 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">🏨 Accommodation</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div style="text-align: center; padding: 0.75rem; background: #FFF5E6; border-radius: 0.5rem;">
-                                    <div style="font-size: 1.5rem; font-weight: bold; color: #FF6B35;">
-                                        <?php echo number_format($acc_analytics_today['total_views_today'] ?? 0); ?>
-                                    </div>
-                                    <div style="color: #64748B; font-size: 0.75rem;">Tampilan</div>
-                                </div>
-                                <div style="text-align: center; padding: 0.75rem; background: #F3E5F5; border-radius: 0.5rem;">
-                                    <div style="font-size: 1.5rem; font-weight: bold; color: #7B1FA2;">
-                                        <?php echo number_format($acc_analytics_today['unique_visitors_today'] ?? 0); ?>
-                                    </div>
-                                    <div style="color: #64748B; font-size: 0.75rem;">Pengunjung</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Top Destinations -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">🌟 Top Destinasi (7 Hari)</h3>
-                            <a href="adminwisata.php" class="btn btn-sm btn-outline">Kelola Wisata</a>
-                        </div>
-                        <div class="card-body">
-                            <?php if (empty($top_destinations)): ?>
-                                <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
-                                    Belum ada data views dalam 7 hari terakhir
-                                </p>
-                            <?php else: ?>
-                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <?php foreach ($top_destinations as $index => $dest): ?>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #F9FAFB;">
-                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                                <div style="width: 24px; height: 24px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
-                                                    <?php echo $index + 1; ?>
-                                                </div>
-                                                <div>
-                                                    <div style="font-weight: 600; font-size: 0.875rem;"><?php echo htmlspecialchars($dest['judul']); ?></div>
-                                                </div>
-                                            </div>
-                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                <span style="font-size: 0.875rem; color: #6B7280;">👁️</span>
-                                                <span style="font-weight: 600; font-size: 0.875rem;"><?php echo number_format($dest['view_count']); ?></span>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Accommodation Analytics Summary -->
-                <div class="grid grid-2" style="margin-bottom: 2rem;">
-                    <!-- Top Accommodations -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">🏨 Top Penginapan (7 Hari)</h3>
-                            <a href="adminpenginapan.php" class="btn btn-sm btn-outline">Kelola Penginapan</a>
-                        </div>
-                        <div class="card-body">
-                            <?php if (empty($top_accommodations)): ?>
-                                <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
-                                    Belum ada data views dalam 7 hari terakhir
-                                </p>
-                            <?php else: ?>
-                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <?php foreach ($top_accommodations as $index => $acc): ?>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #F9FAFB;">
-                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                                <div style="width: 24px; height: 24px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
-                                                    <?php echo $index + 1; ?>
-                                                </div>
-                                                <div>
-                                                    <div style="font-weight: 600; font-size: 0.875rem;"><?php echo htmlspecialchars($acc['judul']); ?></div>
-                                                </div>
-                                            </div>
-                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                <span style="font-size: 0.875rem; color: #6B7280;">👁️</span>
-                                                <span style="font-weight: 600; font-size: 0.875rem;"><?php echo number_format($acc['view_count']); ?></span>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    
-                    <!-- Analytics Overview -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">📈 Ringkasan Analitik</h3>
                         </div>
                         <div class="card-body">
                             <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -728,8 +660,11 @@ $page_title = 'Dashboard';
                                             <div style="font-size: 1.25rem; font-weight: bold; color: #1E40AF;">
                                                 <?php echo number_format(($analytics_today['total_views_today'] ?? 0)); ?>
                                             </div>
+                                            <div style="font-size: 0.875rem; color: #64748B; margin-top: 0.25rem;">
+                                                <?php echo number_format($analytics_today['unique_visitors_today'] ?? 0); ?> pengunjung unik
+                                            </div>
                                         </div>
-                                        <div style="font-size: 2rem;">🏖️</div>
+                                        <div style="font-size: 2rem; color: #1E40AF;"><i class="fas fa-umbrella-beach"></i></div>
                                     </div>
                                 </div>
                                 <div style="padding: 1rem; background: #FFF7ED; border-radius: 0.5rem;">
@@ -739,27 +674,106 @@ $page_title = 'Dashboard';
                                             <div style="font-size: 1.25rem; font-weight: bold; color: #C2410C;">
                                                 <?php echo number_format(($acc_analytics_today['total_views_today'] ?? 0)); ?>
                                             </div>
+                                            <div style="font-size: 0.875rem; color: #64748B; margin-top: 0.25rem;">
+                                                <?php echo number_format($acc_analytics_today['unique_visitors_today'] ?? 0); ?> pengunjung unik
+                                            </div>
                                         </div>
-                                        <div style="font-size: 2rem;">🏨</div>
+                                        <div style="font-size: 2rem; color: #C2410C;"><i class="fas fa-building"></i></div>
                                     </div>
                                 </div>
                                 <div style="text-align: center; margin-top: 0.5rem;">
                                     <a href="wisata_analytics.php" class="btn btn-primary btn-sm" style="width: 100%;">
-                                        📊 Lihat Dashboard Analitik Lengkap
+                                        <i class="fas fa-chart-bar"></i> Lihat Dashboard Analitik Lengkap
                                     </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Combined Top Destinations & Accommodations -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-star"></i> Top Destinasi & Penginapan (7 Hari)</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="adminwisata.php" class="btn btn-sm btn-outline">Kelola Wisata</a>
+                                <a href="adminpenginapan.php" class="btn btn-sm btn-outline">Kelola Penginapan</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="combined-tops-grid">
+                                <!-- Top Destinations Column -->
+                                <div>
+                                    <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #1E40AF; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-trophy"></i> Top Destinasi
+                                    </h4>
+                                    <?php if (empty($top_destinations)): ?>
+                                        <p style="color: var(--text-secondary); text-align: center; padding: 1.5rem 0; font-size: 0.875rem;">
+                                            Belum ada data views
+                                        </p>
+                                    <?php else: ?>
+                                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                            <?php foreach ($top_destinations as $index => $dest): ?>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #EFF6FF;">
+                                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                        <div style="width: 20px; height: 20px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
+                                                            <?php echo $index + 1; ?>
+                                                        </div>
+                                                        <div>
+                                                            <div style="font-weight: 600; font-size: 0.8rem;"><?php echo htmlspecialchars(substr($dest['judul'], 0, 25)) . (strlen($dest['judul']) > 25 ? '...' : ''); ?></div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <span style="font-size: 0.75rem; color: #6B7280;"><i class="fas fa-eye"></i></span>
+                                                        <span style="font-weight: 600; font-size: 0.8rem;"><?php echo number_format($dest['view_count']); ?></span>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <!-- Top Accommodations Column -->
+                                <div>
+                                    <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #C2410C; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-medal"></i> Top Penginapan
+                                    </h4>
+                                    <?php if (empty($top_accommodations)): ?>
+                                        <p style="color: var(--text-secondary); text-align: center; padding: 1.5rem 0; font-size: 0.875rem;">
+                                            Belum ada data views
+                                        </p>
+                                    <?php else: ?>
+                                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                            <?php foreach ($top_accommodations as $index => $acc): ?>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.375rem; background: #FFF7ED;">
+                                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                        <div style="width: 20px; height: 20px; background: <?php echo $index === 0 ? '#FFD700' : ($index === 1 ? '#C0C0C0' : ($index === 2 ? '#CD7F32' : '#E5E7EB')); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: <?php echo $index < 3 ? '#000' : '#6B7280'; ?>;">
+                                                            <?php echo $index + 1; ?>
+                                                        </div>
+                                                        <div>
+                                                            <div style="font-weight: 600; font-size: 0.8rem;"><?php echo htmlspecialchars(substr($acc['judul'], 0, 25)) . (strlen($acc['judul']) > 25 ? '...' : ''); ?></div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <span style="font-size: 0.75rem; color: #6B7280;"><i class="fas fa-eye"></i></span>
+                                                        <span style="font-weight: 600; font-size: 0.8rem;"><?php echo number_format($acc['view_count']); ?></span>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Quick Actions -->
+                <!-- UMKM Management Section -->
                 <div class="grid grid-2" style="margin-bottom: 2rem;">
                     <!-- Recent UMKM -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">UMKM Terbaru</h3>
-                            <a href="#" class="btn btn-sm btn-outline">Lihat Semua</a>
+                            <h3 class="card-title"><i class="fas fa-clock"></i> UMKM Terbaru</h3>
+                            <a href="#umkm-management" class="btn btn-sm btn-outline">Lihat Semua</a>
                         </div>
                         <div class="card-body">
                             <?php if (empty($recent_umkm)): ?>
@@ -786,10 +800,11 @@ $page_title = 'Dashboard';
                         </div>
                     </div>
                     
-                    <!-- Quick Stats -->
-                    <div class="card umkm-status-card" style="height: auto; min-height: 400px;">
+                    <!-- UMKM Status Overview -->
+                    <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Status UMKM</h3>
+                            <h3 class="card-title"><i class="fas fa-chart-pie"></i> Status UMKM</h3>
+                            <a href="#umkm-management" class="btn btn-sm btn-outline">Kelola UMKM</a>
                         </div>
                         <div class="card-body" style="overflow: hidden; position: relative; padding-bottom: 1.5rem;">
                             <div style="width: 100%; height: 150px; position: relative; display: flex; justify-content: center; align-items: center;">
@@ -824,15 +839,15 @@ $page_title = 'Dashboard';
                 </div>
                 
                 <!-- UMKM Management Table -->
-                <div class="card">
+                <div class="card" id="umkm-management">
                     <div class="card-header">
                         <h3 class="card-title">Manajemen UMKM</h3>
                         <div style="display: flex; gap: 0.75rem;">
                             <button class="btn btn-outline btn-sm" onclick="exportData()">
-                                <span>📥</span> Export
+                                <i class="fas fa-download"></i> Export
                             </button>
                             <button class="btn btn-primary btn-sm">
-                                <span>➕</span> Tambah UMKM
+                                <i class="fas fa-plus"></i> Tambah UMKM
                             </button>
                         </div>
                     </div>
@@ -923,7 +938,7 @@ $page_title = 'Dashboard';
                                                         <?php endif; ?>
                                                         
                                                         <button class="btn btn-outline btn-sm" onclick="viewDetails(<?php echo $umkm['id']; ?>)" data-tooltip="View Details">
-                                                            👁️
+                                                            <i class="fas fa-eye"></i>
                                                         </button>
                                                         
                                                         <form method="POST" style="display: inline;">
@@ -931,7 +946,7 @@ $page_title = 'Dashboard';
                                                             <button type="submit" name="delete_umkm" class="btn btn-danger btn-sm" 
                                                                     onclick="return confirmDelete('Hapus UMKM ini? Tindakan ini tidak dapat dibatalkan!')"
                                                                     data-tooltip="Delete">
-                                                                🗑️
+                                                                <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
                                                     </div>
@@ -944,6 +959,10 @@ $page_title = 'Dashboard';
                         <?php endif; ?>
                     </div>
                 </div>
+                
+                <!-- Summary and Recommendations Sections -->
+                <?php include 'components/summary-section.php'; ?>
+                <?php include 'components/recommendations-section.php'; ?>
             </div>
             
             <?php include 'components/footer.php'; ?>
@@ -954,37 +973,10 @@ $page_title = 'Dashboard';
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Prevent any auto-scrolling behavior
+        // Removed problematic auto-scroll prevention that was interfering with accessibility and UX
         document.addEventListener('DOMContentLoaded', function() {
-            // Store initial scroll position
-            const initialScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Reset scroll position if it changes unexpectedly
-            let scrollCheckInterval = setInterval(function() {
-                const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                if (Math.abs(currentScrollTop - initialScrollTop) > 100 && !window.userScrolling) {
-                    window.scrollTo(0, initialScrollTop);
-                }
-            }, 100);
-            
-            // Track user scrolling
-            let scrollTimeout;
-            window.addEventListener('wheel', function() {
-                window.userScrolling = true;
-                clearTimeout(scrollTimeout);
-                clearInterval(scrollCheckInterval);
-                scrollTimeout = setTimeout(() => {
-                    window.userScrolling = false;
-                }, 1000);
-            });
-            
-            window.addEventListener('touchmove', function() {
-                window.userScrolling = true;
-                clearTimeout(scrollTimeout);
-                clearInterval(scrollCheckInterval);
-                scrollTimeout = setTimeout(() => {
-                    window.userScrolling = false;
-                }, 1000);
-            });
+            // Allow natural scrolling behavior - no forced scroll reset
+            console.log('Admin dashboard loaded - natural scrolling enabled');
         });
         
         // Initialize Chart

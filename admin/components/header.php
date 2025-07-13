@@ -14,17 +14,19 @@ $admin_username = $_SESSION['admin_username'] ?? 'Admin';
 $page_title = $page_title ?? 'Dashboard';
 ?>
 
+<!-- Skip Links for Accessibility -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<a href="#sidebar" class="skip-link">Skip to navigation</a>
+
 <header class="admin-header">
     <div class="header-left">
-        <button class="sidebar-toggle" onclick="toggleSidebar()">
-            <span>☰</span>
-        </button>
         <h1 class="page-title"><?php echo htmlspecialchars($page_title); ?></h1>
     </div>
     
     <div class="header-right">
         <div class="search-box">
-            <input type="text" placeholder="Cari..." id="globalSearch">
+            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+            <input type="text" placeholder="Cari..." id="globalSearch" aria-label="Search dashboard content">
         </div>
         
         <div class="user-menu">
@@ -35,6 +37,32 @@ $page_title = $page_title ?? 'Dashboard';
         </div>
     </div>
 </header>
+
+<!-- CDN Fallback Script -->
+<script>
+// Check if FontAwesome loaded successfully, provide fallback if needed
+document.addEventListener('DOMContentLoaded', function() {
+    const testIcon = document.createElement('i');
+    testIcon.className = 'fas fa-test';
+    document.body.appendChild(testIcon);
+    
+    const iconStyles = window.getComputedStyle(testIcon, ':before');
+    if (!iconStyles.content || iconStyles.content === 'none') {
+        console.warn('FontAwesome failed to load, using fallback icons');
+        // Add fallback CSS
+        const fallbackStyle = document.createElement('style');
+        fallbackStyle.textContent = `
+            .fas.fa-search::before { content: '🔍'; }
+            .fas.fa-bars::before { content: '☰'; }
+            .fas.fa-home::before { content: '🏠'; }
+            .fas.fa-sign-out-alt::before { content: '🚪'; }
+        `;
+        document.head.appendChild(fallbackStyle);
+    }
+    
+    document.body.removeChild(testIcon);
+});
+</script>
 
 <style>
 .dropdown-menu {

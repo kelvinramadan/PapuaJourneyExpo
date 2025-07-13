@@ -1,55 +1,15 @@
 // Admin Dashboard JavaScript
 
-// Toggle Sidebar
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    
-    if (!sidebar || !mainContent) return;
-    
-    // Mobile behavior
-    if (window.innerWidth <= 768) {
-        sidebar.classList.toggle('active');
-    } else {
-        // Desktop behavior
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('sidebar-collapsed');
-        
-        // Save state to localStorage
-        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-    }
-}
 
-// Auto-collapse sidebar when expand button is clicked
-function autoCollapseSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    
-    if (sidebar && !sidebar.classList.contains('collapsed')) {
-        sidebar.classList.add('collapsed');
-        if (mainContent) {
-            mainContent.classList.add('sidebar-collapsed');
-        }
-        localStorage.setItem('sidebarCollapsed', 'true');
-    }
-}
-
-// Initialize sidebar state from localStorage
+// Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
     
-    if (!sidebar || !mainContent) return;
-    
-    // Check localStorage or default to collapsed on smaller screens
-    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true' || window.innerWidth < 1400;
-    
-    if (sidebarCollapsed) {
+    if (sidebar && mainContent) {
+        // Always keep sidebar in collapsed state for desktop
         sidebar.classList.add('collapsed');
         mainContent.classList.add('sidebar-collapsed');
-    } else {
-        sidebar.classList.remove('collapsed');
-        mainContent.classList.remove('sidebar-collapsed');
     }
     
     // Initialize tooltips
@@ -63,13 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeCharts();
     }
     
-    // Close sidebar on outside click (mobile)
+    // Mobile UX: Close sidebar on backdrop click (mobile only)
     document.addEventListener('click', function(event) {
         const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.querySelector('.sidebar-toggle');
         
         if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('active')) {
-            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+            if (!sidebar.contains(event.target)) {
                 sidebar.classList.remove('active');
             }
         }
