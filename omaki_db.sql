@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2025 at 03:20 PM
+-- Generation Time: Jul 13, 2025 at 10:23 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -359,7 +359,8 @@ INSERT INTO `penginapan_statistics` (`id`, `penginapan_id`, `stat_date`, `view_c
 (2, 2, '2025-06-27', 1, 1, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:39:07'),
 (3, 3, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47'),
 (4, 4, '2025-06-27', 0, 0, 0, 0.00, '2025-06-26 21:21:47', '2025-06-26 21:21:47'),
-(9, 4, '2025-06-30', 1, 1, 0, 0.00, '2025-06-30 16:42:29', '2025-06-30 16:42:29');
+(9, 4, '2025-06-30', 1, 1, 0, 0.00, '2025-06-30 16:42:29', '2025-06-30 16:42:29'),
+(10, 22, '2025-07-13', 1, 1, 0, 0.00, '2025-07-13 15:14:38', '2025-07-13 15:14:38');
 
 -- --------------------------------------------------------
 
@@ -383,7 +384,8 @@ CREATE TABLE `penginapan_views` (
 
 INSERT INTO `penginapan_views` (`id`, `penginapan_id`, `user_id`, `ip_address`, `view_date`, `session_id`, `user_agent`) VALUES
 (1, 2, 1, '::1', '2025-06-27 04:39:07', '6f02u1hb506npcldu15372j7qn', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
-(2, 4, 8, '::1', '2025-06-30 23:42:29', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+(2, 4, 8, '::1', '2025-06-30 23:42:29', '88qdatrka6tgd4g1qdp1trb4r3', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'),
+(3, 22, 1, '::1', '2025-07-13 22:14:38', '3vfn6nhtmn8nloc985svg5ce3r', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36');
 
 -- --------------------------------------------------------
 
@@ -904,7 +906,28 @@ CREATE TABLE `wisata` (
 INSERT INTO `wisata` (`id`, `judul`, `deskripsi`, `harga`, `kategori`, `alamat`, `jam_buka`, `photo`, `created_at`, `updated_at`) VALUES
 (4, 'Karmon Waterfall', 'Air Terjun Karmon adalah salah satu destinasi wisata alam yang menakjubkan di Kabupaten Biak Numfor, Provinsi Papua. Terletak di tengah-tengah hutan tropis yang lebat, air terjun ini memiliki ketinggian sekitar 40 meter. Keindahan Air Terjun Karmon terletak pada aliran airnya yang jernih dan suasana sekitarnya yang alami dan menawan.', 10000.00, 'alam', 'Kampung Karmon, Distrik Warsa, Biak bagian utara', '08:00 - 17:00', '684c2e7cb31d0.jpg', '2025-06-13 13:58:20', '2025-06-13 13:58:20'),
 (5, 'TropicSurf “Secret Papua” Tour', 'Paket eksklusif surf & cruise dengan kapal phinisi mewah (silolona), menelusuri spot selancar terpencil di Papua. Semua tingkat keahlian bisa ikut; didampingi instruktur top. Setelah sesi surfing, menginap di resort bintang lima atau di kapal yang nyaman di laut .', 409938.00, 'alam', 'Perairan nasional di Raja Ampat dan West Papua.', 'Reservasi', '684fc767c53d3.jpg', '2025-06-16 07:27:35', '2025-06-16 07:27:35'),
-(6, 'Pantai Base-G', 'Pantai Base G atau juga dikenal sebagai Tanjung Ria terletak disebelah utara Kota Jayapura, Papua. Pantai Base G berlokasi sekitar 10 km dari Kota Jayapura di Distrik Jayapura Utara. Pantai Base G dapat dikunjungi dengan menggunakan berbagai jenis kendaraan dengan waktu tempuh kurang lebih 20 menit dari kota, dengan akses jalan beraspal. Apabila pengunjung mengambil patokan Bandara Sentani, waktu tempuh darat sekitar 1,5 jam.\\r\\n\\r\\nNama Base G berasal dari sejarahnya yang dahulu merupakan basis militer dengan nama Base G Camp pada masa Perang Dunia II. Kawasan Pantai Base G mempunyai luas sekitar 90 ha, panjang garis pantai 6-15 meter, dengan lebar pantai belakang 15-40 meter, lebar perairan 150-400 meter.\\r\\n\\r\\nPantai Base G Jayapura merupakan salah satu tujuan wisata unggulan di kota Jayapura, Papua. Meskipun masih berada dalam wilayah kota, pantai ini menyuguhkan keindahan alam yang jarang dimiliki oleh pantai-pantai lain di Jayapura. Lokasinya yang terletak di sebelah barat kota Jayapura membuat pantai ini mudah diakses.', 50000.00, 'alam', 'Tj. Ria, Kec. Jayapura Utara, Kota Jayapura, Papua', '06.00 - 21.00 ', 'wisata_685aa4c3aae6c.jpg', '2025-06-24 13:14:43', '2025-06-24 13:14:43');
+(6, 'Pantai Base-G', 'Pantai Base G atau juga dikenal sebagai Tanjung Ria terletak disebelah utara Kota Jayapura, Papua. Pantai Base G berlokasi sekitar 10 km dari Kota Jayapura di Distrik Jayapura Utara. Pantai Base G dapat dikunjungi dengan menggunakan berbagai jenis kendaraan dengan waktu tempuh kurang lebih 20 menit dari kota, dengan akses jalan beraspal. Apabila pengunjung mengambil patokan Bandara Sentani, waktu tempuh darat sekitar 1,5 jam.\\r\\n\\r\\nNama Base G berasal dari sejarahnya yang dahulu merupakan basis militer dengan nama Base G Camp pada masa Perang Dunia II. Kawasan Pantai Base G mempunyai luas sekitar 90 ha, panjang garis pantai 6-15 meter, dengan lebar pantai belakang 15-40 meter, lebar perairan 150-400 meter.\\r\\n\\r\\nPantai Base G Jayapura merupakan salah satu tujuan wisata unggulan di kota Jayapura, Papua. Meskipun masih berada dalam wilayah kota, pantai ini menyuguhkan keindahan alam yang jarang dimiliki oleh pantai-pantai lain di Jayapura. Lokasinya yang terletak di sebelah barat kota Jayapura membuat pantai ini mudah diakses.', 50000.00, 'alam', 'Tj. Ria, Kec. Jayapura Utara, Kota Jayapura, Papua', '06.00 - 21.00 ', 'wisata_685aa4c3aae6c.jpg', '2025-06-24 13:14:43', '2025-06-24 13:14:43'),
+(7, 'Raja Ampat', 'Surga bawah laut dunia dengan keanekaragaman hayati laut tertinggi di dunia. Cocok untuk snorkeling, diving, dan island hopping.', 50000.00, 'alam', 'Kabupaten Raja Ampat, Papua Barat Daya', '06:00 - 20:00', 'wisata_68740bc1aa1e5.jpg', '2025-07-13 19:40:49', '2025-07-13 19:40:49'),
+(8, 'Danau Sentani', 'Danau terbesar di Papua, dikelilingi oleh perbukitan hijau dan desa-desa adat dengan budaya lokal yang kental.', 20000.00, 'alam', 'Distrik Sentani, Kabupaten Jayapura, Papua', '08:00 - 17:00', 'wisata_68740c4eb44e7.jpeg', '2025-07-13 19:43:10', '2025-07-13 19:43:10'),
+(9, 'Lembah Baliem', 'Lembah luas yang merupakan rumah bagi suku Dani. Terkenal dengan festival Lembah Baliem dan panorama pegunungan.', 30000.00, 'alam', 'Kabupaten Jayawijaya, Papua Pegunungan', '07:00 - 17:00', 'wisata_68740ca73a91c.jpg', '2025-07-13 19:44:39', '2025-07-13 19:44:39'),
+(10, 'Taman Nasional Lorentz', 'Situs Warisan Dunia UNESCO yang merupakan taman nasional terbesar di Asia Tenggara, rumah bagi puncak salju tropis (Puncak Jaya) dan keanekaragaman hayati.', 50000.00, 'alam', 'Membentang di beberapa kabupaten: Mimika, Jayawijaya, Nduga, Yahukimo, Papua Tengah', '07:00 - 17:00', 'wisata_68740cdff0b26.jpg', '2025-07-13 19:45:35', '2025-07-13 19:45:35'),
+(11, 'Pantai Harlem', 'Kampung Tablasupa, Distrik Depapre, Kabupaten Jayapura', 25000.00, 'alam', 'Kampung Tablasupa, Distrik Depapre, Kabupaten Jayapura', '07:00 - 17:00', 'wisata_68740d0c0af7f.jpg', '2025-07-13 19:46:20', '2025-07-13 19:46:20'),
+(12, 'Bukit Teletubbies Jayapura', 'Deskripsi: Perbukitan hijau menyerupai lanskap serial Teletubbies, cocok untuk piknik dan menikmati panorama alam.', 10000.00, 'alam', 'Doyo Lama, Distrik Waibu, Kabupaten Jayapura', '06:00 - 18:00', 'wisata_68740d4d80845.jpeg', '2025-07-13 19:47:25', '2025-07-13 19:47:25'),
+(13, 'Museum Loka Budaya UNCEN', 'Museum budaya Papua dengan koleksi artefak adat dan sejarah suku-suku Papua.', 0.00, 'budaya', 'Kampus Uncen Waena, Kota Jayapura', '08:00 - 16:00', 'wisata_68740f2d9d449.jpeg', '2025-07-13 19:55:25', '2025-07-13 19:55:25'),
+(14, 'Tugu MacArthur', 'Tugu bersejarah peninggalan Perang Dunia II, dengan pemandangan Danau Sentani.', 10000.00, 'budaya', 'Bukit Ifar, Sentani, Kabupaten Jayapura', '07:00 - 17:00', 'wisata_68740fa270f93.jpg', '2025-07-13 19:57:22', '2025-07-13 19:57:22'),
+(15, 'Pantai Holtekamp', 'Pantai pasir putih dengan jembatan merah ikonik dan pemandangan Teluk Youtefa.', 10000.00, 'alam', 'Distrik Muara Tami, Kota Jayapura', '06:00 - 18:00', 'wisata_68741023873a3.jpg', '2025-07-13 19:59:31', '2025-07-13 19:59:31'),
+(16, 'Pantai Hamadi', 'Pantai di pusat kota dengan pasir lembut dan pemandangan laut lepas.', 10000.00, 'alam', 'Hamadi, Distrik Jayapura Selatan, Kota Jayapura', '06:00 - 18:00', 'wisata_687410a77a6a9.jpg', '2025-07-13 20:01:43', '2025-07-13 20:01:43'),
+(17, 'Museum Negeri Papua', 'Museum besar yang menyimpan koleksi budaya, sejarah, dan arkeologi Papua.\\r\\n', 5000.00, 'budaya', 'Jl. Raya Abepura, Kota Jayapura', '08:00 - 15:00', 'wisata_687411053cd70.jpeg', '2025-07-13 20:03:17', '2025-07-13 20:03:17'),
+(18, 'Pantai Pasir 6', 'Pantai yang cocok untuk menikmati matahari terbenam di Jayapura.', 10000.00, 'alam', 'Skouw Sae, Distrik Muara Tami, Kota Jayapura', '06:00 - 18:00', 'wisata_68741157cdf41.jpeg', '2025-07-13 20:04:39', '2025-07-13 20:04:39'),
+(19, 'Bukit Jokowi', 'Bukit dengan pemandangan Teluk Youtefa dan jembatan Youtefa dari atas.', 5000.00, 'alam', 'Koya Barat, Distrik Muara Tami, Kota Jayapura', '06:00 - 18:00', 'wisata_687411b839108.jpg', '2025-07-13 20:06:16', '2025-07-13 20:06:16'),
+(20, 'Air Terjun Cyclop', 'Air terjun tersembunyi di kawasan Cagar Alam Cyclop, cocok untuk hiking.', 10000.00, 'alam', 'Kawasan Pegunungan Cyclop, Kabupaten Jayapura', '07:00 - 17:00', 'wisata_68741232b1c81.jpg', '2025-07-13 20:08:18', '2025-07-13 20:08:18'),
+(21, 'Bukit Salib', 'Bukit dengan salib besar di puncaknya, lokasi ziarah dan melihat Danau Sentani dari\\r\\natas.', 5000.00, 'alam', 'Sentani Tengah, Kabupaten Jayapura', '07:00 - 17:00', 'wisata_68741292a5bcb.jpg', '2025-07-13 20:09:54', '2025-07-13 20:09:54'),
+(22, 'Pantai Marauw', 'Pantai alami yang tenang dengan akses jalan ke arah Skouw.', 10000.00, 'alam', 'Marauw, Distrik Muara Tami, Kota Jayapura', '06:00 - 18:00', 'wisata_687412f24daa8.jpg', '2025-07-13 20:11:30', '2025-07-13 20:11:30'),
+(23, 'Kampung Kayu Batu', 'Kampung adat dengan pemandangan laut dan budaya lokal.', 0.00, 'alam', 'Distrik Jayapura Utara, Kota Jayapura', '08:00 - 17:00', 'wisata_6874134b1f84a.jpg', '2025-07-13 20:12:59', '2025-07-13 20:12:59'),
+(24, 'Teluk Youtefa', 'Teluk indah yang mengelilingi kawasan konservasi mangrove dan budaya pesisir.\\r\\n', 0.00, 'alam', 'Kota Jayapura', '06:00 - 18:00', 'wisata_687413d6e5734.jpg', '2025-07-13 20:15:18', '2025-07-13 20:15:18'),
+(25, 'Cagar Alam Cyclop', 'Cagar alam pegunungan yang cocok untuk trekking dan melihat flora endemik Papua.', 15000.00, 'alam', 'Kabupaten Jayapura', '07:00 - 17:00', 'wisata_6874144094698.jpg', '2025-07-13 20:17:04', '2025-07-13 20:17:04'),
+(26, 'Bukit Sibei', 'Destinasi wisata alam dengan pemandangan Danau Sentani dan sekitarnya.', 5000.00, 'alam', 'Sentani Timur, Kabupaten Jayapura', '06:00 - 18:00', 'wisata_687414ecb4084.jpg', '2025-07-13 20:19:56', '2025-07-13 20:19:56'),
+(27, 'Bukit Aplim', 'Bukit yang menjadi tempat pengamatan indahnya matahari terbit di Jayapura.', 5000.00, 'alam', 'Abepura, Kota Jayapura\\r\\n', '05:00 - 18:00', 'wisata_6874158c59656.jpg', '2025-07-13 20:22:36', '2025-07-13 20:22:36');
 
 -- --------------------------------------------------------
 
@@ -1314,13 +1337,13 @@ ALTER TABLE `penginapan`
 -- AUTO_INCREMENT for table `penginapan_statistics`
 --
 ALTER TABLE `penginapan_statistics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `penginapan_views`
 --
 ALTER TABLE `penginapan_views`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pesanpenginapan`
@@ -1410,7 +1433,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `wisata`
 --
 ALTER TABLE `wisata`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `wisata_statistics`
