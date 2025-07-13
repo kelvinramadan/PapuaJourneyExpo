@@ -35,6 +35,7 @@ $detail_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Handle detail view
 $penginapan_detail = null;
+$penginapan_id = 0;
 if ($view_mode === 'detail' && $detail_id > 0) {
     $query = "SELECT * FROM penginapan WHERE id = ?";
     $stmt = $db->prepare($query);
@@ -44,6 +45,7 @@ if ($view_mode === 'detail' && $detail_id > 0) {
     
     if ($result->num_rows > 0) {
         $penginapan_detail = $result->fetch_assoc();
+        $penginapan_id = (int)$penginapan_detail['id'];
     }
     $stmt->close();
 }
@@ -737,7 +739,7 @@ $database->closeConnection();
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/kelvinoktabrian/"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
@@ -960,6 +962,35 @@ $database->closeConnection();
                 this.style.transform = 'scale(0.98)';
             });
         });
+
+        // Track penginapan view function
+        function trackPenginapanView(penginapanId) {
+            fetch('track_view.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    penginapan_id: penginapanId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('View tracked successfully');
+                }
+            })
+            .catch(error => {
+                console.warn('Error tracking view:', error);
+            });
+        }
+
+        // Track views for detail page
+        <?php if ($view_mode === 'detail' && $penginapan_detail && $penginapan_id > 0): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            trackPenginapanView(<?php echo $penginapan_id; ?>);
+        });
+        <?php endif; ?>
     </script>
 </body>
 </html>

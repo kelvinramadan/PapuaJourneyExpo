@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2025 at 01:14 AM
+-- Generation Time: Jul 13, 2025 at 03:20 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -1038,7 +1038,8 @@ ALTER TABLE `artikel`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_kategori` (`kategori`),
   ADD KEY `idx_status` (`status`),
-  ADD KEY `idx_umkm_id` (`umkm_id`);
+  ADD KEY `idx_umkm_id` (`umkm_id`),
+  ADD KEY `idx_artikel_umkm` (`umkm_id`,`id`);
 
 --
 -- Indexes for table `cart_items`
@@ -1184,7 +1185,10 @@ ALTER TABLE `transaksi`
   ADD KEY `user_id` (`user_id`),
   ADD KEY `idx_user_transactions` (`user_id`,`payment_status`),
   ADD KEY `idx_payment_status_proof` (`payment_status`,`payment_proof`),
-  ADD KEY `idx_payment_status_date` (`payment_status`,`created_at`);
+  ADD KEY `idx_payment_status_date` (`payment_status`,`created_at`),
+  ADD KEY `idx_transaksi_date_status` (`created_at`,`payment_status`),
+  ADD KEY `idx_transaksi_created_at` (`created_at`),
+  ADD KEY `idx_transaksi_payment_method` (`payment_method`,`payment_status`);
 
 --
 -- Indexes for table `transaksi_items`
@@ -1193,7 +1197,9 @@ ALTER TABLE `transaksi_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `transaksi_id` (`transaksi_id`),
   ADD KEY `idx_transaction_items` (`transaksi_id`,`item_type`),
-  ADD KEY `idx_item_type_id` (`item_type`,`item_id`);
+  ADD KEY `idx_item_type_id` (`item_type`,`item_id`),
+  ADD KEY `idx_transaksi_items_lookup` (`transaksi_id`,`item_type`,`item_id`),
+  ADD KEY `idx_transaksi_items_revenue` (`item_id`,`item_type`,`subtotal`);
 
 --
 -- Indexes for table `umkm`
