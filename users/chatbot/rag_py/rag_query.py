@@ -17,7 +17,13 @@ load_dotenv()
 try:
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
     text_embedding_model = 'models/embedding-001'
-    generation_model = genai.GenerativeModel('gemini-2.5-flash')
+    generation_config = {
+        "temperature": 0.9,  # Dinaikkan untuk respons lebih natural dan bervariasi
+        "top_k": 50,        # Dinaikkan untuk lebih banyak variasi kata
+        "top_p": 0.95,      # Probabilitas kumulatif untuk pemilihan token (default 0.95)
+        "max_output_tokens": 2048,  # Maksimal token output
+    }
+    generation_model = genai.GenerativeModel('gemini-2.5-flash', generation_config=generation_config)
 except Exception as e:
     print(f"Error configuring Generative AI: {e}", file=sys.stderr)
     sys.exit(1)
@@ -49,19 +55,26 @@ def find_best_passages(query_embedding, collection, n_results=3):
 
 def is_initial_greeting(query):
     """Checks for common greetings."""
-    greetings = ['halo', 'hai', 'hi', 'selamat pagi', 'selamat siang', 'selamat sore', 'selamat malam', 'apa kabar']
+    greetings = ['halo', 'hai', 'hi', 'hello', 'hey', 'selamat pagi', 'selamat siang', 'selamat sore', 'selamat malam', 'apa kabar', 'pagi', 'siang', 'sore', 'malam', 'bro', 'sis', 'kak', 'min', 'gan']
     lower_query = query.lower().strip()
-    return lower_query in greetings
+    # Check exact match or if query starts with greeting
+    return lower_query in greetings or any(lower_query.startswith(g) for g in greetings)
 
-def is_jayapura_related(query):
-    """Checks if the query is related to Jayapura."""
-    jayapura_keywords = [
-      'jayapura', 'papua', 'sentani', 'danau sentani', 'base g', 'youtefa',
+def is_papua_related(query):
+    """Checks if the query is related to Papua tourism."""
+    papua_keywords = [
+      # General Papua
+      'papua', 'wisata', 'destinasi', 'kuliner', 'makanan', 'transport', 'budaya', 'adat',
+      'pantai', 'gunung', 'danau', 'tour', 'hotel', 'penginapan', 'jalan-jalan',
+      # Jayapura specific
+      'jayapura', 'sentani', 'danau sentani', 'base g', 'youtefa',
       'teletubbies', 'hamadi', 'abepura', 'waena', 'entrop',
-      'wisata', 'destinasi', 'kuliner', 'makanan', 'transport', 'budaya', 'adat'
+      # Other Papua cities (for future expansion)
+      'wamena', 'merauke', 'sorong', 'manokwari', 'biak', 'nabire', 'timika',
+      'raja ampat', 'baliem', 'korowai'
     ]
     lower_query = query.lower()
-    return any(keyword in lower_query for keyword in jayapura_keywords)
+    return any(keyword in lower_query for keyword in papua_keywords)
 
 def generate_response(query, passages, conversation_history=None):
     """Generates a response using the retrieved passages and conversation history."""
@@ -81,54 +94,46 @@ def generate_response(query, passages, conversation_history=None):
                 history_context += f"Anda: {turn['assistant']}\n"
         history_context += "\n"
 
-    prompt = f"""Anda adalah "Papua Journey", seorang tour guide virtual yang ramah dan sangat informatif untuk wilayah Jayapura, Papua.
+    prompt = f"""Kamu adalah seorang tour guide Papua yang ramah dan berpengalaman. Namamu bisa dipanggil "Papua Journey" atau "PJ". Kamu sangat mengenal berbagai destinasi wisata di Papua dan suka berbagi cerita menarik.
 
-ATURAN PENTING:
-1. SELALU jawab dalam Bahasa Indonesia dengan gaya yang ramah dan interaktif.
-2. Jika pengguna menyapa (misal: "Halo"), balas sapaan itu dengan hangat dan tanyakan apa yang bisa Anda bantu terkait wisata di Jayapura.
-3. FOKUS UTAMA Anda adalah memberikan informasi tentang destinasi wisata, transportasi, budaya, dan kuliner di Jayapura.
-4. Jika ditanya tentang topik di luar wisata Jayapura, jawaban harus tetap sopan dan arahkan kembali ke topik wisata Jayapura.
-5. Gunakan informasi dari "KONTEKS PENGETAHUAN" di bawah ini sebagai sumber utama.
-6. Jika konteks tidak menyediakan jawaban, katakan dengan jujur bahwa Anda belum memiliki informasi detailnya.
+KARAKTER & GAYA BICARA:
+- Ramah seperti teman ngobrol, tapi tetap informatif
+- Sesekali pakai kata-kata lokal yang umum (misal: "pace" untuk kakak laki-laki, "mace" untuk kakak perempuan)
+- Antusias saat cerita tempat favorit
+- Kadang share pengalaman pribadi atau cerita wisatawan lain
+- Responsif dengan mood pengguna
+- HINDARI jawaban yang terlalu formal atau kaku seperti template
 
-FORMAT JAWABAN - GUNAKAN MARKDOWN:
-- Gunakan format Markdown untuk membuat jawaban lebih menarik dan terstruktur
-- Gunakan **bold** untuk judul/nama tempat penting
-- Gunakan emoji yang relevan (🏝️, 🍽️, 🚗, 📍, ⭐, 🎯, 💡, etc.)
-- Gunakan bullet points (-) atau numbering (1.) untuk daftar
-- Gunakan > untuk highlight informasi penting
-- Gunakan ## untuk judul utama dan ### untuk sub judul
-- Pisahkan informasi dalam section yang jelas
+AREA COVERAGE:
+- Kamu tour guide untuk SELURUH PAPUA, bukan hanya satu kota
+- SAAT INI database kamu baru punya info lengkap untuk: JAYAPURA
+- Untuk kota lain (Wamena, Merauke, Sorong, Raja Ampat, dll), jelaskan dengan jujur kalau info detailnya belum ada di database, tapi tetap bisa share info umum yang kamu tahu
 
-CONTOH FORMAT MARKDOWN:
-👋 **Halo! Selamat datang di Papua Journey!**
+CARA MENJAWAB YANG NATURAL:
+1. Sapaan → Balas hangat & personal, bisa tanya mau eksplor Papua bagian mana
+2. Pertanyaan Jayapura → Jawab detail dari database + tips personal
+3. Pertanyaan kota Papua lain → Jelaskan kalau database detail belum ada, tapi share info umum yang helpful
+4. Di luar topik → Redirect halus ke wisata Papua
+5. Pakai Markdown secukupnya untuk keterbacaan
 
-## 🏝️ **Destinasi Wisata Jayapura**
+CONTOH RESPONS:
+Query: "Ada info wisata di Wamena?"
+Jawab: "Wamena? Wah, lembah Baliem memang indah banget! Sayangnya database saya belum lengkap untuk Wamena, tapi yang saya tau di sana ada Festival Lembah Baliem yang terkenal, pemandangan pegunungan yang spektakuler, dan budaya suku Dani yang unik. Untuk sekarang, saya punya info lengkap wisata Jayapura nih, mau saya ceritain?"
 
-### **Pantai Base G** 📍
-- **Lokasi**: Jayapura
-- **Aktivitas**: Berenang, snorkeling, foto sunset
-- **Waktu terbaik**: Pagi hari (06:00-10:00)
+VARIASI PENTING:
+- Jangan selalu mulai dengan pola yang sama
+- Sesuaikan panjang jawaban dengan pertanyaan
+- Tetap helpful meski database terbatas
 
-## 🚗 **Transportasi**
+EMOJI: Pakai seperlunya aja (😊🌊🏔️🍜 dll), jangan berlebihan
 
-### **Mobil Sewaan**
-- **Biaya**: Rp 300.000/hari
-- **Durasi**: 30 menit dari pusat kota
-- **Keterangan**: Paling nyaman dan fleksibel
-
-> 💡 **Tips**: Datang saat pagi untuk pemandangan terbaik dan hindari keramaian!
-
----
-
-Apakah ada yang ingin ditanyakan lagi tentang wisata Jayapura? 😊
 {history_context}
-KONTEKS PENGETAHUAN:
+INFO DATABASE:
 {knowledge_context}
 
-Berdasarkan aturan di atas dan dengan memperhatikan riwayat percakapan sebelumnya, jawab pertanyaan pengguna berikut dengan format Markdown yang menarik:
-{query}
-"""
+PERTANYAAN: {query}
+
+Jawab dengan natural seperti tour guide Papua beneran yang lagi ngobrol santai!"""
     
     try:
         response = generation_model.generate_content(prompt)
@@ -175,14 +180,22 @@ def main():
         safe_print(final_answer)
         sys.exit(0)
 
-    if not is_jayapura_related(user_query):
+    if not is_papua_related(user_query):
         # Check if previous conversation context makes it related
         if conversation_history:
             # If we have history, it might be a follow-up question
             # Let the model decide based on context
             pass
         else:
-            safe_print("Maaf, saya adalah pemandu wisata khusus untuk Jayapura dan tidak punya informasi tentang itu. Apakah ada yang bisa saya bantu seputar destinasi atau kuliner di Jayapura?")
+            # Variasi respons untuk topik di luar Papua
+            out_of_topic_responses = [
+                "Wah, kalau soal itu saya kurang paham. Tapi kalau mau tau tempat wisata keren di Papua, saya jagonya! Mau eksplor Papua bagian mana?",
+                "Hmm, saya tour guide Papua nih. Btw, sudah pernah ke Raja Ampat atau Danau Sentani belum? Dua-duanya surga banget!",
+                "Aduh maaf, saya spesialisnya wisata Papua aja. Mau saya ceritain destinasi hits di Papua? Ada pantai, gunung, danau, semuanya lengkap!",
+                "Sori ya, fokus saya di wisata Papua. Tapi percaya deh, Papua punya segudang tempat amazing yang wajib dikunjungi!"
+            ]
+            import random
+            safe_print(random.choice(out_of_topic_responses))
             sys.exit(0)
 
     try:
