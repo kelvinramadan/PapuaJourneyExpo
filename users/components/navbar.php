@@ -300,6 +300,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
+/* Custom style for chatbot navbar */
+.pj-navbar-wrapper .pj-navbar-header.chatbot-nav .nav-links a,
+.pj-navbar-wrapper .pj-navbar-header.chatbot-nav .logo p {
+    color: var(--text-color-secondary) !important;
+}
+
+.pj-navbar-wrapper .pj-navbar-header.chatbot-nav .mobile-menu-toggle span {
+    background: var(--text-color-secondary);
+}
+
 .pj-navbar-wrapper .pj-navbar-header.header-hidden {
     transform: translateY(-100%);
 }
@@ -1033,7 +1043,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <!-- Papua Journey Navbar Component -->
 <div class="pj-navbar-wrapper">
-    <header class="pj-navbar-header" id="pj-header">
+    <header class="pj-navbar-header <?php if ($in_chatbot) echo 'chatbot-nav'; ?>" id="pj-header">
     <nav class="navbar">
         <a href="<?php echo $base_path; ?>index.php" class="logo">
             <img src="<?php echo $base_path; ?>assets/logo.png" alt="Papua Journey Logo">
