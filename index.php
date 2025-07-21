@@ -523,7 +523,6 @@ function getInitial($name) {
                     <span class="section-label">What Travelers Say</span>
                     <h2>Real Stories from <b>Real Adventurers</b></h2>
                     <div class="review-actions">
-                        <a href="../../login.php" class="btn btn-primary">
                             <i class="fas fa-user"></i>
                             Login to Share Your Experience
                         </a>
